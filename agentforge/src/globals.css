@@ -1,0 +1,282 @@
+@import "tailwindcss";
+
+/* ===== AgentForge Design System (Dark Mode Only - GitHub-Inspired) ===== */
+
+@theme inline {
+  /* Core Backgrounds (GitHub Dark) */
+  --color-bg-root: #0D1117;
+  --color-bg-surface: #161B22;
+  --color-bg-surface-raised: #1C2128;
+  --color-bg-surface-hover: #21262D;
+  --color-bg-surface-active: #262C36;
+  --color-bg-elevated: #21262D;
+
+  /* Borders */
+  --color-border-default: #30363D;
+  --color-border-subtle: #21262D;
+  --color-border-emphasis: #484F58;
+
+  /* Text */
+  --color-text-primary: #E6EDF3;
+  --color-text-secondary: #8B949E;
+  --color-text-tertiary: #6E7681;
+  --color-text-link: #58A6FF;
+  --color-text-on-color: #FFFFFF;
+
+  /* Primary (Electric Blue) */
+  --color-primary: #3B82F6;
+  --color-primary-hover: #60A5FA;
+  --color-primary-active: #2563EB;
+
+  /* Node Type Colors */
+  --color-node-llm: #8B5CF6;
+  --color-node-tool: #10B981;
+  --color-node-memory: #F59E0B;
+  --color-node-logic: #EF4444;
+  --color-node-output: #06B6D4;
+  --color-node-input: #94A3B8;
+  --color-node-guardrail: #F97316;
+  --color-node-custom: #EC4899;
+  --color-node-transform: #3B82F6;
+
+  /* Semantic Colors */
+  --color-success: #3FB950;
+  --color-warning: #D29922;
+  --color-error: #F85149;
+  --color-info: #58A6FF;
+
+  /* Chart Colors */
+  --color-chart-1: #3B82F6;
+  --color-chart-2: #8B5CF6;
+  --color-chart-3: #10B981;
+  --color-chart-4: #F59E0B;
+  --color-chart-5: #F85149;
+  --color-chart-6: #EC4899;
+
+  /* Fonts */
+  --font-heading: 'Geist Sans', 'Inter', -apple-system, sans-serif;
+  --font-body: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+  --font-mono: 'JetBrains Mono', Menlo, Monaco, Consolas, monospace;
+
+  /* Sidebar */
+  --spacing-sidebar: 48px;
+
+  /* Animation tokens */
+  --duration-fast: 100ms;
+  --duration-normal: 200ms;
+  --duration-slow: 300ms;
+
+  /* Shadows */
+  --shadow-1: 0 1px 3px rgba(0, 0, 0, 0.3);
+  --shadow-2: 0 2px 8px rgba(0, 0, 0, 0.3);
+  --shadow-3: 0 4px 16px rgba(0, 0, 0, 0.4);
+  --shadow-4: 0 8px 24px rgba(0, 0, 0, 0.5);
+  --shadow-5: 0 16px 48px rgba(0, 0, 0, 0.6);
+}
+
+/* ===== CSS Variables ===== */
+
+:root {
+  --background: #0D1117;
+  --foreground: #E6EDF3;
+  --muted: #161B22;
+  --muted-foreground: #8B949E;
+  --card: #161B22;
+  --card-foreground: #E6EDF3;
+  --popover: #1C2128;
+  --popover-foreground: #E6EDF3;
+  --primary: #3B82F6;
+  --primary-foreground: #FFFFFF;
+  --secondary: #21262D;
+  --secondary-foreground: #E6EDF3;
+  --accent: #21262D;
+  --accent-foreground: #E6EDF3;
+  --destructive: #F85149;
+  --destructive-foreground: #FFFFFF;
+  --border: #30363D;
+  --input: #21262D;
+  --ring: #3B82F6;
+  --radius: 0.375rem;
+}
+
+/* ===== Base Styles ===== */
+
+html, body, #root {
+  height: 100%;
+  margin: 0;
+  padding: 0;
+  overflow: hidden;
+}
+
+body {
+  background-color: var(--background);
+  color: var(--foreground);
+  font-family: var(--font-body);
+  font-size: 13px;
+  line-height: 20px;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+/* Custom title bar drag region */
+.titlebar-drag {
+  -webkit-app-region: drag;
+}
+
+.titlebar-no-drag {
+  -webkit-app-region: no-drag;
+}
+
+/* Monospace metrics */
+.font-metric {
+  font-family: var(--font-mono);
+  font-variant-numeric: tabular-nums;
+}
+
+/* Scrollbar styling (GitHub-dark style) */
+* {
+  scrollbar-width: thin;
+  scrollbar-color: #484F58 transparent;
+}
+
+*::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+
+*::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+*::-webkit-scrollbar-thumb {
+  background: #484F58;
+  border-radius: 3px;
+}
+
+*::-webkit-scrollbar-thumb:hover {
+  background: #6E7681;
+}
+
+/* Focus ring for accessibility */
+*:focus-visible {
+  outline: 2px solid var(--ring);
+  outline-offset: 2px;
+  border-radius: var(--radius);
+}
+
+/* Disable transitions for prefers-reduced-motion */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+}
+
+/* Node execution pulse animation */
+@keyframes node-executing {
+  0%, 100% { box-shadow: 0 0 0 0 rgba(59, 130, 246, 0.4); }
+  50% { box-shadow: 0 0 0 6px rgba(59, 130, 246, 0); }
+}
+
+.animate-node-executing {
+  animation: node-executing 1.5s ease-in-out infinite;
+}
+
+/* Data flow particle animation */
+@keyframes flow-particle {
+  0% { offset-distance: 0%; opacity: 0; }
+  10% { opacity: 1; }
+  90% { opacity: 1; }
+  100% { offset-distance: 100%; opacity: 0; }
+}
+
+/* Success flash */
+@keyframes success-flash {
+  0%, 100% { border-color: var(--border); }
+  50% { border-color: #3FB950; }
+}
+
+.animate-success-flash {
+  animation: success-flash 500ms ease-out;
+}
+
+/* Error shake */
+@keyframes error-shake {
+  0%, 100% { transform: translateX(0); }
+  20%, 60% { transform: translateX(-3px); }
+  40%, 80% { transform: translateX(3px); }
+}
+
+.animate-error-shake {
+  animation: error-shake 300ms ease-out;
+}
+
+/* Logo gradient text */
+.text-gradient-brand {
+  background: linear-gradient(135deg, #E6EDF3, #3B82F6);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+/* React Flow customizations */
+.react-flow__background {
+  background-color: #0D1117 !important;
+}
+
+.react-flow__minimap {
+  background-color: rgba(22, 27, 34, 0.8) !important;
+  border: 1px solid #30363D !important;
+  border-radius: 8px !important;
+}
+
+.react-flow__controls {
+  border: 1px solid #30363D !important;
+  border-radius: 8px !important;
+  overflow: hidden;
+}
+
+.react-flow__controls-button {
+  background: #161B22 !important;
+  border-bottom: 1px solid #30363D !important;
+  fill: #8B949E !important;
+}
+
+.react-flow__controls-button:hover {
+  background: #21262D !important;
+}
+
+/* Selection rectangle */
+.react-flow__selection {
+  border: 1px dashed #3B82F6 !important;
+  background: rgba(59, 130, 246, 0.06) !important;
+}
+
+/* ── Light Theme ── */
+[data-theme="light"] {
+  --color-bg-root: #F6F8FA;
+  --color-bg-surface: #FFFFFF;
+  --color-bg-surface-raised: #F3F4F6;
+  --color-bg-surface-hover: #E5E7EB;
+  --color-bg-surface-active: #D1D5DB;
+  --color-bg-elevated: #FFFFFF;
+
+  --color-border-default: #D0D7DE;
+  --color-border-subtle: #E5E7EB;
+  --color-border-emphasis: #8B949E;
+
+  --color-text-primary: #1F2328;
+  --color-text-secondary: #57606A;
+  --color-text-tertiary: #6E7681;
+  --color-text-link: #0969DA;
+  --color-text-on-color: #FFFFFF;
+
+  --shadow-1: 0 1px 2px rgba(0, 0, 0, 0.04);
+  --shadow-2: 0 3px 6px rgba(0, 0, 0, 0.06);
+  --shadow-3: 0 8px 24px rgba(0, 0, 0, 0.08);
+  --shadow-4: 0 12px 48px rgba(0, 0, 0, 0.1);
+  --shadow-5: 0 20px 60px rgba(0, 0, 0, 0.12);
+}

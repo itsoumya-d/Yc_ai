@@ -1,0 +1,159 @@
+@import "tailwindcss";
+
+/* ===== InvoiceAI Design System (Tailwind v4) ===== */
+
+@theme inline {
+  /* Brand Colors - Money Green */
+  --color-brand-50: #ECFDF5;
+  --color-brand-100: #D1FAE5;
+  --color-brand-200: #A7F3D0;
+  --color-brand-300: #6EE7B7;
+  --color-brand-400: #34D399;
+  --color-brand-500: #10B981;
+  --color-brand-600: #059669;
+  --color-brand-700: #047857;
+  --color-brand-800: #065F46;
+  --color-brand-900: #064E3B;
+
+  /* Invoice Status Colors */
+  --color-status-paid: #22C55E;
+  --color-status-overdue: #DC2626;
+  --color-status-pending: #F59E0B;
+  --color-status-draft: #6B7280;
+  --color-status-sent: #3B82F6;
+  --color-status-viewed: #8B5CF6;
+  --color-status-partial: #F59E0B;
+  --color-status-cancelled: #9CA3AF;
+
+  /* Status Background Tints */
+  --color-status-paid-bg: #F0FDF4;
+  --color-status-overdue-bg: #FEF2F2;
+  --color-status-pending-bg: #FFFBEB;
+  --color-status-draft-bg: #F9FAFB;
+  --color-status-sent-bg: #EFF6FF;
+  --color-status-viewed-bg: #F5F3FF;
+  --color-status-partial-bg: #FFFBEB;
+  --color-status-cancelled-bg: #F9FAFB;
+
+  /* Semantic surface colors */
+  --color-surface: #FFFFFF;
+  --color-surface-secondary: #F9FAFB;
+  --color-surface-tertiary: #F3F4F6;
+  --color-border: #E5E7EB;
+  --color-border-light: #F3F4F6;
+
+  /* Fonts */
+  --font-heading: var(--font-plus-jakarta-sans), 'Plus Jakarta Sans', sans-serif;
+  --font-body: var(--font-inter), 'Inter', sans-serif;
+  --font-mono: 'DM Mono', ui-monospace, monospace;
+
+  /* Sidebar */
+  --spacing-sidebar: 256px;
+  --spacing-sidebar-collapsed: 72px;
+
+  /* Animation tokens */
+  --duration-fast: 100ms;
+  --duration-normal: 200ms;
+  --duration-slow: 300ms;
+  --duration-spring: 400ms;
+
+  /* Shadows */
+  --shadow-card: 0 1px 3px 0 rgba(0, 0, 0, 0.1), 0 1px 2px -1px rgba(0, 0, 0, 0.1);
+  --shadow-card-hover: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -2px rgba(0, 0, 0, 0.1);
+  --shadow-dropdown: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -4px rgba(0, 0, 0, 0.1);
+}
+
+/* ===== CSS Variables for Light/Dark Mode ===== */
+
+:root {
+  --background: #FFFFFF;
+  --foreground: #111827;
+  --muted: #F9FAFB;
+  --muted-foreground: #6B7280;
+  --card: #FFFFFF;
+  --card-foreground: #111827;
+  --popover: #FFFFFF;
+  --popover-foreground: #111827;
+  --primary: #059669;
+  --primary-foreground: #FFFFFF;
+  --secondary: #F3F4F6;
+  --secondary-foreground: #1F2937;
+  --accent: #F3F4F6;
+  --accent-foreground: #1F2937;
+  --destructive: #DC2626;
+  --destructive-foreground: #FFFFFF;
+  --border: #E5E7EB;
+  --input: #E5E7EB;
+  --ring: #059669;
+  --radius: 0.5rem;
+}
+
+.dark {
+  --background: #0F172A;
+  --foreground: #F1F5F9;
+  --muted: #1E293B;
+  --muted-foreground: #94A3B8;
+  --card: #1E293B;
+  --card-foreground: #F1F5F9;
+  --popover: #1E293B;
+  --popover-foreground: #F1F5F9;
+  --primary: #34D399;
+  --primary-foreground: #064E3B;
+  --secondary: #334155;
+  --secondary-foreground: #F1F5F9;
+  --accent: #334155;
+  --accent-foreground: #F1F5F9;
+  --destructive: #EF4444;
+  --destructive-foreground: #FFFFFF;
+  --border: #334155;
+  --input: #334155;
+  --ring: #34D399;
+}
+
+/* ===== Base Styles ===== */
+
+body {
+  background-color: var(--background);
+  color: var(--foreground);
+  font-family: var(--font-body);
+}
+
+/* Financial numbers - monospace for alignment */
+.font-amount {
+  font-family: var(--font-mono);
+  font-variant-numeric: tabular-nums;
+  text-align: right;
+}
+
+/* Scrollbar styling */
+* {
+  scrollbar-width: thin;
+  scrollbar-color: var(--border) transparent;
+}
+
+/* Focus ring for accessibility */
+*:focus-visible {
+  outline: 2px solid var(--ring);
+  outline-offset: 2px;
+  border-radius: var(--radius);
+}
+
+/* Smooth transitions for theme switching */
+*,
+*::before,
+*::after {
+  transition-property: background-color, border-color, color;
+  transition-duration: 150ms;
+  transition-timing-function: ease-in-out;
+}
+
+/* Disable transitions for prefers-reduced-motion */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+}

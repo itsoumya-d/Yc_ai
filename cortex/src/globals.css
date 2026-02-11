@@ -1,0 +1,169 @@
+@import "tailwindcss";
+
+@theme inline {
+  /* Primary - Indigo */
+  --color-primary-DEFAULT: #4F46E5;
+  --color-primary-light: #6366F1;
+  --color-primary-muted: rgba(79, 70, 229, 0.15);
+  --color-primary-subtle: rgba(79, 70, 229, 0.08);
+
+  /* Chart Palette */
+  --color-chart-blue: #3B82F6;
+  --color-chart-green: #22C55E;
+  --color-chart-amber: #F59E0B;
+  --color-chart-red: #EF4444;
+  --color-chart-purple: #A855F7;
+  --color-chart-cyan: #06B6D4;
+  --color-chart-pink: #EC4899;
+  --color-chart-orange: #F97316;
+
+  /* Status */
+  --color-status-success: #22C55E;
+  --color-status-warning: #F59E0B;
+  --color-status-error: #EF4444;
+  --color-status-info: #3B82F6;
+
+  /* Background - Deep purple-black */
+  --color-bg-root: #0F0D1A;
+  --color-bg-surface: #1A1726;
+  --color-bg-surface-raised: #252233;
+  --color-bg-surface-overlay: #302D40;
+
+  /* Text */
+  --color-text-primary: #F1F0F5;
+  --color-text-secondary: #9B97AB;
+  --color-text-tertiary: #6B6780;
+
+  /* Border */
+  --color-border-default: #2E2B3D;
+  --color-border-subtle: #252233;
+
+  /* SQL Syntax */
+  --color-sql-keyword: #C084FC;
+  --color-sql-string: #34D399;
+  --color-sql-number: #FB923C;
+  --color-sql-function: #60A5FA;
+  --color-sql-table: #F472B6;
+  --color-sql-comment: #6B6780;
+
+  /* Fonts */
+  --font-heading: 'Geist', system-ui, sans-serif;
+  --font-body: 'Inter', system-ui, sans-serif;
+  --font-mono: 'JetBrains Mono', monospace;
+
+  /* Animation */
+  --animate-pulse-query: pulse-query 2s ease-in-out infinite;
+  --animate-data-flow: data-flow 1.5s ease-in-out infinite;
+}
+
+@keyframes pulse-query {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.6; }
+}
+
+@keyframes data-flow {
+  0% { transform: translateX(-100%); }
+  100% { transform: translateX(100%); }
+}
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body {
+  font-family: var(--font-body);
+  background: var(--color-bg-root);
+  color: var(--color-text-primary);
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  overflow: hidden;
+  user-select: none;
+}
+
+/* Headings */
+.data-heading {
+  font-family: var(--font-heading);
+  font-weight: 600;
+  letter-spacing: -0.01em;
+}
+
+/* SQL Code */
+.sql-code {
+  font-family: var(--font-mono);
+  font-size: 13px;
+  line-height: 1.6;
+}
+
+.sql-keyword { color: var(--color-sql-keyword); font-weight: 500; }
+.sql-string { color: var(--color-sql-string); }
+.sql-number { color: var(--color-sql-number); }
+.sql-function { color: var(--color-sql-function); }
+.sql-table { color: var(--color-sql-table); }
+.sql-comment { color: var(--color-sql-comment); font-style: italic; }
+
+/* KPI value */
+.kpi-value {
+  font-family: var(--font-heading);
+  font-weight: 700;
+  font-variant-numeric: tabular-nums;
+}
+
+/* Query bar */
+.query-bar {
+  background: var(--color-bg-surface);
+  border: 1px solid var(--color-border-default);
+  transition: border-color 0.2s, box-shadow 0.2s;
+}
+
+.query-bar:focus-within {
+  border-color: var(--color-primary-DEFAULT);
+  box-shadow: 0 0 0 3px var(--color-primary-muted);
+}
+
+/* Scrollbar */
+::-webkit-scrollbar { width: 6px; height: 6px; }
+::-webkit-scrollbar-track { background: transparent; }
+::-webkit-scrollbar-thumb {
+  background: var(--color-border-default);
+  border-radius: 3px;
+}
+::-webkit-scrollbar-thumb:hover { background: var(--color-text-tertiary); }
+
+/* Data table */
+.data-table th {
+  font-family: var(--font-body);
+  font-size: 11px;
+  font-weight: 500;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: var(--color-text-tertiary);
+}
+
+.data-table td {
+  font-family: var(--font-mono);
+  font-size: 13px;
+}
+
+/* Light theme overrides */
+[data-theme="light"] {
+  --color-bg-root: #F8F9FC;
+  --color-bg-surface: #FFFFFF;
+  --color-bg-surface-raised: #F1F3F8;
+  --color-bg-surface-overlay: #E8EBF2;
+
+  --color-text-primary: #111827;
+  --color-text-secondary: #4B5563;
+  --color-text-tertiary: #9CA3AF;
+
+  --color-border-default: #E5E7EB;
+  --color-border-subtle: #F3F4F6;
+
+  --color-sql-keyword: #7C3AED;
+  --color-sql-string: #059669;
+  --color-sql-number: #D97706;
+  --color-sql-function: #2563EB;
+  --color-sql-table: #DB2777;
+  --color-sql-comment: #9CA3AF;
+}

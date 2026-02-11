@@ -1,0 +1,130 @@
+@import "tailwindcss";
+
+@theme inline {
+  /* Primary - Deep Purple */
+  --color-primary-DEFAULT: #6C2BD9;
+  --color-primary-light: #8B5CF6;
+  --color-primary-muted: rgba(108, 43, 217, 0.15);
+
+  /* Accent - Electric Cyan */
+  --color-accent-DEFAULT: #06D6A0;
+  --color-accent-light: #34D399;
+  --color-accent-muted: rgba(6, 214, 160, 0.15);
+
+  /* Warm Coral */
+  --color-coral: #FF6B6B;
+  --color-coral-muted: rgba(255, 107, 107, 0.15);
+
+  /* Amber */
+  --color-amber: #FBBF24;
+  --color-amber-muted: rgba(251, 191, 36, 0.15);
+
+  /* Background - Deep midnight */
+  --color-bg-root: #0A0812;
+  --color-bg-surface: #141020;
+  --color-bg-surface-raised: #1E1A2E;
+  --color-bg-surface-overlay: #2A2540;
+
+  /* Text */
+  --color-text-primary: #F5F3FF;
+  --color-text-secondary: #A8A0C0;
+  --color-text-tertiary: #6B6490;
+
+  /* Border */
+  --color-border-default: #2A2540;
+  --color-border-subtle: #1E1A2E;
+
+  /* Music-specific */
+  --color-chord-major: #06D6A0;
+  --color-chord-minor: #8B5CF6;
+  --color-chord-dim: #FF6B6B;
+  --color-chord-aug: #FBBF24;
+  --color-beat-active: #6C2BD9;
+  --color-beat-accent: #06D6A0;
+  --color-meter-peak: #FF6B6B;
+  --color-meter-normal: #06D6A0;
+  --color-meter-low: #6B6490;
+
+  /* Fonts */
+  --font-heading: 'Space Grotesk', system-ui, sans-serif;
+  --font-body: 'Inter', system-ui, sans-serif;
+  --font-mono: 'JetBrains Mono', monospace;
+
+  --animate-pulse-beat: pulse-beat 0.5s ease-out;
+  --animate-glow: glow 2s ease-in-out infinite;
+}
+
+@keyframes pulse-beat {
+  0% { transform: scale(1); }
+  50% { transform: scale(1.05); }
+  100% { transform: scale(1); }
+}
+
+@keyframes glow {
+  0%, 100% { box-shadow: 0 0 0 0 rgba(108, 43, 217, 0.4); }
+  50% { box-shadow: 0 0 20px 4px rgba(108, 43, 217, 0.2); }
+}
+
+* { margin: 0; padding: 0; box-sizing: border-box; }
+
+body {
+  font-family: var(--font-body);
+  background: var(--color-bg-root);
+  color: var(--color-text-primary);
+  -webkit-font-smoothing: antialiased;
+  overflow: hidden;
+  user-select: none;
+}
+
+.music-heading {
+  font-family: var(--font-heading);
+  font-weight: 600;
+  letter-spacing: -0.02em;
+}
+
+.bpm-display {
+  font-family: var(--font-mono);
+  font-variant-numeric: tabular-nums;
+}
+
+.chord-card {
+  border-radius: 8px;
+  padding: 12px 16px;
+  text-align: center;
+  cursor: pointer;
+  transition: transform 0.1s, box-shadow 0.2s;
+}
+
+.chord-card:hover { transform: translateY(-2px); }
+.chord-card:active { transform: scale(0.98); }
+
+/* Meter */
+.meter-bar {
+  border-radius: 2px;
+  transition: height 0.05s linear;
+}
+
+::-webkit-scrollbar { width: 6px; height: 6px; }
+::-webkit-scrollbar-track { background: transparent; }
+::-webkit-scrollbar-thumb { background: var(--color-border-default); border-radius: 3px; }
+::-webkit-scrollbar-thumb:hover { background: var(--color-text-tertiary); }
+
+/* ---- Light Theme ---- */
+[data-theme="light"] {
+  --color-bg-root: #F8F7FC;
+  --color-bg-surface: #FFFFFF;
+  --color-bg-surface-raised: #F0EEF5;
+  --color-bg-surface-overlay: #E4E1ED;
+
+  --color-text-primary: #1A1528;
+  --color-text-secondary: #5C5470;
+  --color-text-tertiary: #9990A8;
+
+  --color-border-default: #D4D0E0;
+  --color-border-subtle: #E4E1ED;
+
+  --color-primary-muted: rgba(108, 43, 217, 0.1);
+  --color-accent-muted: rgba(6, 214, 160, 0.1);
+  --color-coral-muted: rgba(255, 107, 107, 0.1);
+  --color-amber-muted: rgba(251, 191, 36, 0.1);
+}

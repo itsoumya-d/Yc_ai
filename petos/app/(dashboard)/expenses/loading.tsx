@@ -1,0 +1,21 @@
+import { Skeleton } from '@/components/ui/skeleton';
+
+export default function ExpensesLoading() {
+  return (
+    <div>
+      <div className="mb-6 flex items-center justify-between">
+        <div>
+          <Skeleton className="h-8 w-32" />
+          <Skeleton className="mt-2 h-4 w-48" />
+        </div>
+        <Skeleton className="h-10 w-32" />
+      </div>
+      <div className="grid grid-cols-1 gap-4 sm:grid-cols-3">
+        {Array.from({ length: 3 }).map((_, i) => (
+          <Skeleton key={i} className="h-24 rounded-xl" />
+        ))}
+      </div>
+      <Skeleton className="mt-6 h-64 rounded-xl" />
+    </div>
+  );
+}

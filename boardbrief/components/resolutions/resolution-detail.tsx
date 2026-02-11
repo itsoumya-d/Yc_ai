@@ -1,0 +1,135 @@
+'use client';
+
+import { useState } from 'react';
+import { useRouter } from 'next/navigation';
+import Link from 'next/link';
+import { Badge } from '@/components/ui/badge';
+import { Button } from '@/components/ui/button';
+import { Card } from '@/components/ui/card';
+import { useToast } from '@/components/ui/toast';
+import { deleteResolution } from '@/lib/actions/resolutions';
+import { Edit, Trash2, ThumbsUp, ThumbsDown, MinusCircle } from 'lucide-react';
+import type { Resolution } from '@/types/database';
+
+interface ResolutionDetailProps {
+  resolution: Resolution;
+}
+
+export function ResolutionDetail({ resolution }: ResolutionDetailProps) {
+  const router = useRouter();
+  const { toast } = useToast();
+  const [deleting, setDeleting] = useState(false);
+
+  const votesFor = resolution.votes_for ?? 0;
+  const votesAgainst = resolution.votes_against ?? 0;
+  const votesAbstain = resolution.votes_abstain ?? 0;
+  const totalVotes = votesFor + votesAgainst + votesAbstain;
+
+  function getBarWidth(count: number): string {
+    if (totalVotes === 0) return '0%';
+    return `${Math.round((count / totalVotes) * 100)}%`;
+  }
+
+  async function handleDelete() {
+    if (!confirm('Delete this resolution?')) return;
+    setDeleting(true);
+    const result = await deleteResolution(resolution.id);
+    if (result.error) {
+      toast({ title: result.error, variant: 'destructive' });
+      setDeleting(false);
+      return;
+    }
+    toast({ title: 'Resolution deleted' });
+    router.push('/resolutions');
+  }
+
+  return (
+    <div className="space-y-6">
+      <div className="flex items-start justify-between">
+        <div>
+          <div className="flex items-center gap-3">
+            <h1 className="font-heading text-2xl font-bold text-[var(--foreground)]">
+              {resolution.title}
+            </h1>
+            <Badge variant={resolution.status}>{resolution.status}</Badge>
+          </div>
+        </div>
+        <div className="flex gap-2">
+          <Link href={`/resolutions/${resolution.id}/edit`}>
+            <Button variant="outline" size="sm">
+              <Edit className="w-4 h-4 mr-1" />
+              Edit
+            </Button>
+          </Link>
+          <Button
+            variant="outline"
+            size="sm"
+            onClick={handleDelete}
+            disabled={deleting}
+          >
+            <Trash2 className="w-4 h-4 mr-1" />
+            {deleting ? 'Deleting...' : 'Delete'}
+          </Button>
+        </div>
+      </div>
+
+      <Card className="p-4">
+        <h3 className="text-sm font-medium text-[var(--muted-foreground)] mb-3">
+          Vote Results
+        </h3>
+        {totalVotes > 0 ? (
+          <div className="space-y-4">
+            <div className="flex items-center gap-4 text-sm">
+              <div className="flex items-center gap-1 text-green-700">
+                <ThumbsUp className="w-4 h-4" />
+                <span className="font-data">{votesFor} For</span>
+              </div>
+              <div className="flex items-center gap-1 text-red-600">
+                <ThumbsDown className="w-4 h-4" />
+                <span className="font-data">{votesAgainst} Against</span>
+              </div>
+              <div className="flex items-center gap-1 text-[var(--muted-foreground)]">
+                <MinusCircle className="w-4 h-4" />
+                <span className="font-data">{votesAbstain} Abstain</span>
+              </div>
+            </div>
+
+            <div className="w-full h-4 bg-[var(--muted)] rounded-full overflow-hidden flex">
+              <div
+                className="h-full bg-green-600 transition-all"
+                style={{ width: getBarWidth(votesFor) }}
+              />
+              <div
+                className="h-full bg-red-500 transition-all"
+                style={{ width: getBarWidth(votesAgainst) }}
+              />
+              <div
+                className="h-full bg-gray-400 transition-all"
+                style={{ width: getBarWidth(votesAbstain) }}
+              />
+            </div>
+
+            <p className="text-xs text-[var(--muted-foreground)]">
+              Total: {totalVotes} vote{totalVotes !== 1 ? 's' : ''} cast
+            </p>
+          </div>
+        ) : (
+          <p className="text-sm text-[var(--muted-foreground)]">
+            No votes have been recorded yet.
+          </p>
+        )}
+      </Card>
+
+      {resolution.body && (
+        <Card className="p-4">
+          <h3 className="text-sm font-medium text-[var(--muted-foreground)] mb-2">
+            Resolution Body
+          </h3>
+          <p className="text-sm text-[var(--foreground)] whitespace-pre-wrap leading-relaxed">
+            {resolution.body}
+          </p>
+        </Card>
+      )}
+    </div>
+  );
+}

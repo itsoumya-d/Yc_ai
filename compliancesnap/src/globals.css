@@ -1,0 +1,82 @@
+@import "tailwindcss";
+
+@theme inline {
+  --color-safety-yellow: #FFC107;
+  --color-safety-yellow-light: #FFF3CD;
+  --color-safety-yellow-dark: #E5AC00;
+
+  --color-charcoal: #2D3436;
+  --color-charcoal-light: #636E72;
+
+  --color-severity-critical: #FF3B30;
+  --color-severity-critical-bg: rgba(255, 59, 48, 0.12);
+  --color-severity-major: #FF9500;
+  --color-severity-major-bg: rgba(255, 149, 0, 0.12);
+  --color-severity-minor: #FFC107;
+  --color-severity-minor-bg: rgba(255, 193, 7, 0.12);
+  --color-severity-observation: #007AFF;
+  --color-severity-observation-bg: rgba(0, 122, 255, 0.12);
+
+  --color-compliant: #34C759;
+  --color-compliant-bg: rgba(52, 199, 89, 0.12);
+
+  --color-info: #007AFF;
+  --color-admin-purple: #AF52DE;
+
+  --color-bg-root: #000000;
+  --color-bg-surface: #1C1C1E;
+  --color-bg-card: #2C2C2E;
+  --color-bg-light: #F2F2F7;
+
+  --color-text-primary: #FFFFFF;
+  --color-text-secondary: #8E8E93;
+  --color-text-inverse: #2D3436;
+
+  --color-border-default: #3A3A3C;
+  --color-border-light: #E5E5EA;
+
+  --font-heading: 'Work Sans', system-ui, sans-serif;
+  --font-body: 'Source Sans 3', system-ui, sans-serif;
+  --font-code: 'Fira Code', monospace;
+}
+
+* { margin: 0; padding: 0; box-sizing: border-box; }
+
+body {
+  font-family: var(--font-body);
+  background: var(--color-bg-root);
+  color: var(--color-text-primary);
+  -webkit-font-smoothing: antialiased;
+  overflow: hidden;
+  user-select: none;
+  max-width: 428px;
+  margin: 0 auto;
+}
+
+.snap-heading { font-family: var(--font-heading); font-weight: 600; }
+.snap-heading-bold { font-family: var(--font-heading); font-weight: 700; }
+.snap-code { font-family: var(--font-code); font-variant-numeric: tabular-nums; }
+.score-display { font-family: var(--font-heading); font-weight: 700; font-variant-numeric: tabular-nums; }
+
+::-webkit-scrollbar { display: none; }
+
+/* ---- Light Theme ---- */
+[data-theme="light"] {
+  --color-bg-root: #F2F2F7;
+  --color-bg-surface: #FFFFFF;
+  --color-bg-card: #FFFFFF;
+  --color-bg-light: #F2F2F7;
+
+  --color-text-primary: #1C1C1E;
+  --color-text-secondary: #8E8E93;
+  --color-text-inverse: #2D3436;
+
+  --color-border-default: #D1D1D6;
+  --color-border-light: #E5E5EA;
+
+  --color-severity-critical-bg: rgba(255, 59, 48, 0.08);
+  --color-severity-major-bg: rgba(255, 149, 0, 0.08);
+  --color-severity-minor-bg: rgba(255, 193, 7, 0.08);
+  --color-severity-observation-bg: rgba(0, 122, 255, 0.08);
+  --color-compliant-bg: rgba(52, 199, 89, 0.08);
+}

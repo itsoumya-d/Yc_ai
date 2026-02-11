@@ -1,0 +1,246 @@
+@import 'tailwindcss';
+
+@theme inline {
+  /* ── PCB Design System: Circuit Green + Dark Workspace ── */
+
+  /* Background */
+  --color-bg-root: #0D1117;
+  --color-bg-surface: #161B22;
+  --color-bg-surface-raised: #1C2128;
+  --color-bg-surface-hover: #21262D;
+  --color-bg-canvas: #0D1117;
+
+  /* Borders */
+  --color-border-default: #30363D;
+  --color-border-emphasis: #484F58;
+  --color-border-subtle: #21262D;
+
+  /* Text */
+  --color-text-primary: #E8E8E8;
+  --color-text-secondary: #8B949E;
+  --color-text-tertiary: #6E7681;
+  --color-text-inverse: #0D1117;
+  --color-text-on-color: #FFFFFF;
+  --color-text-link: #58A6FF;
+
+  /* Primary: Circuit Green */
+  --color-primary: #00C853;
+  --color-primary-hover: #00E676;
+  --color-primary-active: #00A844;
+  --color-primary-muted: rgba(0, 200, 83, 0.12);
+
+  /* Accent: Signal Blue */
+  --color-accent: #2979FF;
+  --color-accent-hover: #448AFF;
+  --color-accent-muted: rgba(41, 121, 255, 0.12);
+
+  /* Tertiary: Copper Trace */
+  --color-copper: #D4A843;
+  --color-copper-muted: rgba(212, 168, 67, 0.12);
+
+  /* Semantic */
+  --color-success: #2EA043;
+  --color-warning: #D29922;
+  --color-error: #F85149;
+  --color-info: #58A6FF;
+
+  /* PCB Layer Colors */
+  --color-layer-fcu: #EF4444;
+  --color-layer-bcu: #3B82F6;
+  --color-layer-in1: #A855F7;
+  --color-layer-in2: #14B8A6;
+  --color-layer-fsilk: #FFFFFF;
+  --color-layer-fmask: #22C55E;
+  --color-layer-outline: #F59E0B;
+  --color-layer-drill: #06B6D4;
+  --color-layer-courtyard: #EC4899;
+  --color-layer-fab: #9CA3AF;
+
+  /* DRC Status */
+  --color-drc-pass: #2EA043;
+  --color-drc-warning: #D29922;
+  --color-drc-error: #F85149;
+  --color-drc-info: #58A6FF;
+
+  /* Typography */
+  --font-heading: 'IBM Plex Sans', system-ui, sans-serif;
+  --font-body: 'Inter', system-ui, sans-serif;
+  --font-mono: 'IBM Plex Mono', ui-monospace, monospace;
+
+  /* Shadows */
+  --shadow-1: 0 1px 2px rgba(0, 0, 0, 0.3);
+  --shadow-2: 0 4px 12px rgba(0, 0, 0, 0.4);
+  --shadow-3: 0 8px 24px rgba(0, 0, 0, 0.5);
+
+  /* Border Radius */
+  --radius-sm: 4px;
+  --radius-md: 6px;
+  --radius-lg: 8px;
+  --radius-xl: 12px;
+  --radius-full: 9999px;
+}
+
+/* ── Base Styles ── */
+
+* {
+  box-sizing: border-box;
+}
+
+html,
+body,
+#root {
+  height: 100%;
+  margin: 0;
+  padding: 0;
+  font-family: var(--font-body);
+  background: var(--color-bg-root);
+  color: var(--color-text-primary);
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+/* macOS title bar drag region */
+.titlebar-drag {
+  -webkit-app-region: drag;
+}
+.titlebar-no-drag {
+  -webkit-app-region: no-drag;
+}
+
+/* Scrollbars */
+::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+::-webkit-scrollbar-thumb {
+  background: var(--color-border-default);
+  border-radius: var(--radius-full);
+}
+::-webkit-scrollbar-thumb:hover {
+  background: var(--color-border-emphasis);
+}
+
+/* Focus ring */
+:focus-visible {
+  outline: 2px solid var(--color-accent);
+  outline-offset: 2px;
+}
+
+/* ── Animations ── */
+
+@keyframes drc-pulse {
+  0%, 100% { transform: scale(1); opacity: 1; }
+  50% { transform: scale(1.15); opacity: 0.7; }
+}
+
+@keyframes route-progress {
+  0% { stroke-dashoffset: 100; }
+  100% { stroke-dashoffset: 0; }
+}
+
+@keyframes ai-thinking {
+  0%, 100% { opacity: 0.3; }
+  50% { opacity: 1; }
+}
+
+@keyframes snap-indicator {
+  0%, 100% { transform: scale(1); }
+  50% { transform: scale(1.3); }
+}
+
+.animate-drc-pulse {
+  animation: drc-pulse 2s ease-in-out infinite;
+}
+
+.animate-route-progress {
+  animation: route-progress 1s linear forwards;
+}
+
+.animate-ai-thinking {
+  animation: ai-thinking 1.4s ease-in-out infinite;
+}
+
+.animate-snap {
+  animation: snap-indicator 0.6s ease-in-out;
+}
+
+/* ── CAD Canvas ── */
+
+.cad-canvas {
+  background-color: var(--color-bg-canvas);
+  background-image:
+    radial-gradient(circle, var(--color-border-default) 0.5px, transparent 0.5px);
+  background-size: 20px 20px;
+}
+
+.cad-crosshair {
+  cursor: crosshair;
+}
+
+/* ── Layer Color Utilities ── */
+
+.layer-fcu { color: var(--color-layer-fcu); }
+.layer-bcu { color: var(--color-layer-bcu); }
+.layer-in1 { color: var(--color-layer-in1); }
+.layer-in2 { color: var(--color-layer-in2); }
+.layer-fsilk { color: var(--color-layer-fsilk); }
+.layer-fmask { color: var(--color-layer-fmask); }
+.layer-outline { color: var(--color-layer-outline); }
+.layer-drill { color: var(--color-layer-drill); }
+
+/* ── Light Theme ── */
+
+[data-theme="light"] {
+  --color-bg-root: #F6F8FA;
+  --color-bg-surface: #FFFFFF;
+  --color-bg-surface-raised: #F6F8FA;
+  --color-bg-surface-hover: #EAEEF2;
+  --color-bg-canvas: #FFFFFF;
+
+  --color-border-default: #D0D7DE;
+  --color-border-emphasis: #8C959F;
+  --color-border-subtle: #EAEEF2;
+
+  --color-text-primary: #1F2328;
+  --color-text-secondary: #656D76;
+  --color-text-tertiary: #8C959F;
+  --color-text-inverse: #FFFFFF;
+  --color-text-on-color: #FFFFFF;
+  --color-text-link: #0969DA;
+
+  --color-primary: #00A844;
+  --color-primary-hover: #00C853;
+  --color-primary-active: #008C3A;
+  --color-primary-muted: rgba(0, 168, 68, 0.10);
+
+  --color-accent: #0969DA;
+  --color-accent-hover: #0550AE;
+  --color-accent-muted: rgba(9, 105, 218, 0.10);
+
+  --color-copper: #B8860B;
+  --color-copper-muted: rgba(184, 134, 11, 0.10);
+
+  --color-success: #1A7F37;
+  --color-warning: #9A6700;
+  --color-error: #CF222E;
+  --color-info: #0969DA;
+
+  --color-layer-fsilk: #1F2328;
+
+  --shadow-1: 0 1px 2px rgba(0, 0, 0, 0.08);
+  --shadow-2: 0 4px 12px rgba(0, 0, 0, 0.12);
+  --shadow-3: 0 8px 24px rgba(0, 0, 0, 0.16);
+}
+
+/* Reduced motion */
+@media (prefers-reduced-motion: reduce) {
+  .animate-drc-pulse,
+  .animate-route-progress,
+  .animate-ai-thinking,
+  .animate-snap {
+    animation: none;
+  }
+}

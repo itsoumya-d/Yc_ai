@@ -1,0 +1,103 @@
+@import "tailwindcss";
+
+:root {
+  --background: #fdf6e3;
+  --foreground: #1a1412;
+  --muted: #f5ede0;
+  --muted-foreground: #78716c;
+  --border: #e7ddd0;
+  --card: #ffffff;
+  --card-foreground: #1a1412;
+  --accent: #fef3e2;
+  --accent-foreground: #881337;
+  --input: #e7ddd0;
+  --destructive: #dc2626;
+  --destructive-foreground: #ffffff;
+  --ring: #881337;
+}
+
+@theme inline {
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --font-sans: var(--font-plus-jakarta);
+  --font-serif: var(--font-lora);
+  --font-mono: var(--font-geist-mono);
+
+  --color-brand-50: #fff1f2;
+  --color-brand-100: #ffe4e6;
+  --color-brand-200: #fecdd3;
+  --color-brand-300: #fda4af;
+  --color-brand-400: #fb7185;
+  --color-brand-500: #be123c;
+  --color-brand-600: #881337;
+  --color-brand-700: #6d0f2d;
+  --color-brand-800: #530b22;
+  --color-brand-900: #3a0718;
+
+  --color-gold-50: #fefce8;
+  --color-gold-100: #fef9c3;
+  --color-gold-200: #fef08a;
+  --color-gold-300: #fde047;
+  --color-gold-400: #d4a843;
+  --color-gold-500: #b8942e;
+  --color-gold-600: #9a7b24;
+  --color-gold-700: #7c621a;
+  --color-gold-800: #5e4a13;
+  --color-gold-900: #40320c;
+
+  --color-accent: var(--accent);
+  --color-accent-foreground: var(--accent-foreground);
+  --color-input: var(--input);
+  --color-destructive: var(--destructive);
+  --color-destructive-foreground: var(--destructive-foreground);
+  --color-ring: var(--ring);
+  --color-card: var(--card);
+  --color-card-foreground: var(--card-foreground);
+  --color-muted: var(--muted);
+  --color-muted-foreground: var(--muted-foreground);
+  --color-border: var(--border);
+
+  --shadow-card: 0 1px 3px 0 rgb(0 0 0 / 0.04), 0 1px 2px -1px rgb(0 0 0 / 0.04);
+  --shadow-card-hover: 0 4px 6px -1px rgb(0 0 0 / 0.06), 0 2px 4px -2px rgb(0 0 0 / 0.06);
+  --shadow-dropdown: 0 10px 15px -3px rgb(0 0 0 / 0.08), 0 4px 6px -4px rgb(0 0 0 / 0.04);
+
+  --duration-fast: 100ms;
+  --duration-normal: 200ms;
+  --duration-slow: 300ms;
+}
+
+body {
+  background: var(--background);
+  color: var(--foreground);
+  font-family: var(--font-sans), system-ui, sans-serif;
+}
+
+::-webkit-scrollbar {
+  width: 6px;
+}
+
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+::-webkit-scrollbar-thumb {
+  background: var(--border);
+  border-radius: 3px;
+}
+
+.font-heading {
+  font-weight: 700;
+  letter-spacing: -0.025em;
+}
+
+.font-prose {
+  font-family: var(--font-serif), Georgia, serif;
+  line-height: 1.8;
+}
+
+.writing-editor {
+  font-family: var(--font-serif), Georgia, serif;
+  font-size: 1.125rem;
+  line-height: 1.8;
+  min-height: 500px;
+}

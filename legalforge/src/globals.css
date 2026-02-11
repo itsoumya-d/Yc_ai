@@ -1,0 +1,215 @@
+@import "tailwindcss";
+
+@theme inline {
+  /* ── Deep Navy Primary ── */
+  --color-primary: #1E3A5F;
+  --color-primary-hover: #16304F;
+  --color-primary-light: #5B8DB8;
+  --color-primary-muted: #1E3A5F26;
+
+  /* ── Gold Accent ── */
+  --color-accent: #C8A951;
+  --color-accent-hover: #B89840;
+  --color-accent-light: #D4B85C;
+  --color-accent-muted: #C8A95126;
+
+  /* ── Semantic Colors ── */
+  --color-risk-red: #DC2626;
+  --color-risk-red-muted: #DC262620;
+  --color-caution-amber: #D97706;
+  --color-caution-amber-muted: #D9770620;
+  --color-safe-green: #16A34A;
+  --color-safe-green-muted: #16A34A20;
+  --color-info-blue: #2563EB;
+  --color-info-blue-muted: #2563EB20;
+
+  /* ── Track Changes ── */
+  --color-insertion: #2563EB;
+  --color-insertion-bg: #DBEAFE20;
+  --color-deletion: #DC2626;
+  --color-deletion-bg: #FEE2E220;
+  --color-modification: #D97706;
+  --color-modification-bg: #FFFBEB20;
+
+  /* ── Author Colors ── */
+  --color-author-1: #2563EB;
+  --color-author-2: #7C3AED;
+  --color-author-3: #059669;
+  --color-author-4: #DC2626;
+
+  /* ── Risk Level Colors ── */
+  --color-risk-critical: #DC2626;
+  --color-risk-high: #EF4444;
+  --color-risk-medium: #D97706;
+  --color-risk-low: #16A34A;
+
+  /* ── Backgrounds (Dark Mode) ── */
+  --color-bg-root: #0F172A;
+  --color-bg-surface: #1E293B;
+  --color-bg-surface-raised: #334155;
+  --color-bg-surface-hover: #475569;
+  --color-bg-paper: #1A2332;
+  --color-bg-overlay: #0F172AE6;
+
+  /* ── Borders ── */
+  --color-border-default: #334155;
+  --color-border-emphasis: #475569;
+  --color-border-muted: #1E293B;
+
+  /* ── Text ── */
+  --color-text-primary: #F1F5F9;
+  --color-text-secondary: #94A3B8;
+  --color-text-tertiary: #64748B;
+  --color-text-on-color: #FFFFFF;
+  --color-text-link: #5B8DB8;
+
+  /* ── Shadows ── */
+  --shadow-1: 0 1px 2px rgba(0, 0, 0, 0.3);
+  --shadow-2: 0 4px 6px rgba(0, 0, 0, 0.35);
+  --shadow-3: 0 10px 15px rgba(0, 0, 0, 0.4);
+  --shadow-glow-navy: 0 0 20px rgba(30, 58, 95, 0.3);
+  --shadow-glow-gold: 0 0 20px rgba(200, 169, 81, 0.3);
+
+  /* ── Radii ── */
+  --radius-sm: 4px;
+  --radius-md: 6px;
+  --radius-lg: 8px;
+  --radius-xl: 12px;
+
+  /* ── Fonts ── */
+  --font-heading: "Libre Baskerville", Georgia, serif;
+  --font-body: "Inter", system-ui, sans-serif;
+  --font-contract: "Source Serif 4", Georgia, serif;
+  --font-mono: "JetBrains Mono", "Fira Code", monospace;
+
+  /* ── Spacing ── */
+  --spacing-sidebar: 240px;
+  --spacing-sidebar-collapsed: 56px;
+
+  /* ── Animations ── */
+  --duration-fast: 100ms;
+  --duration-normal: 150ms;
+  --duration-slow: 200ms;
+}
+
+/* ── Base ── */
+body {
+  background-color: var(--color-bg-root);
+  color: var(--color-text-primary);
+  font-family: var(--font-body);
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+/* ── Scrollbar ── */
+::-webkit-scrollbar { width: 6px; height: 6px; }
+::-webkit-scrollbar-track { background: transparent; }
+::-webkit-scrollbar-thumb { background: var(--color-border-default); border-radius: 3px; }
+::-webkit-scrollbar-thumb:hover { background: var(--color-border-emphasis); }
+
+/* ── Focus ── */
+*:focus-visible {
+  outline: 2px solid var(--color-primary-light);
+  outline-offset: 2px;
+  border-radius: var(--radius-sm);
+}
+
+/* ── Legal Headings ── */
+.legal-heading {
+  font-family: var(--font-heading);
+  font-weight: 700;
+  letter-spacing: -0.01em;
+}
+
+/* ── Contract Body ── */
+.contract-body {
+  font-family: var(--font-contract);
+  font-size: 15px;
+  line-height: 1.8;
+  max-width: 680px;
+}
+
+/* ── Clause ID ── */
+.clause-id {
+  font-family: var(--font-mono);
+  font-size: 13px;
+  letter-spacing: 0;
+}
+
+/* ── Risk Pulse ── */
+@keyframes risk-pulse {
+  0%, 100% { box-shadow: 0 0 0 0 rgba(220, 38, 38, 0.4); }
+  50% { box-shadow: 0 0 0 6px rgba(220, 38, 38, 0); }
+}
+
+.risk-pulse { animation: risk-pulse 2s ease-in-out infinite; }
+
+/* ── AI Processing Glow ── */
+@keyframes ai-glow {
+  0%, 100% { border-color: var(--color-primary-light); }
+  50% { border-color: var(--color-accent); }
+}
+
+.ai-processing { animation: ai-glow 2s ease-in-out infinite; }
+
+/* ── Track Changes ── */
+.track-insertion {
+  background: var(--color-insertion-bg);
+  text-decoration: underline;
+  text-decoration-color: var(--color-insertion);
+}
+
+.track-deletion {
+  background: var(--color-deletion-bg);
+  text-decoration: line-through;
+  text-decoration-color: var(--color-deletion);
+  color: var(--color-text-tertiary);
+}
+
+.track-modification {
+  background: var(--color-modification-bg);
+  border-left: 2px solid var(--color-modification);
+  padding-left: 4px;
+}
+
+/* ── Gold Accent Line ── */
+.gold-accent-border {
+  border-left: 3px solid var(--color-accent);
+}
+
+/* ── Light Theme ── */
+[data-theme="light"] {
+  --color-bg-root: #F8F9FC;
+  --color-bg-surface: #FFFFFF;
+  --color-bg-surface-raised: #F1F3F5;
+  --color-bg-surface-hover: #E2E5EA;
+  --color-bg-paper: #FAFBFC;
+  --color-bg-overlay: #F8F9FCE6;
+
+  --color-border-default: #D1D5DB;
+  --color-border-emphasis: #9CA3AF;
+  --color-border-muted: #E5E7EB;
+
+  --color-text-primary: #111827;
+  --color-text-secondary: #4B5563;
+  --color-text-tertiary: #6B7280;
+  --color-text-on-color: #FFFFFF;
+  --color-text-link: #1E3A5F;
+
+  --color-primary-muted: #1E3A5F1A;
+
+  --shadow-1: 0 1px 2px rgba(0, 0, 0, 0.05);
+  --shadow-2: 0 4px 6px rgba(0, 0, 0, 0.08);
+  --shadow-3: 0 10px 15px rgba(0, 0, 0, 0.1);
+  --shadow-glow-navy: 0 0 20px rgba(30, 58, 95, 0.15);
+  --shadow-glow-gold: 0 0 20px rgba(200, 169, 81, 0.15);
+
+  --color-insertion-bg: #DBEAFE40;
+  --color-deletion-bg: #FEE2E240;
+  --color-modification-bg: #FFFBEB40;
+}
+
+/* ── Reduced Motion ── */
+@media (prefers-reduced-motion: reduce) {
+  .risk-pulse, .ai-processing { animation: none; }
+}
