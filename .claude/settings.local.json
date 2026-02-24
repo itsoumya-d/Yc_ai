@@ -39,7 +39,8 @@
       "Bash(fi)",
       "Bash(cat:*)",
       "Bash(sort:*)",
-      "Bash(git add:*)"
+      "Bash(git add:*)",
+      "Bash(git commit:*)"
     ],
     "deny": [
       "Bash(rm -rf*)",
