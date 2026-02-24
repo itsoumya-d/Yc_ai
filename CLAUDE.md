@@ -428,6 +428,21 @@ Fixes applied in the session that completed the portfolio:
 
 ---
 
+## Session Feb 2026 (Final) — Additional Fixes
+
+### CompliBot Critical Fixes
+- **`lib/actions/frameworks.ts`**: Added `FRAMEWORK_CONTROLS` map with 12-17 standard controls per framework (SOC 2, GDPR, HIPAA, ISO 27001, PCI DSS). `toggleFramework()` now seeds standard controls when a framework is first enabled. Added `recalculateFrameworkScore()` which `controls.ts` calls after every status change.
+- **`lib/actions/controls.ts`**: `updateControlStatus()` now fetches `framework_id`, then calls `recalculateFrameworkScore()` to keep `compliance_score`, `controls_total`, `controls_compliant` accurate. Added `revalidatePath('/frameworks')`.
+- **New: `lib/actions/ai.ts`**: `analyzeGapsFromControls()` — uses GPT-4o to analyze non-compliant/partial controls and generates gap records in DB. `generateFrameworkGaps()` wrapper for per-framework analysis.
+- **New: `app/api/evidence/upload/route.ts`**: File upload to Supabase `compliance-evidence` storage bucket. Accepts PDF, images, Word/Excel, plain text up to 10 MB.
+
+### New API Routes Added
+- **`storythread/app/api/ai/generate/route.ts`**: Streaming AI writing assistant (SSE/ReadableStream). Supports 5 generation types: `continue`, `dialogue`, `rephrase`, `fix_prose`, `describe_scene`. Uses GPT-4o at temp=0.8.
+- **`skillbridge/app/api/resume/upload/route.ts`**: Resume file upload to Supabase `resumes` storage. Accepts PDF, Word, text. Returns `publicUrl` + raw `textContent` for parsing.
+- **`dealroom/app/api/deals/[id]/analyze/route.ts`**: Thin REST wrapper around the `analyzeDeal()` server action for client-side polling use.
+
+---
+
 ## Portfolio Status: ALL 20 PROJECTS COMPLETE ✅
 
 All phases of development are done. If continuing work in a new session:
@@ -442,3 +457,4 @@ All phases of development are done. If continuing work in a new session:
 - `invoiceai/supabase/migrations/005_create_invoices.sql` — canonical RLS migration
 - `invoiceai/components/ui/button.tsx` — canonical UI component (cva + cn)
 - `claimforge/app/(dashboard)/cases/[id]/page.tsx` → `case-detail-client.tsx` — canonical Server Component + 'use client' delegate pattern
+- `complibot/lib/actions/frameworks.ts` → `FRAMEWORK_CONTROLS` map — canonical control seeding pattern
