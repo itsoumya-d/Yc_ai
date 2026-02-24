@@ -13,6 +13,7 @@ import {
   duplicateInvoiceAction,
 } from '@/lib/actions/invoices';
 import { SendInvoiceDialog } from '@/components/invoices/send-invoice-dialog';
+import { RecordPaymentDialog } from '@/components/invoices/record-payment-dialog';
 import { formatCurrency, formatDate } from '@/lib/utils';
 import type { InvoiceWithDetails, Invoice } from '@/types/database';
 import {
@@ -27,11 +28,19 @@ interface InvoiceDetailProps {
   invoice: InvoiceWithDetails;
 }
 
+const METHOD_LABELS: Record<string, string> = {
+  card: 'Card',
+  ach: 'Bank Transfer',
+  manual: 'Cash',
+  other: 'Other',
+};
+
 export function InvoiceDetail({ invoice }: InvoiceDetailProps) {
   const router = useRouter();
   const { toast } = useToast();
   const [actionLoading, setActionLoading] = useState(false);
   const [sendDialogOpen, setSendDialogOpen] = useState(false);
+  const [recordPaymentOpen, setRecordPaymentOpen] = useState(false);
 
   const handleStatusChange = async (status: Invoice['status']) => {
     setActionLoading(true);
@@ -83,6 +92,14 @@ export function InvoiceDetail({ invoice }: InvoiceDetailProps) {
     { label: 'Paid', date: invoice.paid_at, active: !!invoice.paid_at },
   ];
 
+  const canRecordPayment =
+    ['sent', 'viewed', 'overdue', 'partial'].includes(invoice.status) &&
+    (invoice.amount_due ?? 0) > 0;
+
+  const succeededPayments = (invoice.payments ?? []).filter(
+    (p) => p.status === 'succeeded'
+  );
+
   return (
     <>
       {/* Header */}
@@ -128,6 +145,15 @@ export function InvoiceDetail({ invoice }: InvoiceDetailProps) {
           {invoice.status === 'draft' && (
             <Button onClick={() => setSendDialogOpen(true)} disabled={actionLoading}>
               Send Invoice
+            </Button>
+          )}
+          {canRecordPayment && (
+            <Button
+              variant="outline"
+              onClick={() => setRecordPaymentOpen(true)}
+              disabled={actionLoading}
+            >
+              Record Payment
             </Button>
           )}
           {['sent', 'viewed', 'overdue'].includes(invoice.status) && (
@@ -330,6 +356,40 @@ export function InvoiceDetail({ invoice }: InvoiceDetailProps) {
             </Card>
           )}
 
+          {/* Payment History */}
+          {succeededPayments.length > 0 && (
+            <Card>
+              <CardHeader>
+                <CardTitle>Payment History</CardTitle>
+              </CardHeader>
+              <CardContent className="space-y-3">
+                {succeededPayments.map((payment) => (
+                  <div
+                    key={payment.id}
+                    className="flex items-start justify-between gap-2 text-sm"
+                  >
+                    <div>
+                      <p className="font-medium">
+                        {formatCurrency(payment.amount, invoice.currency)}
+                      </p>
+                      <p className="text-xs text-[var(--muted-foreground)]">
+                        {METHOD_LABELS[payment.payment_method] ?? payment.payment_method}
+                        {(payment as { reference_note?: string }).reference_note
+                          ? ` · ${(payment as { reference_note?: string }).reference_note}`
+                          : ''}
+                      </p>
+                    </div>
+                    <p className="text-xs text-[var(--muted-foreground)] shrink-0">
+                      {formatDate(
+                        (payment as { payment_date?: string }).payment_date ?? payment.created_at
+                      )}
+                    </p>
+                  </div>
+                ))}
+              </CardContent>
+            </Card>
+          )}
+
           {invoice.notes && (
             <Card>
               <CardHeader>
@@ -353,6 +413,18 @@ export function InvoiceDetail({ invoice }: InvoiceDetailProps) {
           invoiceNumber={invoice.invoice_number}
           clientName={invoice.client.name}
           clientEmail={invoice.client.email}
+        />
+      )}
+
+      {canRecordPayment && (
+        <RecordPaymentDialog
+          open={recordPaymentOpen}
+          onOpenChange={setRecordPaymentOpen}
+          invoiceId={invoice.id}
+          invoiceNumber={invoice.invoice_number}
+          amountDue={invoice.amount_due ?? 0}
+          currency={invoice.currency ?? 'USD'}
+          onSuccess={() => router.refresh()}
         />
       )}
     </>
