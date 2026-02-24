@@ -6,6 +6,7 @@ import {
   ShieldCheck,
   LayoutDashboard,
   ListChecks,
+  CheckSquare,
   AlertTriangle,
   FileText,
   FolderOpen,
@@ -18,6 +19,7 @@ import { createClient } from '@/lib/supabase/client';
 const navLinks = [
   { href: '/dashboard', label: 'Dashboard', icon: LayoutDashboard },
   { href: '/frameworks', label: 'Frameworks', icon: ListChecks },
+  { href: '/controls', label: 'Controls', icon: CheckSquare },
   { href: '/gaps', label: 'Gaps', icon: AlertTriangle },
   { href: '/policies', label: 'Policies', icon: FileText },
   { href: '/evidence', label: 'Evidence', icon: FolderOpen },

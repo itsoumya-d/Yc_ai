@@ -10,6 +10,7 @@ import {
   Wallet,
   LogOut,
   Users,
+  Settings,
 } from 'lucide-react';
 import { createClient } from '@/lib/supabase/client';
 
@@ -19,6 +20,7 @@ const NAV_ITEMS = [
   { href: '/resources', label: 'Resources', icon: Wrench },
   { href: '/voting', label: 'Voting', icon: Vote },
   { href: '/treasury', label: 'Treasury', icon: Wallet },
+  { href: '/settings', label: 'Settings', icon: Settings },
 ];
 
 export default function Sidebar() {

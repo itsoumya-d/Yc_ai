@@ -7,7 +7,9 @@ import {
   TrendingUp,
   LayoutDashboard,
   Briefcase,
+  Users,
   BarChart3,
+  Settings,
   LogOut,
   Menu,
   X,
@@ -18,7 +20,9 @@ import { clsx } from 'clsx';
 const navItems = [
   { href: '/dashboard', label: 'Dashboard', icon: LayoutDashboard },
   { href: '/deals', label: 'Deals', icon: Briefcase },
+  { href: '/contacts', label: 'Contacts', icon: Users },
   { href: '/forecasting', label: 'Forecasting', icon: BarChart3 },
+  { href: '/settings', label: 'Settings', icon: Settings },
 ];
 
 export function Sidebar() {

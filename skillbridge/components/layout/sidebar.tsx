@@ -9,6 +9,7 @@ import {
   Map,
   BookOpen,
   FileText,
+  Settings,
   LogOut,
 } from 'lucide-react';
 import { createClient } from '@/lib/supabase/client';
@@ -19,6 +20,7 @@ const NAV_ITEMS = [
   { href: '/career-paths', label: 'Career Paths', icon: Map },
   { href: '/learning-plan', label: 'Learning Plan', icon: BookOpen },
   { href: '/resume', label: 'Resume', icon: FileText },
+  { href: '/settings', label: 'Settings', icon: Settings },
 ];
 
 export default function Sidebar() {
