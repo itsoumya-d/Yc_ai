@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { createClient } from '@/lib/supabase/server';
 import { createServerClient } from '@supabase/ssr';
+import { rateLimit, rateLimitHeaders } from '@/lib/rate-limit';
 
 const ALLOWED_TYPES = [
   'application/pdf',
@@ -26,6 +27,15 @@ export async function POST(request: NextRequest) {
 
   if (!user) {
     return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+  }
+
+  const rl = rateLimit(`upload:${user.id}`, { max: 10, windowMs: 60_000 });
+  if (!rl.success) {
+    const retryAfter = Math.max(0, rl.reset - Math.floor(Date.now() / 1000));
+    return NextResponse.json(
+      { error: 'Too many upload requests. Please wait before uploading again.' },
+      { status: 429, headers: { ...rateLimitHeaders(rl), 'Retry-After': String(retryAfter) } }
+    );
   }
 
   const formData = await request.formData();
@@ -72,5 +82,8 @@ export async function POST(request: NextRequest) {
     textContent = await file.text();
   }
 
-  return NextResponse.json({ url: publicUrl, filename, textContent });
+  return NextResponse.json(
+    { url: publicUrl, filename, textContent },
+    { headers: rateLimitHeaders(rl) }
+  );
 }

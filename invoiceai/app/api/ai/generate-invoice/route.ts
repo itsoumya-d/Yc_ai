@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { createClient } from '@/lib/supabase/server';
 import { generateInvoiceFromDescription } from '@/lib/openai/client';
+import { rateLimit, rateLimitHeaders } from '@/lib/rate-limit';
 
 export async function POST(request: NextRequest) {
   const supabase = await createClient();
@@ -10,6 +11,15 @@ export async function POST(request: NextRequest) {
 
   if (!user) {
     return NextResponse.json({ error: 'Not authenticated' }, { status: 401 });
+  }
+
+  const rl = rateLimit(`ai:${user.id}`, { max: 20, windowMs: 60_000 });
+  if (!rl.success) {
+    const retryAfter = Math.max(0, rl.reset - Math.floor(Date.now() / 1000));
+    return NextResponse.json(
+      { error: 'Too many requests. Please wait before generating again.' },
+      { status: 429, headers: { ...rateLimitHeaders(rl), 'Retry-After': String(retryAfter) } }
+    );
   }
 
   const body = await request.json();

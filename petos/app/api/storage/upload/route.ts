@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { createClient, createServiceClient } from '@/lib/supabase/server';
+import { rateLimit, rateLimitHeaders } from '@/lib/rate-limit';
 
 const ALLOWED_TYPES = ['image/jpeg', 'image/png', 'image/webp', 'image/gif'];
 const MAX_SIZE_BYTES = 5 * 1024 * 1024; // 5 MB
@@ -13,6 +14,15 @@ export async function POST(request: NextRequest) {
 
   if (!user) {
     return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+  }
+
+  const rl = rateLimit(`upload:${user.id}`, { max: 20, windowMs: 60_000 });
+  if (!rl.success) {
+    const retryAfter = Math.max(0, rl.reset - Math.floor(Date.now() / 1000));
+    return NextResponse.json(
+      { error: 'Too many upload requests. Please wait before uploading more photos.' },
+      { status: 429, headers: { ...rateLimitHeaders(rl), 'Retry-After': String(retryAfter) } }
+    );
   }
 
   const formData = await request.formData();
@@ -50,5 +60,5 @@ export async function POST(request: NextRequest) {
 
   const { data: urlData } = adminSupabase.storage.from(BUCKET).getPublicUrl(filename);
 
-  return NextResponse.json({ url: urlData.publicUrl });
+  return NextResponse.json({ url: urlData.publicUrl }, { headers: rateLimitHeaders(rl) });
 }

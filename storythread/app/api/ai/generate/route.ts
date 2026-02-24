@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import OpenAI from 'openai';
 import { createClient } from '@/lib/supabase/server';
+import { rateLimit, rateLimitHeaders } from '@/lib/rate-limit';
 
 type GenerationType = 'continue' | 'dialogue' | 'rephrase' | 'fix_prose' | 'describe_scene';
 
@@ -25,6 +26,15 @@ export async function POST(request: NextRequest) {
 
   if (!user) {
     return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+  }
+
+  const rl = rateLimit(`ai:${user.id}`, { max: 30, windowMs: 60_000 });
+  if (!rl.success) {
+    const retryAfter = Math.max(0, rl.reset - Math.floor(Date.now() / 1000));
+    return NextResponse.json(
+      { error: 'Too many requests. Please wait before generating again.' },
+      { status: 429, headers: { ...rateLimitHeaders(rl), 'Retry-After': String(retryAfter) } }
+    );
   }
 
   if (!process.env.OPENAI_API_KEY) {
@@ -99,6 +109,7 @@ export async function POST(request: NextRequest) {
       'Content-Type': 'text/plain; charset=utf-8',
       'Transfer-Encoding': 'chunked',
       'X-Content-Type-Options': 'nosniff',
+      ...rateLimitHeaders(rl),
     },
   });
 }
