@@ -107,7 +107,9 @@ export default function LoginScreen() {
           </TouchableOpacity>
         </View>
 
-        <Text style={styles.footer}>Contact your dispatcher to set up your account.</Text>
+        <TouchableOpacity onPress={() => router.push('/signup')} style={{ marginTop: SPACING.lg, alignItems: 'center' }}>
+          <Text style={styles.footer}>New technician? <Text style={{ fontWeight: '700' }}>Create an account</Text></Text>
+        </TouchableOpacity>
       </KeyboardAvoidingView>
     </SafeAreaView>
   );
