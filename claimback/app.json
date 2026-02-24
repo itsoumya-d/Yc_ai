@@ -1,0 +1,10 @@
+{
+  "expo": {
+    "name": "Claimback", "slug": "claimback", "version": "1.0.0",
+    "orientation": "portrait", "scheme": "claimback",
+    "splash": { "backgroundColor": "#16A34A" },
+    "plugins": ["expo-router", "expo-camera"],
+    "ios": { "bundleIdentifier": "com.claimback.app", "infoPlist": { "NSCameraUsageDescription": "Claimback needs camera access to scan your bills." } },
+    "android": { "package": "com.claimback.app", "permissions": ["CAMERA"] }
+  }
+}

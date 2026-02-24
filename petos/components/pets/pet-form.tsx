@@ -6,6 +6,7 @@ import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { PhotoUpload } from '@/components/ui/photo-upload';
 import { useToast } from '@/components/ui/toast';
 import { createPet, updatePet } from '@/lib/actions/pets';
 import type { Pet } from '@/types/database';
@@ -177,12 +178,11 @@ export function PetForm({ pet }: PetFormProps) {
             </label>
           </div>
 
-          <Input
-            id="photo_url"
+          <PhotoUpload
             name="photo_url"
-            label="Photo URL"
-            placeholder="https://..."
-            defaultValue={pet?.photo_url || ''}
+            defaultValue={pet?.photo_url}
+            folder="pets"
+            label="Pet Photo"
           />
 
           <Textarea

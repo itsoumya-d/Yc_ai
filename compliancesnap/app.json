@@ -1,0 +1,33 @@
+{
+  "expo": {
+    "name": "ComplianceSnap",
+    "slug": "compliancesnap",
+    "version": "1.0.0",
+    "orientation": "portrait",
+    "icon": "./assets/icon.png",
+    "splash": {
+      "backgroundColor": "#DC2626"
+    },
+    "ios": {
+      "bundleIdentifier": "com.compliancesnap.app",
+      "infoPlist": {
+        "NSCameraUsageDescription": "ComplianceSnap captures photos of workplace safety hazards for inspection.",
+        "NSPhotoLibraryUsageDescription": "ComplianceSnap saves inspection photos."
+      }
+    },
+    "android": {
+      "package": "com.compliancesnap.app",
+      "permissions": ["CAMERA"]
+    },
+    "plugins": [
+      "expo-router",
+      "expo-camera",
+      "expo-sqlite",
+      "expo-notifications"
+    ],
+    "scheme": "compliancesnap",
+    "experiments": {
+      "typedRoutes": true
+    }
+  }
+}

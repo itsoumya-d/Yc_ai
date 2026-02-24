@@ -1,0 +1,23 @@
+{
+  "home": {
+    "greeting": "Good morning",
+    "qualifyFor": "You may qualify for",
+    "perYear": "per year",
+    "seeAll": "See all {{count}} programs",
+    "scanCta": "Scan a Document",
+    "topBenefits": "Your Top Benefits",
+    "activeApplications": "Active Applications",
+    "applyNow": "Apply Now"
+  },
+  "programs": {
+    "eligible": "ELIGIBLE",
+    "mayBeEligible": "MAY BE ELIGIBLE",
+    "notEligible": "NOT ELIGIBLE"
+  },
+  "scanner": {
+    "positionDoc": "Position document inside the frame",
+    "analyzing": "Analyzing document...",
+    "success": "Document Scanned",
+    "failed": "Scan Failed"
+  }
+}

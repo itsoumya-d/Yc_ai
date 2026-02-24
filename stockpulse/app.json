@@ -1,0 +1,32 @@
+{
+  "expo": {
+    "name": "StockPulse",
+    "slug": "stockpulse",
+    "version": "1.0.0",
+    "orientation": "portrait",
+    "icon": "./assets/icon.png",
+    "splash": {
+      "backgroundColor": "#059669"
+    },
+    "ios": {
+      "bundleIdentifier": "com.stockpulse.app",
+      "infoPlist": {
+        "NSCameraUsageDescription": "StockPulse scans barcodes and captures product photos for AI identification."
+      }
+    },
+    "android": {
+      "package": "com.stockpulse.app",
+      "permissions": ["CAMERA"]
+    },
+    "plugins": [
+      "expo-router",
+      "expo-camera",
+      "expo-barcode-scanner",
+      "expo-notifications"
+    ],
+    "scheme": "stockpulse",
+    "experiments": {
+      "typedRoutes": true
+    }
+  }
+}

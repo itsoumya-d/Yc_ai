@@ -1,0 +1,122 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(ls:*)",
+      "Bash(done)",
+      "Bash(wc:*)",
+      "Bash(du:*)",
+      "Bash(npx tsc --noEmit*)",
+      "Bash(npx eslint*)",
+      "Bash(npm run lint*)",
+      "Bash(npm run build*)",
+      "Bash(npm run dev*)",
+      "Bash(git status*)",
+      "Bash(git log*)",
+      "Bash(git diff*)",
+      "Bash(git add*)",
+      "Bash(git commit*)",
+      "Bash(find * -name*)",
+      "Bash(head *)",
+      "Bash(tail *)",
+      "Bash(cat *)",
+      "Bash(mkdir -p*)",
+      "Bash(npm install:*)",
+      "Bash(grep:*)",
+      "Bash(npx tsc:*)",
+      "Bash(echo \"No email lib found\" grep -r \"email\\\\|sendgrid\\\\|resend\" \"E:/Yc_ai/.claude/worktrees/infallible-hugle/petos/lib\" --include=\"*.ts\" -l)",
+      "Bash(find:*)",
+      "Bash(head:*)",
+      "Bash(__NEW_LINE_5d6272a48b50f3ef__ echo \"=== ClaimForge dashboard ===\")",
+      "Bash(for dir in invoiceai petos storythread boardbrief proposalpilot claimforge complibot dealroom skillbridge neighbordao)",
+      "Bash(do)",
+      "Bash(auth_layout=\"E:/Yc_ai/.claude/worktrees/infallible-hugle/$dir/app/\\(auth\\)/layout.tsx\")",
+      "Bash(login_route=\"E:/Yc_ai/.claude/worktrees/infallible-hugle/$dir/app/\\(auth\\)/login/page.tsx\")",
+      "Bash(if [ -f \"$auth_layout\" ])",
+      "Bash(then)",
+      "Bash(echo:*)",
+      "Bash(elif [ -f \"$login_route\" ])",
+      "Bash(else)",
+      "Bash(fi)",
+      "Bash(cat:*)",
+      "Bash(sort:*)",
+      "Bash(git add:*)"
+    ],
+    "deny": [
+      "Bash(rm -rf*)",
+      "Bash(git push --force*)",
+      "Bash(git reset --hard*)"
+    ]
+  },
+  "hooks": {
+    "PostToolUse": [
+      {
+        "matcher": "Write",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "bash -c 'FILE=\"${CLAUDE_TOOL_INPUT_PATH:-}\"; if echo \"$FILE\" | grep -qE \"\\.tsx$|\\.ts$\"; then DIR=$(dirname \"$FILE\"); D=0; while [ \"$DIR\" != \"/\" ] && [ $D -lt 6 ]; do if [ -f \"$DIR/tsconfig.json\" ] && [ -f \"$DIR/package.json\" ]; then cd \"$DIR\" && npx tsc --noEmit --skipLibCheck 2>&1 | head -20; exit 0; fi; DIR=$(dirname \"$DIR\"); D=$((D+1)); done; fi'",
+            "timeout": 30000
+          }
+        ]
+      },
+      {
+        "matcher": "Write",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "bash -c 'FILE=\"${CLAUDE_TOOL_INPUT_PATH:-}\"; if echo \"$FILE\" | grep -qE \"\\.tsx$|\\.ts$\"; then DIR=$(dirname \"$FILE\"); D=0; while [ \"$DIR\" != \"/\" ] && [ $D -lt 6 ]; do if [ -f \"$DIR/eslint.config.mjs\" ]; then cd \"$DIR\" && npx eslint \"$FILE\" --max-warnings=5 2>&1 | tail -15; exit 0; fi; DIR=$(dirname \"$DIR\"); D=$((D+1)); done; fi'",
+            "timeout": 30000
+          }
+        ]
+      }
+    ],
+    "PreToolUse": [
+      {
+        "matcher": "Write",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "bash -c 'FILE=\"${CLAUDE_TOOL_INPUT_PATH:-}\"; if echo \"$FILE\" | grep -qE \"\\.env$|\\.env\\.local$|\\.env\\.production$|\\.env\\.staging$|\\.env\\.development$\"; then echo \"BLOCKED: Writing to $FILE is not allowed. Use .env.example for templates only. Real env values must be set manually in your shell or hosting platform.\"; exit 1; fi; exit 0'"
+          }
+        ]
+      }
+    ]
+  },
+  "mcpServers": {
+    "context7": {
+      "command": "npx",
+      "args": [
+        "-y",
+        "@upstash/context7-mcp@latest"
+      ]
+    },
+    "supabase": {
+      "command": "npx",
+      "args": [
+        "-y",
+        "@supabase/mcp-server-supabase@latest",
+        "--supabase-url",
+        "${SUPABASE_URL}",
+        "--supabase-service-role-key",
+        "${SUPABASE_SERVICE_ROLE_KEY}"
+      ]
+    },
+    "playwright": {
+      "command": "npx",
+      "args": [
+        "-y",
+        "@playwright/mcp@latest"
+      ]
+    },
+    "github": {
+      "command": "npx",
+      "args": [
+        "-y",
+        "@modelcontextprotocol/server-github"
+      ],
+      "env": {
+        "GITHUB_PERSONAL_ACCESS_TOKEN": "${GITHUB_TOKEN}"
+      }
+    }
+  }
+}

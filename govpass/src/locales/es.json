@@ -1,0 +1,23 @@
+{
+  "home": {
+    "greeting": "Buenos días",
+    "qualifyFor": "Puede calificar para",
+    "perYear": "por año",
+    "seeAll": "Ver los {{count}} programas",
+    "scanCta": "Escanear un documento",
+    "topBenefits": "Sus mejores beneficios",
+    "activeApplications": "Solicitudes activas",
+    "applyNow": "Solicitar ahora"
+  },
+  "programs": {
+    "eligible": "ELEGIBLE",
+    "mayBeEligible": "PUEDE SER ELEGIBLE",
+    "notEligible": "NO ELEGIBLE"
+  },
+  "scanner": {
+    "positionDoc": "Coloque el documento dentro del marco",
+    "analyzing": "Analizando documento...",
+    "success": "Documento escaneado",
+    "failed": "Error al escanear"
+  }
+}

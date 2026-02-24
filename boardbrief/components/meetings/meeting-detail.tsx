@@ -20,6 +20,8 @@ import {
   Sparkles,
   Loader2,
   Download,
+  Mic,
+  CalendarPlus,
 } from 'lucide-react';
 import type { MeetingWithDetails, MeetingType, MeetingStatus } from '@/types/database';
 
@@ -33,6 +35,8 @@ export function MeetingDetail({ meeting }: MeetingDetailProps) {
   const [deleting, setDeleting] = useState(false);
   const [summary, setSummary] = useState('');
   const [aiLoading, setAiLoading] = useState(false);
+  const [transcribing, setTranscribing] = useState(false);
+  const [transcript, setTranscript] = useState('');
 
   async function handleDelete() {
     if (!confirm('Delete this meeting?')) return;
@@ -45,6 +49,41 @@ export function MeetingDetail({ meeting }: MeetingDetailProps) {
     }
     toast({ title: 'Meeting deleted' });
     router.push('/meetings');
+  }
+
+  async function handleTranscribe(file: File) {
+    setTranscribing(true);
+    const fd = new FormData();
+    fd.append('audio', file);
+    try {
+      const res = await fetch(`/api/meetings/${meeting.id}/transcribe`, { method: 'POST', body: fd });
+      const data = await res.json();
+      if (!res.ok) {
+        toast({ title: data.error ?? 'Transcription failed', variant: 'destructive' });
+      } else {
+        setTranscript(data.transcript);
+        toast({ title: 'Transcription complete', description: 'Transcript saved to meeting notes.' });
+        router.refresh();
+      }
+    } catch {
+      toast({ title: 'Transcription failed', variant: 'destructive' });
+    }
+    setTranscribing(false);
+  }
+
+  function buildGoogleCalendarUrl() {
+    if (!meeting.scheduled_at) return null;
+    const start = new Date(meeting.scheduled_at);
+    const end = new Date(start.getTime() + (meeting.duration_minutes ?? 60) * 60 * 1000);
+    const fmt = (d: Date) => d.toISOString().replace(/[-:]/g, '').replace(/\.\d{3}Z/, 'Z');
+    const params = new URLSearchParams({
+      action: 'TEMPLATE',
+      text: meeting.title,
+      dates: `${fmt(start)}/${fmt(end)}`,
+      ...(meeting.location ? { location: meeting.location } : {}),
+      ...(meeting.video_link ? { location: meeting.video_link } : {}),
+    });
+    return `https://calendar.google.com/calendar/render?${params}`;
   }
 
   async function handleGenerateSummary() {
@@ -112,7 +151,7 @@ export function MeetingDetail({ meeting }: MeetingDetailProps) {
             )}
           </div>
         </div>
-        <div className="flex gap-2">
+        <div className="flex gap-2 flex-wrap">
           <Link href={`/meetings/${meeting.id}/edit`}>
             <Button variant="outline" size="sm">
               <Edit className="w-4 h-4 mr-1" />
@@ -125,6 +164,47 @@ export function MeetingDetail({ meeting }: MeetingDetailProps) {
               Minutes PDF
             </Button>
           </a>
+          <a href={`/api/meetings/${meeting.id}/ical`} download>
+            <Button variant="outline" size="sm">
+              <CalendarPlus className="w-4 h-4 mr-1" />
+              Export .ics
+            </Button>
+          </a>
+          {buildGoogleCalendarUrl() && (
+            <a href={buildGoogleCalendarUrl()!} target="_blank" rel="noopener noreferrer">
+              <Button variant="outline" size="sm">
+                <Calendar className="w-4 h-4 mr-1" />
+                Google Cal
+              </Button>
+            </a>
+          )}
+          <label>
+            <Button
+              variant="outline"
+              size="sm"
+              disabled={transcribing}
+              onClick={(e) => {
+                const input = (e.currentTarget as HTMLElement).closest('label')?.querySelector('input');
+                input?.click();
+              }}
+            >
+              {transcribing ? (
+                <><Loader2 className="w-4 h-4 mr-1 animate-spin" />Transcribing...</>
+              ) : (
+                <><Mic className="w-4 h-4 mr-1" />Transcribe</>
+              )}
+            </Button>
+            <input
+              type="file"
+              accept="audio/*,video/*"
+              className="hidden"
+              onChange={(e) => {
+                const file = e.target.files?.[0];
+                if (file) handleTranscribe(file);
+                e.target.value = '';
+              }}
+            />
+          </label>
           <Button
             variant="outline"
             size="sm"
@@ -182,6 +262,20 @@ export function MeetingDetail({ meeting }: MeetingDetailProps) {
           </p>
         )}
       </Card>
+
+      {transcript && (
+        <Card className="p-4">
+          <div className="flex items-center justify-between mb-2">
+            <h3 className="text-sm font-medium text-[var(--muted-foreground)]">
+              Audio Transcript
+            </h3>
+            <Mic className="w-4 h-4 text-[var(--muted-foreground)]" />
+          </div>
+          <p className="text-sm text-[var(--foreground)] whitespace-pre-wrap bg-[var(--muted)] p-3 rounded-lg">
+            {transcript}
+          </p>
+        </Card>
+      )}
 
       {meeting.action_items.length > 0 && (
         <Card className="p-4">

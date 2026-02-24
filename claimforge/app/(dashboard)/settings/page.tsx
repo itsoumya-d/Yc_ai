@@ -1,10 +1,10 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
+import { createBrowserClient } from '@supabase/ssr';
 import { PageHeader } from '@/components/layout/page-header';
 import { cn } from '@/lib/utils';
 import {
-  Settings,
   User,
   Building2,
   Shield,
@@ -26,8 +26,81 @@ const settingsNav = [
   { id: 'appearance', icon: Palette, label: 'Appearance' },
 ];
 
+interface UserProfile {
+  email: string;
+  full_name: string;
+  role: string;
+}
+
 export default function SettingsPage() {
   const [activeSection, setActiveSection] = useState('profile');
+  const [profile, setProfile] = useState<UserProfile | null>(null);
+  const [loading, setLoading] = useState(true);
+  const [fullName, setFullName] = useState('');
+  const [email, setEmail] = useState('');
+  const [saving, setSaving] = useState(false);
+  const [saveMessage, setSaveMessage] = useState('');
+
+  useEffect(() => {
+    async function loadProfile() {
+      const supabase = createBrowserClient(
+        process.env.NEXT_PUBLIC_SUPABASE_URL!,
+        process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
+      );
+
+      const { data: { user } } = await supabase.auth.getUser();
+      if (!user) {
+        setLoading(false);
+        return;
+      }
+
+      const { data: profileData } = await supabase
+        .from('profiles')
+        .select('full_name, role')
+        .eq('id', user.id)
+        .single();
+
+      const userProfile: UserProfile = {
+        email: user.email ?? '',
+        full_name: profileData?.full_name ?? '',
+        role: profileData?.role ?? 'admin',
+      };
+
+      setProfile(userProfile);
+      setFullName(userProfile.full_name);
+      setEmail(userProfile.email);
+      setLoading(false);
+    }
+
+    loadProfile();
+  }, []);
+
+  async function handleSaveProfile() {
+    if (!profile) return;
+    setSaving(true);
+    setSaveMessage('');
+
+    try {
+      const supabase = createBrowserClient(
+        process.env.NEXT_PUBLIC_SUPABASE_URL!,
+        process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
+      );
+
+      const { data: { user } } = await supabase.auth.getUser();
+      if (!user) return;
+
+      await supabase
+        .from('profiles')
+        .upsert({ id: user.id, full_name: fullName });
+
+      setProfile((prev) => prev ? { ...prev, full_name: fullName } : prev);
+      setSaveMessage('Profile saved successfully.');
+    } catch {
+      setSaveMessage('Failed to save profile.');
+    } finally {
+      setSaving(false);
+    }
+  }
 
   return (
     <div className="flex h-full flex-col">
@@ -60,27 +133,49 @@ export default function SettingsPage() {
           {activeSection === 'profile' && (
             <div className="max-w-2xl space-y-6">
               <h2 className="legal-heading text-base text-text-primary">Profile Settings</h2>
-              <div className="space-y-4">
-                <div>
-                  <label className="mb-1.5 block text-xs font-medium text-text-secondary">Full Name</label>
-                  <input type="text" defaultValue="Sarah Chen" className="h-9 w-full rounded-lg border border-border-default bg-bg-surface-raised px-3 text-sm text-text-primary focus:border-primary focus:outline-none" />
+              {loading ? (
+                <div className="text-sm text-text-tertiary">Loading profile...</div>
+              ) : (
+                <div className="space-y-4">
+                  <div>
+                    <label className="mb-1.5 block text-xs font-medium text-text-secondary">Full Name</label>
+                    <input
+                      type="text"
+                      value={fullName}
+                      onChange={(e) => setFullName(e.target.value)}
+                      className="h-9 w-full rounded-lg border border-border-default bg-bg-surface-raised px-3 text-sm text-text-primary focus:border-primary focus:outline-none"
+                    />
+                  </div>
+                  <div>
+                    <label className="mb-1.5 block text-xs font-medium text-text-secondary">Email</label>
+                    <input
+                      type="email"
+                      value={email}
+                      readOnly
+                      className="h-9 w-full rounded-lg border border-border-default bg-bg-surface px-3 text-sm text-text-tertiary cursor-not-allowed"
+                    />
+                    <p className="mt-1 text-[10px] text-text-tertiary">Email cannot be changed here.</p>
+                  </div>
+                  <div>
+                    <label className="mb-1.5 block text-xs font-medium text-text-secondary">Role</label>
+                    <div className="h-9 rounded-lg border border-border-default bg-bg-surface px-3 flex items-center text-sm text-text-tertiary capitalize">
+                      {profile?.role ?? 'Administrator'}
+                    </div>
+                  </div>
+                  <div className="flex items-center gap-3">
+                    <button
+                      onClick={handleSaveProfile}
+                      disabled={saving}
+                      className="rounded-lg bg-primary px-4 py-2 text-sm font-medium text-text-on-color transition-colors hover:bg-primary-hover disabled:opacity-50"
+                    >
+                      {saving ? 'Saving...' : 'Save Changes'}
+                    </button>
+                    {saveMessage && (
+                      <span className="text-xs text-text-secondary">{saveMessage}</span>
+                    )}
+                  </div>
                 </div>
-                <div>
-                  <label className="mb-1.5 block text-xs font-medium text-text-secondary">Email</label>
-                  <input type="email" defaultValue="sarah.chen@claimforge.io" className="h-9 w-full rounded-lg border border-border-default bg-bg-surface-raised px-3 text-sm text-text-primary focus:border-primary focus:outline-none" />
-                </div>
-                <div>
-                  <label className="mb-1.5 block text-xs font-medium text-text-secondary">Role</label>
-                  <div className="h-9 rounded-lg border border-border-default bg-bg-surface px-3 flex items-center text-sm text-text-tertiary">Administrator</div>
-                </div>
-                <div>
-                  <label className="mb-1.5 block text-xs font-medium text-text-secondary">Title</label>
-                  <input type="text" defaultValue="Lead Investigator" className="h-9 w-full rounded-lg border border-border-default bg-bg-surface-raised px-3 text-sm text-text-primary focus:border-primary focus:outline-none" />
-                </div>
-                <button className="rounded-lg bg-primary px-4 py-2 text-sm font-medium text-text-on-color transition-colors hover:bg-primary-hover">
-                  Save Changes
-                </button>
-              </div>
+              )}
             </div>
           )}
 
@@ -103,7 +198,7 @@ export default function SettingsPage() {
                   <div className="flex items-center justify-between">
                     <div>
                       <div className="text-sm text-text-primary">Current Session</div>
-                      <div className="text-[10px] text-text-tertiary">macOS - Chrome 122 - Last active now</div>
+                      <div className="text-[10px] text-text-tertiary">Active now</div>
                     </div>
                     <span className="rounded-full bg-verified-green-muted px-2 py-0.5 text-[10px] font-medium text-verified-green">Active</span>
                   </div>
@@ -113,20 +208,7 @@ export default function SettingsPage() {
               <div className="rounded-xl border border-border-default bg-bg-surface p-5 space-y-4">
                 <h3 className="text-sm font-medium text-text-primary">Audit Log</h3>
                 <p className="text-xs text-text-secondary">All actions are logged for compliance and security review.</p>
-                <div className="space-y-2">
-                  {[
-                    { action: 'Logged in', time: '2 hours ago' },
-                    { action: 'Viewed case CF-2024-001', time: '2 hours ago' },
-                    { action: 'Uploaded 3 documents', time: '3 hours ago' },
-                    { action: 'Generated report', time: '5 hours ago' },
-                    { action: 'Ran fraud analysis', time: '1 day ago' },
-                  ].map((entry, i) => (
-                    <div key={i} className="flex items-center justify-between rounded-lg border border-border-muted px-3 py-2">
-                      <span className="text-xs text-text-secondary">{entry.action}</span>
-                      <span className="text-[10px] text-text-tertiary">{entry.time}</span>
-                    </div>
-                  ))}
-                </div>
+                <p className="text-xs text-text-tertiary">Connect backend to view audit log entries.</p>
               </div>
             </div>
           )}
@@ -139,7 +221,7 @@ export default function SettingsPage() {
                 <h3 className="text-sm font-medium text-text-primary">OpenAI API Key</h3>
                 <p className="text-xs text-text-secondary">Used for document analysis, entity extraction, and fraud pattern detection.</p>
                 <div className="flex items-center gap-2">
-                  <input type="password" defaultValue="sk-proj-xxxxxxxxxxxx" className="h-9 flex-1 rounded-lg border border-border-default bg-bg-surface-raised px-3 font-mono text-sm text-text-primary focus:border-primary focus:outline-none" />
+                  <input type="password" placeholder="sk-proj-..." className="h-9 flex-1 rounded-lg border border-border-default bg-bg-surface-raised px-3 font-mono text-sm text-text-primary focus:border-primary focus:outline-none" />
                   <button className="rounded-lg border border-border-default px-3 py-2 text-xs text-text-secondary transition-colors hover:bg-bg-surface-raised">Show</button>
                   <button className="rounded-lg border border-border-default px-3 py-2 text-xs text-text-secondary transition-colors hover:bg-bg-surface-raised">Test</button>
                 </div>
@@ -149,7 +231,7 @@ export default function SettingsPage() {
                 <h3 className="text-sm font-medium text-text-primary">Google Cloud Vision</h3>
                 <p className="text-xs text-text-secondary">Used for OCR processing of scanned documents and images.</p>
                 <div className="flex items-center gap-2">
-                  <input type="password" defaultValue="AIzaSyxxxxxxxxxx" className="h-9 flex-1 rounded-lg border border-border-default bg-bg-surface-raised px-3 font-mono text-sm text-text-primary focus:border-primary focus:outline-none" />
+                  <input type="password" placeholder="AIzaSy..." className="h-9 flex-1 rounded-lg border border-border-default bg-bg-surface-raised px-3 font-mono text-sm text-text-primary focus:border-primary focus:outline-none" />
                   <button className="rounded-lg border border-border-default px-3 py-2 text-xs text-text-secondary transition-colors hover:bg-bg-surface-raised">Show</button>
                   <button className="rounded-lg border border-border-default px-3 py-2 text-xs text-text-secondary transition-colors hover:bg-bg-surface-raised">Test</button>
                 </div>

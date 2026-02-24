@@ -1,0 +1,15 @@
+{
+  "expo": {
+    "name": "AuraCheck", "slug": "auracheck", "version": "1.0.0",
+    "orientation": "portrait", "scheme": "auracheck",
+    "splash": { "backgroundColor": "#0D9488" },
+    "plugins": ["expo-router", "expo-camera", ["expo-local-authentication", {}]],
+    "ios": { "bundleIdentifier": "com.auracheck.app",
+      "infoPlist": {
+        "NSCameraUsageDescription": "AuraCheck needs camera access to monitor your skin health.",
+        "NSFaceIDUsageDescription": "AuraCheck uses biometric authentication to protect your health data."
+      }
+    },
+    "android": { "package": "com.auracheck.app", "permissions": ["CAMERA", "USE_BIOMETRIC"] }
+  }
+}

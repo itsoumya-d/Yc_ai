@@ -1,7 +1,9 @@
 import { getPets } from '@/lib/actions/pets';
 import { getHealthRecords } from '@/lib/actions/health-records';
+import { getVaccinationSchedule } from '@/lib/actions/vaccinations';
 import { PageHeader } from '@/components/layout/page-header';
 import { HealthTimeline } from '@/components/health/health-timeline';
+import { VaccinationSchedule } from '@/components/health/vaccination-schedule';
 import { HealthRecordForm } from '@/components/health/health-record-form';
 import { Button } from '@/components/ui/button';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
@@ -13,13 +15,15 @@ export const metadata = {
 };
 
 export default async function HealthPage() {
-  const [petsResult, recordsResult] = await Promise.all([
+  const [petsResult, recordsResult, scheduleResult] = await Promise.all([
     getPets(),
     getHealthRecords(),
+    getVaccinationSchedule(),
   ]);
 
   const pets = petsResult.data || [];
   const records = recordsResult.data || [];
+  const vaccinations = scheduleResult.data || [];
 
   return (
     <div>
@@ -45,8 +49,17 @@ export default async function HealthPage() {
           </Dialog>
         }
       />
-      <div className="mt-6">
-        <HealthTimeline records={records} />
+      <div className="mt-6 space-y-8">
+        {vaccinations.length > 0 && (
+          <div>
+            <h2 className="mb-3 text-base font-semibold text-[var(--foreground)]">Vaccination Schedule</h2>
+            <VaccinationSchedule items={vaccinations} />
+          </div>
+        )}
+        <div>
+          <h2 className="mb-3 text-base font-semibold text-[var(--foreground)]">Health Timeline</h2>
+          <HealthTimeline records={records} />
+        </div>
       </div>
     </div>
   );

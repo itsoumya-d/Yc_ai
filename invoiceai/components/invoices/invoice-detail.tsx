@@ -12,6 +12,7 @@ import {
   deleteInvoiceAction,
   duplicateInvoiceAction,
 } from '@/lib/actions/invoices';
+import { SendInvoiceDialog } from '@/components/invoices/send-invoice-dialog';
 import { formatCurrency, formatDate } from '@/lib/utils';
 import type { InvoiceWithDetails, Invoice } from '@/types/database';
 import {
@@ -30,6 +31,7 @@ export function InvoiceDetail({ invoice }: InvoiceDetailProps) {
   const router = useRouter();
   const { toast } = useToast();
   const [actionLoading, setActionLoading] = useState(false);
+  const [sendDialogOpen, setSendDialogOpen] = useState(false);
 
   const handleStatusChange = async (status: Invoice['status']) => {
     setActionLoading(true);
@@ -124,7 +126,7 @@ export function InvoiceDetail({ invoice }: InvoiceDetailProps) {
           </Button>
 
           {invoice.status === 'draft' && (
-            <Button onClick={() => handleStatusChange('sent')} disabled={actionLoading}>
+            <Button onClick={() => setSendDialogOpen(true)} disabled={actionLoading}>
               Send Invoice
             </Button>
           )}
@@ -342,6 +344,17 @@ export function InvoiceDetail({ invoice }: InvoiceDetailProps) {
           )}
         </div>
       </div>
+
+      {invoice.status === 'draft' && invoice.client && (
+        <SendInvoiceDialog
+          open={sendDialogOpen}
+          onOpenChange={setSendDialogOpen}
+          invoiceId={invoice.id}
+          invoiceNumber={invoice.invoice_number}
+          clientName={invoice.client.name}
+          clientEmail={invoice.client.email}
+        />
+      )}
     </>
   );
 }
