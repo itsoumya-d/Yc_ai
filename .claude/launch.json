@@ -1,0 +1,125 @@
+{
+  "version": "0.0.1",
+  "configurations": [
+    {
+      "name": "boardbrief",
+      "runtimeExecutable": "cmd.exe",
+      "runtimeArgs": ["/c", "npm --prefix boardbrief run dev -- -p 3000"],
+      "port": 3000
+    },
+    {
+      "name": "claimforge",
+      "runtimeExecutable": "cmd.exe",
+      "runtimeArgs": ["/c", "npm --prefix claimforge run dev -- -p 3001"],
+      "port": 3001
+    },
+    {
+      "name": "complibot",
+      "runtimeExecutable": "cmd.exe",
+      "runtimeArgs": ["/c", "npm --prefix complibot run dev -- -p 3002"],
+      "port": 3002
+    },
+    {
+      "name": "dealroom",
+      "runtimeExecutable": "cmd.exe",
+      "runtimeArgs": ["/c", "npm --prefix dealroom run dev -- -p 3003"],
+      "port": 3003
+    },
+    {
+      "name": "invoiceai",
+      "runtimeExecutable": "cmd.exe",
+      "runtimeArgs": ["/c", "npm --prefix invoiceai run dev -- -p 3004"],
+      "port": 3004
+    },
+    {
+      "name": "neighbordao",
+      "runtimeExecutable": "cmd.exe",
+      "runtimeArgs": ["/c", "npm --prefix neighbordao run dev -- -p 3005"],
+      "port": 3005
+    },
+    {
+      "name": "petos",
+      "runtimeExecutable": "cmd.exe",
+      "runtimeArgs": ["/c", "npm --prefix petos run dev -- -p 3006"],
+      "port": 3006
+    },
+    {
+      "name": "proposalpilot",
+      "runtimeExecutable": "cmd.exe",
+      "runtimeArgs": ["/c", "npm --prefix proposalpilot run dev -- -p 3007"],
+      "port": 3007
+    },
+    {
+      "name": "skillbridge",
+      "runtimeExecutable": "cmd.exe",
+      "runtimeArgs": ["/c", "npm --prefix skillbridge run dev -- -p 3008"],
+      "port": 3008
+    },
+    {
+      "name": "storythread",
+      "runtimeExecutable": "cmd.exe",
+      "runtimeArgs": ["/c", "npm --prefix storythread run dev -- -p 3009"],
+      "port": 3009
+    },
+    {
+      "name": "auracheck",
+      "runtimeExecutable": "cmd.exe",
+      "runtimeArgs": ["/c", "cd auracheck && npx expo start --web --port 8081"],
+      "port": 8081
+    },
+    {
+      "name": "claimback",
+      "runtimeExecutable": "cmd.exe",
+      "runtimeArgs": ["/c", "cd claimback && npx expo start --web --port 8082"],
+      "port": 8082
+    },
+    {
+      "name": "compliancesnap",
+      "runtimeExecutable": "cmd.exe",
+      "runtimeArgs": ["/c", "cd compliancesnap && npx expo start --web --port 8083"],
+      "port": 8083
+    },
+    {
+      "name": "fieldlens",
+      "runtimeExecutable": "cmd.exe",
+      "runtimeArgs": ["/c", "cd fieldlens && npx expo start --web --port 8084"],
+      "port": 8084
+    },
+    {
+      "name": "govpass",
+      "runtimeExecutable": "cmd.exe",
+      "runtimeArgs": ["/c", "cd govpass && npx expo start --web --port 8085"],
+      "port": 8085
+    },
+    {
+      "name": "inspectorai",
+      "runtimeExecutable": "cmd.exe",
+      "runtimeArgs": ["/c", "cd inspectorai && npx expo start --web --port 8086"],
+      "port": 8086
+    },
+    {
+      "name": "mortal",
+      "runtimeExecutable": "cmd.exe",
+      "runtimeArgs": ["/c", "cd mortal && npx expo start --web --port 8087"],
+      "port": 8087
+    },
+    {
+      "name": "routeai",
+      "runtimeExecutable": "cmd.exe",
+      "runtimeArgs": ["/c", "cd routeai && npx expo start --web --port 8088"],
+      "port": 8088
+    },
+    {
+      "name": "sitesync",
+      "runtimeExecutable": "cmd.exe",
+      "runtimeArgs": ["/c", "cd sitesync && npx expo start --web --port 8089"],
+      "port": 8089
+    },
+    {
+      "name": "stockpulse",
+      "runtimeExecutable": "cmd.exe",
+      "runtimeArgs": ["/c", "cd stockpulse && npx expo start --web --port 8090"],
+      "port": 8090
+    }
+  ]
+}
