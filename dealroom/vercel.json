@@ -1,0 +1,24 @@
+{
+  "framework": "nextjs",
+  "buildCommand": "npm run build",
+  "installCommand": "npm install",
+  "env": {
+    "NEXT_PUBLIC_SUPABASE_URL": "@dealroom_supabase_url",
+    "NEXT_PUBLIC_SUPABASE_ANON_KEY": "@dealroom_supabase_anon_key",
+    "SUPABASE_SERVICE_ROLE_KEY": "@dealroom_supabase_service_role_key",
+    "OPENAI_API_KEY": "@dealroom_openai_api_key",
+    "STRIPE_SECRET_KEY": "@dealroom_stripe_secret_key",
+    "NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY": "@dealroom_stripe_publishable_key",
+    "NEXT_PUBLIC_APP_URL": "@dealroom_app_url"
+  },
+  "headers": [
+    {
+      "source": "/(.*)",
+      "headers": [
+        { "key": "X-Frame-Options", "value": "DENY" },
+        { "key": "X-Content-Type-Options", "value": "nosniff" },
+        { "key": "Referrer-Policy", "value": "strict-origin-when-cross-origin" }
+      ]
+    }
+  ]
+}

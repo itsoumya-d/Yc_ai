@@ -1,0 +1,26 @@
+{
+  "expo": {
+    "name": "StockPulse",
+    "slug": "stockpulse",
+    "version": "1.0.0",
+    "orientation": "portrait",
+    "icon": "./assets/icon.png",
+    "userInterfaceStyle": "light",
+    "splash": { "backgroundColor": "#0F4C3A" },
+    "ios": {
+      "supportsTablet": true,
+      "bundleIdentifier": "com.stockpulse.app",
+      "infoPlist": {
+        "NSCameraUsageDescription": "StockPulse uses your camera to scan barcodes and identify products for inventory management.",
+        "NSPhotoLibraryUsageDescription": "StockPulse saves product photos for inventory records."
+      }
+    },
+    "android": {
+      "adaptiveIcon": { "backgroundColor": "#0F4C3A" },
+      "package": "com.stockpulse.app",
+      "permissions": ["android.permission.CAMERA", "android.permission.VIBRATE"]
+    },
+    "plugins": ["expo-router", "expo-camera", "expo-barcode-scanner"],
+    "scheme": "stockpulse"
+  }
+}

@@ -1,0 +1,19 @@
+{
+  "framework": "nextjs",
+  "buildCommand": "npm run build",
+  "installCommand": "npm install",
+  "env": {
+    "NEXT_PUBLIC_SUPABASE_URL": "@petos_supabase_url",
+    "NEXT_PUBLIC_SUPABASE_ANON_KEY": "@petos_supabase_anon_key",
+    "SUPABASE_SERVICE_ROLE_KEY": "@petos_supabase_service_role_key",
+    "OPENAI_API_KEY": "@petos_openai_api_key"
+  },
+  "headers": [
+    {
+      "source": "/(.*)",
+      "headers": [
+        { "key": "X-Content-Type-Options", "value": "nosniff" }
+      ]
+    }
+  ]
+}

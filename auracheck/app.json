@@ -1,0 +1,24 @@
+{
+  "expo": {
+    "name": "AuraCheck",
+    "slug": "auracheck",
+    "version": "1.0.0",
+    "orientation": "portrait",
+    "userInterfaceStyle": "automatic",
+    "icon": "./assets/icon.png",
+    "splash": { "backgroundColor": "#FDF2F8" },
+    "ios": {
+      "supportsTablet": false,
+      "bundleIdentifier": "com.auracheck.app",
+      "infoPlist": {
+        "NSCameraUsageDescription": "AuraCheck uses your camera to capture skin photos for health monitoring.",
+        "NSHealthShareUsageDescription": "AuraCheck reads sleep and wellness data to correlate with skin health.",
+        "NSHealthUpdateUsageDescription": "AuraCheck updates your health data for skin correlations."
+      }
+    },
+    "android": { "package": "com.auracheck.app", "adaptiveIcon": { "foregroundImage": "./assets/adaptive-icon.png", "backgroundColor": "#FDF2F8" }, "permissions": ["CAMERA"], "versionCode": 1 },
+    "plugins": ["expo-router", "expo-camera"],
+    "scheme": "auracheck",
+    "web": { "bundler": "metro" }
+  }
+}

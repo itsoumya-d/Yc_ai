@@ -16,6 +16,13 @@ export const metadata: Metadata = {
   },
   description:
     'AI-powered pet health management. Track vaccinations, medications, appointments, and get AI symptom analysis for your furry friends.',
+  manifest: '/manifest.json',
+  themeColor: '#ea580c',
+  appleWebApp: {
+    capable: true,
+    statusBarStyle: 'default',
+    title: 'PetOS',
+  },
 };
 
 export default function RootLayout({

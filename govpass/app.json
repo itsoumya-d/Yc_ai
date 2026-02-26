@@ -1,0 +1,42 @@
+{
+  "expo": {
+    "name": "GovPass",
+    "slug": "govpass",
+    "version": "1.0.0",
+    "orientation": "portrait",
+    "icon": "./assets/icon.png",
+    "userInterfaceStyle": "automatic",
+    "splash": {
+      "image": "./assets/splash.png",
+      "resizeMode": "contain",
+      "backgroundColor": "#1B4EDE"
+    },
+    "ios": {
+      "supportsTablet": false,
+      "bundleIdentifier": "com.govpass.app",
+      "infoPlist": {
+        "NSCameraUsageDescription": "GovPass uses your camera to scan government documents and forms.",
+        "NSFaceIDUsageDescription": "GovPass uses Face ID to secure your personal information.",
+        "NSPhotoLibraryUsageDescription": "GovPass needs access to your photos to import documents."
+      }
+    },
+    "android": {
+      "adaptiveIcon": {
+        "foregroundImage": "./assets/adaptive-icon.png",
+        "backgroundColor": "#1B4EDE"
+      },
+      "package": "com.govpass.app",
+      "permissions": ["CAMERA", "READ_EXTERNAL_STORAGE", "USE_BIOMETRIC", "USE_FINGERPRINT"],
+      "versionCode": 1
+    },
+    "plugins": [
+      "expo-router",
+      "expo-camera",
+      ["expo-local-authentication", {
+        "faceIDPermission": "Allow GovPass to use Face ID to secure your data."
+      }]
+    ],
+    "scheme": "govpass",
+    "web": { "bundler": "metro" }
+  }
+}
