@@ -1,6 +1,7 @@
 import { getSharedProposal } from '@/lib/actions/sharing';
 import { Card } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
+import { ViewTracker } from '@/components/proposals/view-tracker';
 import { formatCurrency, formatDate, getStatusLabel, getPricingLabel } from '@/lib/utils';
 import type { ProposalStatus, PricingModel, SectionType } from '@/types/database';
 
@@ -84,7 +85,7 @@ export default async function SharedProposalPage({ params }: { params: Promise<{
         {/* Sections */}
         <div className="space-y-6">
           {proposal.proposal_sections.map((section) => (
-            <Card key={section.id} className="p-6">
+            <Card key={section.id} id={`section-${section.id}`} className="p-6">
               <h2 className="text-lg font-semibold text-[var(--foreground)] mb-3 border-b border-[var(--border)] pb-2">
                 {section.section_type !== 'custom'
                   ? sectionTypeLabels[section.section_type] || section.title
@@ -112,6 +113,12 @@ export default async function SharedProposalPage({ params }: { params: Promise<{
             {profile.business_name ? ` — ${profile.business_name}` : ''}
           </p>
         </div>
+
+        {/* Engagement tracking */}
+        <ViewTracker
+          proposalId={proposal.id}
+          sectionIds={proposal.proposal_sections.map((s) => s.id)}
+        />
       </div>
     </div>
   );

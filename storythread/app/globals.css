@@ -16,6 +16,22 @@
   --ring: #881337;
 }
 
+.dark {
+  --background: #1a1412;
+  --foreground: #f5ede0;
+  --muted: #2a2220;
+  --muted-foreground: #a89890;
+  --border: #3d3230;
+  --card: #241e1a;
+  --card-foreground: #f5ede0;
+  --accent: #3d2020;
+  --accent-foreground: #fda4af;
+  --input: #3d3230;
+  --destructive: #ef4444;
+  --destructive-foreground: #ffffff;
+  --ring: #be123c;
+}
+
 @theme inline {
   --color-background: var(--background);
   --color-foreground: var(--foreground);

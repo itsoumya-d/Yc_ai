@@ -1,7 +1,7 @@
 'use client';
 
-import { useState } from 'react';
-import { useRouter } from 'next/navigation';
+import { useState, useEffect } from 'react';
+import { useRouter, useSearchParams } from 'next/navigation';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
@@ -18,9 +18,20 @@ const STEPS = [
 
 export default function OnboardingPage() {
   const router = useRouter();
+  const searchParams = useSearchParams();
   const { toast } = useToast();
   const [step, setStep] = useState(0);
   const [saving, setSaving] = useState(false);
+  const [stripeConnected, setStripeConnected] = useState(false);
+
+  // Handle Stripe Connect return
+  useEffect(() => {
+    if (searchParams.get('stripe') === 'complete') {
+      setStep(3);
+      setStripeConnected(true);
+      toast({ title: 'Stripe connected successfully!', variant: 'success' });
+    }
+  }, [searchParams, toast]);
 
   // Step 1: Business Info
   const [businessName, setBusinessName] = useState('');
@@ -29,6 +40,9 @@ export default function OnboardingPage() {
   const [businessAddress, setBusinessAddress] = useState('');
 
   // Step 2: Invoice Defaults
+  const [defaultCurrency, setDefaultCurrency] = useState('USD');
+  const [defaultPaymentTerms, setDefaultPaymentTerms] = useState(30);
+  const [brandColor, setBrandColor] = useState('#059669');
   const [defaultNotes, setDefaultNotes] = useState('Thank you for your business!');
   const [defaultTerms, setDefaultTerms] = useState('Payment is due within 30 days of invoice date.');
 
@@ -67,6 +81,9 @@ export default function OnboardingPage() {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({
+        default_currency: defaultCurrency,
+        default_payment_terms: defaultPaymentTerms,
+        brand_color: brandColor,
         default_notes: defaultNotes,
         default_terms: defaultTerms,
       }),
@@ -105,7 +122,11 @@ export default function OnboardingPage() {
   const connectStripe = async () => {
     setConnectingStripe(true);
     try {
-      const res = await fetch('/api/stripe/connect', { method: 'POST' });
+      const res = await fetch('/api/stripe/connect', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ returnTo: 'onboarding' }),
+      });
       const data = await res.json();
       if (data.url) {
         window.location.href = data.url;
@@ -236,6 +257,61 @@ export default function OnboardingPage() {
             </CardDescription>
           </CardHeader>
           <CardContent className="space-y-4">
+            <div className="grid grid-cols-2 gap-4">
+              <div>
+                <label className="mb-1.5 block text-sm font-medium text-[var(--foreground)]">
+                  Default Currency
+                </label>
+                <select
+                  value={defaultCurrency}
+                  onChange={(e) => setDefaultCurrency(e.target.value)}
+                  className="h-10 w-full rounded-lg border border-[var(--border)] bg-[var(--background)] px-3 text-sm text-[var(--foreground)]"
+                >
+                  <option value="USD">USD - US Dollar</option>
+                  <option value="EUR">EUR - Euro</option>
+                  <option value="GBP">GBP - British Pound</option>
+                  <option value="CAD">CAD - Canadian Dollar</option>
+                  <option value="AUD">AUD - Australian Dollar</option>
+                  <option value="INR">INR - Indian Rupee</option>
+                  <option value="JPY">JPY - Japanese Yen</option>
+                  <option value="CHF">CHF - Swiss Franc</option>
+                </select>
+              </div>
+              <div>
+                <label className="mb-1.5 block text-sm font-medium text-[var(--foreground)]">
+                  Payment Terms (days)
+                </label>
+                <select
+                  value={defaultPaymentTerms}
+                  onChange={(e) => setDefaultPaymentTerms(Number(e.target.value))}
+                  className="h-10 w-full rounded-lg border border-[var(--border)] bg-[var(--background)] px-3 text-sm text-[var(--foreground)]"
+                >
+                  <option value={7}>Net 7</option>
+                  <option value={14}>Net 14</option>
+                  <option value={15}>Net 15</option>
+                  <option value={30}>Net 30</option>
+                  <option value={45}>Net 45</option>
+                  <option value={60}>Net 60</option>
+                  <option value={90}>Net 90</option>
+                </select>
+              </div>
+            </div>
+            <div>
+              <label className="mb-1.5 block text-sm font-medium text-[var(--foreground)]">
+                Brand Color
+              </label>
+              <div className="flex items-center gap-3">
+                <input
+                  type="color"
+                  value={brandColor}
+                  onChange={(e) => setBrandColor(e.target.value)}
+                  className="h-10 w-14 cursor-pointer rounded-lg border border-[var(--border)]"
+                />
+                <span className="text-sm text-[var(--muted-foreground)]">
+                  Used in invoice templates and the payment portal
+                </span>
+              </div>
+            </div>
             <Textarea
               label="Default Notes"
               value={defaultNotes}
@@ -319,20 +395,38 @@ export default function OnboardingPage() {
           </CardHeader>
           <CardContent>
             <div className="rounded-lg border border-[var(--border)] p-6 text-center">
-              <div className="mx-auto flex h-12 w-12 items-center justify-center rounded-full bg-brand-100">
-                <svg className="h-6 w-6 text-brand-600" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
-                  <path strokeLinecap="round" strokeLinejoin="round" d="M2.25 8.25h19.5M2.25 9h19.5m-16.5 5.25h6m-6 2.25h3m-3.75 3h15a2.25 2.25 0 0 0 2.25-2.25V6.75A2.25 2.25 0 0 0 19.5 4.5h-15a2.25 2.25 0 0 0-2.25 2.25v10.5A2.25 2.25 0 0 0 4.5 19.5Z" />
-                </svg>
-              </div>
-              <h3 className="mt-3 font-medium text-[var(--foreground)]">
-                Connect Stripe
-              </h3>
-              <p className="mt-1 text-sm text-[var(--muted-foreground)]">
-                Accept credit card payments directly from your invoices.
-              </p>
-              <Button onClick={connectStripe} disabled={connectingStripe} className="mt-4">
-                {connectingStripe ? 'Connecting...' : 'Connect Stripe'}
-              </Button>
+              {stripeConnected ? (
+                <>
+                  <div className="mx-auto flex h-12 w-12 items-center justify-center rounded-full bg-green-100">
+                    <svg className="h-6 w-6 text-green-600" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                      <path strokeLinecap="round" strokeLinejoin="round" d="m4.5 12.75 6 6 9-13.5" />
+                    </svg>
+                  </div>
+                  <h3 className="mt-3 font-medium text-[var(--foreground)]">
+                    Stripe Connected
+                  </h3>
+                  <p className="mt-1 text-sm text-[var(--muted-foreground)]">
+                    You&apos;re all set to accept online payments.
+                  </p>
+                </>
+              ) : (
+                <>
+                  <div className="mx-auto flex h-12 w-12 items-center justify-center rounded-full bg-brand-100">
+                    <svg className="h-6 w-6 text-brand-600" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
+                      <path strokeLinecap="round" strokeLinejoin="round" d="M2.25 8.25h19.5M2.25 9h19.5m-16.5 5.25h6m-6 2.25h3m-3.75 3h15a2.25 2.25 0 0 0 2.25-2.25V6.75A2.25 2.25 0 0 0 19.5 4.5h-15a2.25 2.25 0 0 0-2.25 2.25v10.5A2.25 2.25 0 0 0 4.5 19.5Z" />
+                    </svg>
+                  </div>
+                  <h3 className="mt-3 font-medium text-[var(--foreground)]">
+                    Connect Stripe
+                  </h3>
+                  <p className="mt-1 text-sm text-[var(--muted-foreground)]">
+                    Accept credit card payments directly from your invoices.
+                  </p>
+                  <Button onClick={connectStripe} disabled={connectingStripe} className="mt-4">
+                    {connectingStripe ? 'Connecting...' : 'Connect Stripe'}
+                  </Button>
+                </>
+              )}
             </div>
             <div className="mt-6 flex justify-between">
               <Button variant="outline" onClick={() => setStep(2)}>

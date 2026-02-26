@@ -19,6 +19,7 @@ import {
 import { cn } from '@/lib/utils';
 import { createClient } from '@/lib/supabase/client';
 import { Avatar } from '@/components/ui/avatar';
+import { ThemeToggle } from '@/components/ui/theme-toggle';
 
 const navItems = [
   { label: 'Dashboard', href: '/dashboard', icon: LayoutDashboard },
@@ -100,6 +101,11 @@ export function Sidebar() {
           <Plus className="h-4 w-4 shrink-0" />
           {!collapsed && <span>New Meeting</span>}
         </Link>
+      </div>
+
+      {/* Theme Toggle */}
+      <div className="px-3 pb-1">
+        <ThemeToggle collapsed={collapsed} />
       </div>
 
       {/* User Section */}

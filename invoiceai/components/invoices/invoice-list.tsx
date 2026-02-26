@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useTransition } from 'react';
 import { useRouter } from 'next/navigation';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -8,6 +8,7 @@ import { Badge } from '@/components/ui/badge';
 import { EmptyState } from '@/components/ui/empty-state';
 import { DataTable } from '@/components/ui/data-table';
 import { formatCurrency, formatDate } from '@/lib/utils';
+import { bulkDeleteInvoicesAction, bulkUpdateStatusAction } from '@/lib/actions/invoices';
 import type { InvoiceWithDetails } from '@/types/database';
 
 interface InvoiceListProps {
@@ -30,6 +31,9 @@ export function InvoiceList({ initialInvoices, totalCount }: InvoiceListProps) {
   const router = useRouter();
   const [statusFilter, setStatusFilter] = useState<StatusFilter>('all');
   const [search, setSearch] = useState('');
+  const [selectedIds, setSelectedIds] = useState<Set<string>>(new Set());
+  const [isPending, startTransition] = useTransition();
+  const [bulkError, setBulkError] = useState<string | null>(null);
 
   const filteredInvoices = initialInvoices.filter((inv) => {
     if (statusFilter !== 'all' && inv.status !== statusFilter) return false;
@@ -185,12 +189,115 @@ export function InvoiceList({ initialInvoices, totalCount }: InvoiceListProps) {
         </div>
       </div>
 
+      {/* Bulk Action Bar */}
+      {selectedIds.size > 0 && (
+        <div className="mt-4 flex items-center gap-3 rounded-lg border border-[var(--primary)]/20 bg-[var(--primary)]/5 px-4 py-3">
+          <span className="text-sm font-medium text-[var(--foreground)]">
+            {selectedIds.size} selected
+          </span>
+          <div className="flex gap-2">
+            <Button
+              variant="outline"
+              size="sm"
+              disabled={isPending}
+              onClick={() => {
+                setBulkError(null);
+                startTransition(async () => {
+                  const result = await bulkUpdateStatusAction(Array.from(selectedIds), 'sent');
+                  if (result.error) {
+                    setBulkError(result.error);
+                  } else {
+                    setSelectedIds(new Set());
+                    router.refresh();
+                  }
+                });
+              }}
+            >
+              Mark as Sent
+            </Button>
+            <Button
+              variant="outline"
+              size="sm"
+              disabled={isPending}
+              onClick={() => {
+                setBulkError(null);
+                startTransition(async () => {
+                  const result = await bulkUpdateStatusAction(Array.from(selectedIds), 'paid');
+                  if (result.error) {
+                    setBulkError(result.error);
+                  } else {
+                    setSelectedIds(new Set());
+                    router.refresh();
+                  }
+                });
+              }}
+            >
+              Mark as Paid
+            </Button>
+            <Button
+              variant="outline"
+              size="sm"
+              disabled={isPending}
+              onClick={() => {
+                setBulkError(null);
+                startTransition(async () => {
+                  const result = await bulkUpdateStatusAction(Array.from(selectedIds), 'cancelled');
+                  if (result.error) {
+                    setBulkError(result.error);
+                  } else {
+                    setSelectedIds(new Set());
+                    router.refresh();
+                  }
+                });
+              }}
+            >
+              Cancel
+            </Button>
+            <Button
+              variant="destructive"
+              size="sm"
+              disabled={isPending}
+              onClick={() => {
+                if (!confirm(`Delete ${selectedIds.size} invoice(s)? This cannot be undone.`)) return;
+                setBulkError(null);
+                startTransition(async () => {
+                  const result = await bulkDeleteInvoicesAction(Array.from(selectedIds));
+                  if (result.error) {
+                    setBulkError(result.error);
+                  } else {
+                    setSelectedIds(new Set());
+                    router.refresh();
+                  }
+                });
+              }}
+            >
+              Delete
+            </Button>
+          </div>
+          <button
+            className="ml-auto text-sm text-[var(--muted-foreground)] hover:text-[var(--foreground)]"
+            onClick={() => setSelectedIds(new Set())}
+          >
+            Clear selection
+          </button>
+        </div>
+      )}
+
+      {bulkError && (
+        <div className="mt-2 rounded-lg border border-red-200 bg-red-50 px-4 py-2 text-sm text-red-700">
+          {bulkError}
+        </div>
+      )}
+
       {/* Table */}
       <div className="mt-6">
         <DataTable
           columns={columns}
           data={filteredInvoices}
           keyExtractor={(inv) => inv.id}
+          selectable
+          selectedKeys={selectedIds}
+          onSelectionChange={setSelectedIds}
           onRowClick={(inv) => router.push(`/invoices/${inv.id}`)}
           emptyState={
             <EmptyState

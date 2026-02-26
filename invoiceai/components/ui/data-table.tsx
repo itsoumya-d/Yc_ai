@@ -18,6 +18,9 @@ interface DataTableProps<T> {
   onRowClick?: (item: T) => void;
   emptyState?: React.ReactNode;
   className?: string;
+  selectable?: boolean;
+  selectedKeys?: Set<string>;
+  onSelectionChange?: (selectedKeys: Set<string>) => void;
 }
 
 export function DataTable<T>({
@@ -27,6 +30,9 @@ export function DataTable<T>({
   onRowClick,
   emptyState,
   className,
+  selectable,
+  selectedKeys,
+  onSelectionChange,
 }: DataTableProps<T>) {
   const [sortKey, setSortKey] = useState<string | null>(null);
   const [sortDirection, setSortDirection] = useState<'asc' | 'desc'>('asc');
@@ -52,6 +58,30 @@ export function DataTable<T>({
       })
     : data;
 
+  const allKeys = sortedData.map(keyExtractor);
+  const allSelected = selectable && selectedKeys && allKeys.length > 0 && allKeys.every((k) => selectedKeys.has(k));
+  const someSelected = selectable && selectedKeys && allKeys.some((k) => selectedKeys.has(k));
+
+  const toggleAll = () => {
+    if (!onSelectionChange) return;
+    if (allSelected) {
+      onSelectionChange(new Set());
+    } else {
+      onSelectionChange(new Set(allKeys));
+    }
+  };
+
+  const toggleOne = (key: string) => {
+    if (!onSelectionChange || !selectedKeys) return;
+    const next = new Set(selectedKeys);
+    if (next.has(key)) {
+      next.delete(key);
+    } else {
+      next.add(key);
+    }
+    onSelectionChange(next);
+  };
+
   if (data.length === 0 && emptyState) {
     return <>{emptyState}</>;
   }
@@ -62,6 +92,17 @@ export function DataTable<T>({
         <table className="w-full">
           <thead>
             <tr className="border-b border-[var(--border)] bg-[var(--muted)]">
+              {selectable && (
+                <th className="w-10 px-3 py-3">
+                  <input
+                    type="checkbox"
+                    checked={allSelected ?? false}
+                    ref={(el) => { if (el) el.indeterminate = !!(someSelected && !allSelected); }}
+                    onChange={toggleAll}
+                    className="h-4 w-4 rounded border-[var(--border)] accent-[var(--primary)]"
+                  />
+                </th>
+              )}
               {columns.map((col) => (
                 <th
                   key={col.key}
@@ -91,24 +132,40 @@ export function DataTable<T>({
             </tr>
           </thead>
           <tbody className="divide-y divide-[var(--border)] bg-[var(--card)]">
-            {sortedData.map((item) => (
-              <tr
-                key={keyExtractor(item)}
-                className={cn(
-                  'transition-colors hover:bg-[var(--muted)]',
-                  onRowClick && 'cursor-pointer'
-                )}
-                onClick={onRowClick ? () => onRowClick(item) : undefined}
-              >
-                {columns.map((col) => (
-                  <td key={col.key} className={cn('px-4 py-3 text-sm', col.className)}>
-                    {col.render
-                      ? col.render(item)
-                      : String((item as Record<string, unknown>)[col.key] ?? '')}
-                  </td>
-                ))}
-              </tr>
-            ))}
+            {sortedData.map((item) => {
+              const key = keyExtractor(item);
+              const isSelected = selectable && selectedKeys?.has(key);
+              return (
+                <tr
+                  key={key}
+                  className={cn(
+                    'transition-colors hover:bg-[var(--muted)]',
+                    onRowClick && 'cursor-pointer',
+                    isSelected && 'bg-[var(--primary)]/5'
+                  )}
+                  onClick={onRowClick ? () => onRowClick(item) : undefined}
+                >
+                  {selectable && (
+                    <td className="w-10 px-3 py-3">
+                      <input
+                        type="checkbox"
+                        checked={isSelected ?? false}
+                        onChange={() => toggleOne(key)}
+                        onClick={(e) => e.stopPropagation()}
+                        className="h-4 w-4 rounded border-[var(--border)] accent-[var(--primary)]"
+                      />
+                    </td>
+                  )}
+                  {columns.map((col) => (
+                    <td key={col.key} className={cn('px-4 py-3 text-sm', col.className)}>
+                      {col.render
+                        ? col.render(item)
+                        : String((item as Record<string, unknown>)[col.key] ?? '')}
+                    </td>
+                  ))}
+                </tr>
+              );
+            })}
           </tbody>
         </table>
       </div>

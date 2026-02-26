@@ -1,0 +1,111 @@
+@import "tailwindcss";
+
+:root {
+  --background: #FEFCE8;
+  --foreground: #1C1917;
+  --muted: #FEF9C3;
+  --muted-foreground: #78716C;
+  --border: #E5E7EB;
+  --card: #FFFFFF;
+  --card-foreground: #1C1917;
+  --accent: #F0FDF4;
+  --accent-foreground: #15803D;
+  --input: #E5E7EB;
+  --destructive: #DC2626;
+  --destructive-foreground: #FFFFFF;
+  --ring: #16A34A;
+}
+
+.dark {
+  --background: #1C1917;
+  --foreground: #FAFAF9;
+  --muted: #292524;
+  --muted-foreground: #A8A29E;
+  --border: #44403C;
+  --card: #292524;
+  --card-foreground: #FAFAF9;
+  --accent: #14532D;
+  --accent-foreground: #4ADE80;
+  --input: #44403C;
+  --destructive: #EF4444;
+  --destructive-foreground: #FFFFFF;
+  --ring: #4ADE80;
+}
+
+@theme inline {
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --font-sans: var(--font-nunito);
+  --font-body: var(--font-inter);
+
+  /* Leaf Green */
+  --color-leaf-50: #F0FDF4;
+  --color-leaf-100: #DCFCE7;
+  --color-leaf-200: #BBF7D0;
+  --color-leaf-300: #86EFAC;
+  --color-leaf-400: #4ADE80;
+  --color-leaf-500: #22C55E;
+  --color-leaf-600: #16A34A;
+  --color-leaf-700: #15803D;
+  --color-leaf-800: #166534;
+  --color-leaf-900: #14532D;
+
+  /* Warm Earth */
+  --color-earth-50: #FEFCE8;
+  --color-earth-100: #FEF9C3;
+  --color-earth-200: #FEF08A;
+  --color-earth-300: #FDE047;
+  --color-earth-400: #FACC15;
+  --color-earth-500: #EAB308;
+  --color-earth-600: #CA8A04;
+  --color-earth-700: #A16207;
+
+  /* Sky Blue */
+  --color-sky-50: #F0F9FF;
+  --color-sky-100: #E0F2FE;
+  --color-sky-200: #BAE6FD;
+  --color-sky-300: #7DD3FC;
+  --color-sky-400: #38BDF8;
+  --color-sky-500: #0EA5E9;
+
+  /* Semantic */
+  --color-success: #16A34A;
+  --color-progress: #3B82F6;
+  --color-warning: #F59E0B;
+  --color-error: #DC2626;
+  --color-event: #9333EA;
+  --color-vote: #2563EB;
+  --color-treasury: #CA8A04;
+
+  --color-accent: var(--accent);
+  --color-accent-foreground: var(--accent-foreground);
+  --color-input: var(--input);
+  --color-destructive: var(--destructive);
+  --color-destructive-foreground: var(--destructive-foreground);
+  --color-ring: var(--ring);
+  --color-card: var(--card);
+  --color-card-foreground: var(--card-foreground);
+  --color-muted: var(--muted);
+  --color-muted-foreground: var(--muted-foreground);
+  --color-border: var(--border);
+
+  --shadow-card: 0 1px 3px 0 rgb(0 0 0 / 0.04), 0 1px 2px -1px rgb(0 0 0 / 0.04);
+  --shadow-card-hover: 0 4px 6px -1px rgb(0 0 0 / 0.06), 0 2px 4px -2px rgb(0 0 0 / 0.06);
+  --shadow-dropdown: 0 10px 15px -3px rgb(0 0 0 / 0.08), 0 4px 6px -4px rgb(0 0 0 / 0.04);
+
+  --duration-fast: 150ms;
+  --duration-normal: 200ms;
+  --duration-slow: 300ms;
+}
+
+body {
+  background: var(--background);
+  color: var(--foreground);
+  font-family: var(--font-body), var(--font-sans), system-ui, sans-serif;
+}
+
+::-webkit-scrollbar { width: 6px; }
+::-webkit-scrollbar-track { background: transparent; }
+::-webkit-scrollbar-thumb { background: var(--border); border-radius: 3px; }
+
+.font-heading { font-family: var(--font-sans), system-ui, sans-serif; font-weight: 700; letter-spacing: -0.025em; }

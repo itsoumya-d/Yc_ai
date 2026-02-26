@@ -28,6 +28,7 @@ export default function NewInvoicePage() {
   const [issueDate, setIssueDate] = useState(today);
   const [dueDate, setDueDate] = useState(defaultDue);
   const [paymentTerms, setPaymentTerms] = useState(30);
+  const [currency, setCurrency] = useState('USD');
   const [taxRate, setTaxRate] = useState(0);
   const [notes, setNotes] = useState('');
   const [items, setItems] = useState<InvoiceItemInput[]>([
@@ -136,6 +137,7 @@ export default function NewInvoicePage() {
       issue_date: issueDate,
       due_date: dueDate,
       payment_terms: paymentTerms,
+      currency,
       tax_rate: taxRate,
       notes: notes || undefined,
       ai_input_text: aiInput || undefined,
@@ -253,7 +255,11 @@ export default function NewInvoicePage() {
                 </label>
                 <select
                   value={selectedClientId}
-                  onChange={(e) => setSelectedClientId(e.target.value)}
+                  onChange={(e) => {
+                    setSelectedClientId(e.target.value);
+                    const client = clients.find((c) => c.id === e.target.value);
+                    if (client?.default_currency) setCurrency(client.default_currency);
+                  }}
                   className="flex h-10 w-full rounded-lg border border-[var(--border)] bg-[var(--background)] px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-brand-500"
                 >
                   <option value="">Select a client...</option>
@@ -266,7 +272,7 @@ export default function NewInvoicePage() {
                 </select>
               </div>
 
-              <div className="grid grid-cols-3 gap-4">
+              <div className="grid grid-cols-2 gap-4 sm:grid-cols-4">
                 <Input
                   label="Issue Date"
                   type="date"
@@ -293,6 +299,29 @@ export default function NewInvoicePage() {
                     <option value={30}>Net 30</option>
                     <option value={45}>Net 45</option>
                     <option value={60}>Net 60</option>
+                  </select>
+                </div>
+                <div>
+                  <label className="mb-1.5 block text-sm font-medium text-[var(--foreground)]">
+                    Currency
+                  </label>
+                  <select
+                    value={currency}
+                    onChange={(e) => setCurrency(e.target.value)}
+                    className="flex h-10 w-full rounded-lg border border-[var(--border)] bg-[var(--background)] px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-brand-500"
+                  >
+                    <option value="USD">USD ($)</option>
+                    <option value="EUR">EUR (&euro;)</option>
+                    <option value="GBP">GBP (&pound;)</option>
+                    <option value="CAD">CAD (C$)</option>
+                    <option value="AUD">AUD (A$)</option>
+                    <option value="INR">INR (&rupee;)</option>
+                    <option value="JPY">JPY (&yen;)</option>
+                    <option value="CHF">CHF (Fr)</option>
+                    <option value="BRL">BRL (R$)</option>
+                    <option value="MXN">MXN (Mex$)</option>
+                    <option value="SGD">SGD (S$)</option>
+                    <option value="NZD">NZD (NZ$)</option>
                   </select>
                 </div>
               </div>
@@ -369,7 +398,7 @@ export default function NewInvoicePage() {
                       />
                     </div>
                     <div className="col-span-2 text-right font-amount text-sm">
-                      {formatCurrency(item.quantity * item.unit_price)}
+                      {formatCurrency(item.quantity * item.unit_price, currency)}
                     </div>
                     <div className="col-span-1 text-center">
                       {items.length > 1 && (
@@ -418,18 +447,18 @@ export default function NewInvoicePage() {
                     <span className="text-[var(--muted-foreground)]">
                       Items ({items.filter((i) => i.description.trim()).length})
                     </span>
-                    <span className="font-amount">{formatCurrency(subtotal)}</span>
+                    <span className="font-amount">{formatCurrency(subtotal, currency)}</span>
                   </div>
                   {taxRate > 0 && (
                     <div className="flex justify-between text-sm">
                       <span className="text-[var(--muted-foreground)]">Tax ({taxRate}%)</span>
-                      <span className="font-amount">{formatCurrency(taxAmount)}</span>
+                      <span className="font-amount">{formatCurrency(taxAmount, currency)}</span>
                     </div>
                   )}
                   <div className="border-t border-[var(--border)] pt-2">
                     <div className="flex justify-between text-lg font-bold">
                       <span>Total</span>
-                      <span className="font-amount">{formatCurrency(total)}</span>
+                      <span className="font-amount">{formatCurrency(total, currency)}</span>
                     </div>
                   </div>
                 </div>

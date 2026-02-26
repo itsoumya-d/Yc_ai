@@ -5,6 +5,7 @@ import { usePathname, useRouter } from 'next/navigation';
 import { useState } from 'react';
 import { createClient } from '@/lib/supabase/client';
 import { cn } from '@/lib/utils';
+import { ThemeToggle } from '@/components/ui/theme-toggle';
 import type { User } from '@supabase/supabase-js';
 
 const navigation = [
@@ -170,6 +171,7 @@ export function Sidebar({ user }: SidebarProps) {
 
       {/* Bottom Nav */}
       <div className="border-t border-[var(--border)] px-3 py-3 space-y-1">
+        <ThemeToggle collapsed={collapsed} />
         {bottomNavigation.map((item) => {
           const isActive = pathname === item.href || pathname.startsWith(item.href + '/');
           return (

@@ -9,20 +9,24 @@ import { Badge } from '@/components/ui/badge';
 import { useToast } from '@/components/ui/toast';
 import { deleteProposal } from '@/lib/actions/proposals';
 import { generateShareToken, revokeShareToken } from '@/lib/actions/sharing';
+import { saveProposalAsTemplate } from '@/lib/actions/templates';
 import { ProposalSectionList } from './proposal-section-list';
+import { ProposalAnalytics } from './proposal-analytics';
 import { formatCurrency, formatDate, getStatusLabel, getPricingLabel } from '@/lib/utils';
-import { Edit, Trash2, Plus, Building2, Calendar, DollarSign, Send, Download, Share2, Copy, Check, LinkIcon, X } from 'lucide-react';
-import type { ProposalWithDetails, ProposalStatus, PricingModel } from '@/types/database';
+import { Edit, Trash2, Plus, Building2, Calendar, DollarSign, Send, Download, Share2, Copy, Check, LinkIcon, X, FileText, Loader2 } from 'lucide-react';
+import type { ProposalWithDetails, ProposalStatus, PricingModel, ProposalAnalytics as AnalyticsData } from '@/types/database';
 
 interface ProposalDetailProps {
   proposal: ProposalWithDetails;
+  analytics?: AnalyticsData;
 }
 
-export function ProposalDetail({ proposal }: ProposalDetailProps) {
+export function ProposalDetail({ proposal, analytics }: ProposalDetailProps) {
   const router = useRouter();
   const { toast } = useToast();
   const [deleting, setDeleting] = useState(false);
   const [sharing, setSharing] = useState(false);
+  const [savingTemplate, setSavingTemplate] = useState(false);
   const [showSharePanel, setShowSharePanel] = useState(false);
   const [shareToken, setShareToken] = useState(proposal.share_token);
   const [copied, setCopied] = useState(false);
@@ -76,6 +80,20 @@ export function ProposalDetail({ proposal }: ProposalDetailProps) {
     setTimeout(() => setCopied(false), 2000);
   }
 
+  async function handleSaveAsTemplate() {
+    const name = prompt('Template name:', proposal.title);
+    if (!name) return;
+    setSavingTemplate(true);
+    const result = await saveProposalAsTemplate(proposal.id, name);
+    setSavingTemplate(false);
+    if (result.error) {
+      toast({ title: result.error, variant: 'destructive' });
+      return;
+    }
+    toast({ title: 'Saved as template' });
+    router.refresh();
+  }
+
   const shareUrl = shareToken ? `${typeof window !== 'undefined' ? window.location.origin : ''}/share/${shareToken}` : '';
 
   return (
@@ -100,6 +118,10 @@ export function ProposalDetail({ proposal }: ProposalDetailProps) {
           <Link href={`/proposals/${proposal.id}/edit`}>
             <Button variant="outline" size="sm"><Edit className="w-4 h-4 mr-1" />Edit</Button>
           </Link>
+          <Button variant="outline" size="sm" onClick={handleSaveAsTemplate} disabled={savingTemplate}>
+            {savingTemplate ? <Loader2 className="w-4 h-4 mr-1 animate-spin" /> : <FileText className="w-4 h-4 mr-1" />}
+            {savingTemplate ? 'Saving...' : 'Save as Template'}
+          </Button>
           <a href={`/api/proposals/${proposal.id}/pdf`} download>
             <Button variant="outline" size="sm"><Download className="w-4 h-4 mr-1" />PDF</Button>
           </a>
@@ -182,6 +204,11 @@ export function ProposalDetail({ proposal }: ProposalDetailProps) {
           <h3 className="text-sm font-medium text-[var(--muted-foreground)] mb-1">Notes</h3>
           <p className="text-sm text-[var(--foreground)]">{proposal.notes}</p>
         </Card>
+      )}
+
+      {/* Analytics */}
+      {analytics && (
+        <ProposalAnalytics analytics={analytics} />
       )}
 
       <div>

@@ -3,7 +3,7 @@
 import { createClient } from '@/lib/supabase/server';
 import { revalidatePath } from 'next/cache';
 import type { Symptom } from '@/types/database';
-import { analyzeSymptoms } from './openai';
+import { analyzeSymptoms, analyzeSymptomPhoto } from './openai';
 
 interface ActionResult<T = null> {
   data?: T;
@@ -61,19 +61,30 @@ export async function createSymptom(formData: FormData): Promise<ActionResult<Sy
 
   if (error) return { error: error.message };
 
-  // Run AI analysis
+  // Run AI analysis (use Vision AI if photo is available)
   if (pet) {
     const age = pet.date_of_birth
       ? `${Math.floor((Date.now() - new Date(pet.date_of_birth).getTime()) / (365.25 * 24 * 60 * 60 * 1000))} years`
       : 'unknown age';
 
-    const analysis = await analyzeSymptoms(
-      description,
-      pet.species,
-      pet.breed || 'unknown breed',
-      age,
-      severity
-    );
+    const photoUrl = symptomData.photo_url;
+
+    const analysis = photoUrl
+      ? await analyzeSymptomPhoto(
+          photoUrl,
+          pet.species,
+          pet.breed || 'unknown breed',
+          age,
+          description,
+          severity
+        )
+      : await analyzeSymptoms(
+          description,
+          pet.species,
+          pet.breed || 'unknown breed',
+          age,
+          severity
+        );
 
     if (analysis.data) {
       await supabase

@@ -1,5 +1,8 @@
 import { getPublicStory } from '@/lib/actions/sharing';
+import { getPublicComments } from '@/lib/actions/comments';
+import { createClient } from '@/lib/supabase/server';
 import { getGenreLabel, getGenreEmoji, formatWordCount, formatDate } from '@/lib/utils';
+import { CommentSection } from '@/components/stories/comment-section';
 import { notFound } from 'next/navigation';
 import type { Metadata } from 'next';
 
@@ -21,13 +24,21 @@ export async function generateMetadata({ params }: { params: Promise<{ id: strin
 
 export default async function PublicStoryPage({ params }: { params: Promise<{ id: string }> }) {
   const { id } = await params;
-  const result = await getPublicStory(id);
+  const [result, commentsResult] = await Promise.all([
+    getPublicStory(id),
+    getPublicComments(id),
+  ]);
 
   if (result.error || !result.data) {
     notFound();
   }
 
+  // Get current user (may be null for anonymous readers)
+  const supabase = await createClient();
+  const { data: { user } } = await supabase.auth.getUser();
+
   const { story, chapters } = result.data;
+  const comments = commentsResult.data ?? [];
   const author = story.author_pen_name || story.author_name || 'Anonymous';
   const totalWords = chapters.reduce((sum, ch) => sum + ch.word_count, 0);
   const estimatedReadTime = Math.max(1, Math.round(totalWords / 250));
@@ -146,6 +157,13 @@ export default async function PublicStoryPage({ params }: { params: Promise<{ id
           </div>
         )}
       </div>
+
+      {/* Comments */}
+      <CommentSection
+        storyId={story.id}
+        comments={comments}
+        currentUserId={user?.id}
+      />
 
       {/* Footer */}
       <footer className="border-t border-gray-200 bg-white py-8">

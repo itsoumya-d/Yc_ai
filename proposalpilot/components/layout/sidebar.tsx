@@ -5,6 +5,7 @@ import { usePathname, useRouter } from 'next/navigation';
 import { useState } from 'react';
 import { createClient } from '@/lib/supabase/client';
 import { cn } from '@/lib/utils';
+import { ThemeToggle } from '@/components/ui/theme-toggle';
 import type { User } from '@supabase/supabase-js';
 import { LayoutDashboard, FileText, Users, LayoutTemplate, Library, Settings, Plus, Send, Menu, PanelLeftClose, LogOut } from 'lucide-react';
 
@@ -82,6 +83,7 @@ export function Sidebar({ user }: SidebarProps) {
             </Link>
           );
         })}
+        <ThemeToggle collapsed={collapsed} />
         <div className={cn('flex items-center gap-3 rounded-lg px-3 py-2', collapsed && 'justify-center px-2')}>
           <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-brand-100 text-sm font-semibold text-brand-700">{userInitials}</div>
           {!collapsed && (

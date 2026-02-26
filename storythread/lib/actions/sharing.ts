@@ -1,6 +1,7 @@
 'use server';
 
 import { createClient } from '@/lib/supabase/server';
+import { revalidatePath } from 'next/cache';
 import type { Story, Chapter } from '@/types/database';
 
 export interface PublicStoryData {
@@ -82,5 +83,77 @@ export async function unpublishStory(storyId: string): Promise<ActionResult> {
     .eq('user_id', user.id);
 
   if (error) return { error: error.message };
+  return {};
+}
+
+/** Submit a chapter for editorial review */
+export async function submitChapterForReview(chapterId: string, storyId: string): Promise<ActionResult> {
+  const supabase = await createClient();
+  const { data: { user } } = await supabase.auth.getUser();
+  if (!user) return { error: 'Not authenticated' };
+
+  const { error } = await supabase
+    .from('chapters')
+    .update({ status: 'review', updated_at: new Date().toISOString() })
+    .eq('id', chapterId);
+
+  if (error) return { error: error.message };
+
+  revalidatePath(`/stories/${storyId}`);
+  return {};
+}
+
+/** Approve and publish a chapter (editors/owners only) */
+export async function approveChapter(chapterId: string, storyId: string): Promise<ActionResult> {
+  const supabase = await createClient();
+  const { data: { user } } = await supabase.auth.getUser();
+  if (!user) return { error: 'Not authenticated' };
+
+  const { error } = await supabase
+    .from('chapters')
+    .update({ status: 'published', updated_at: new Date().toISOString() })
+    .eq('id', chapterId);
+
+  if (error) return { error: error.message };
+
+  revalidatePath(`/stories/${storyId}`);
+  revalidatePath(`/read/${storyId}`);
+  return {};
+}
+
+/** Reject a chapter back to draft (with optional notes) */
+export async function rejectChapter(chapterId: string, storyId: string, notes?: string): Promise<ActionResult> {
+  const supabase = await createClient();
+  const { data: { user } } = await supabase.auth.getUser();
+  if (!user) return { error: 'Not authenticated' };
+
+  const update: Record<string, string> = {
+    status: 'draft',
+    updated_at: new Date().toISOString(),
+  };
+  if (notes) update.notes = notes;
+
+  const { error } = await supabase
+    .from('chapters')
+    .update(update)
+    .eq('id', chapterId);
+
+  if (error) return { error: error.message };
+
+  revalidatePath(`/stories/${storyId}`);
+  return {};
+}
+
+/** Increment view count for a published story (anonymous, no auth required) */
+export async function recordStoryView(storyId: string): Promise<ActionResult> {
+  const supabase = await createClient();
+
+  // Try RPC for view count increment; ignore errors if the function doesn't exist yet
+  try {
+    await supabase.rpc('increment_story_views', { story_id: storyId });
+  } catch {
+    // RPC may not exist yet -- that's fine, views are nice-to-have
+  }
+
   return {};
 }

@@ -14,14 +14,16 @@ import { CharacterList } from '@/components/characters/character-list';
 import { WorldElementList } from '@/components/world/world-element-list';
 import { formatWordCount, getStatusLabel, getGenreLabel, getGenreEmoji } from '@/lib/utils';
 import { Edit, Trash2, Download, Share2, Copy, Check, ExternalLink, X } from 'lucide-react';
-import type { StoryWithDetails, StoryStatus, StoryGenre } from '@/types/database';
+import type { StoryWithDetails, StoryStatus, StoryGenre, Collaborator } from '@/types/database';
 import { ExportModal } from './export-modal';
+import { CollaboratorPanel } from './collaborator-panel';
 
 interface StoryDetailProps {
   story: StoryWithDetails;
+  collaborators?: Collaborator[];
 }
 
-export function StoryDetail({ story }: StoryDetailProps) {
+export function StoryDetail({ story, collaborators = [] }: StoryDetailProps) {
   const router = useRouter();
   const { toast } = useToast();
   const [deleting, setDeleting] = useState(false);
@@ -188,6 +190,9 @@ export function StoryDetail({ story }: StoryDetailProps) {
           <TabsTrigger value="chapters">Chapters ({story.chapters.length})</TabsTrigger>
           <TabsTrigger value="characters">Characters ({story.characters.length})</TabsTrigger>
           <TabsTrigger value="world">World ({story.world_elements.length})</TabsTrigger>
+          <TabsTrigger value="collaborators">
+            Team ({collaborators.filter((c) => c.status !== 'removed').length})
+          </TabsTrigger>
         </TabsList>
         <TabsContent value="chapters">
           <ChapterList chapters={story.chapters} storyId={story.id} />
@@ -197,6 +202,9 @@ export function StoryDetail({ story }: StoryDetailProps) {
         </TabsContent>
         <TabsContent value="world">
           <WorldElementList elements={story.world_elements} storyId={story.id} />
+        </TabsContent>
+        <TabsContent value="collaborators">
+          <CollaboratorPanel storyId={story.id} collaborators={collaborators} />
         </TabsContent>
       </Tabs>
 

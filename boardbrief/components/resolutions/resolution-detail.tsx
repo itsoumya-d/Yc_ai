@@ -8,14 +8,16 @@ import { Button } from '@/components/ui/button';
 import { Card } from '@/components/ui/card';
 import { useToast } from '@/components/ui/toast';
 import { deleteResolution } from '@/lib/actions/resolutions';
+import { VotingPanel } from '@/components/resolutions/voting-panel';
 import { Edit, Trash2, ThumbsUp, ThumbsDown, MinusCircle } from 'lucide-react';
-import type { Resolution } from '@/types/database';
+import type { Resolution, BoardMember } from '@/types/database';
 
 interface ResolutionDetailProps {
   resolution: Resolution;
+  boardMembers: BoardMember[];
 }
 
-export function ResolutionDetail({ resolution }: ResolutionDetailProps) {
+export function ResolutionDetail({ resolution, boardMembers }: ResolutionDetailProps) {
   const router = useRouter();
   const { toast } = useToast();
   const [deleting, setDeleting] = useState(false);
@@ -119,6 +121,8 @@ export function ResolutionDetail({ resolution }: ResolutionDetailProps) {
           </p>
         )}
       </Card>
+
+      <VotingPanel resolution={resolution} boardMembers={boardMembers} />
 
       {resolution.body && (
         <Card className="p-4">

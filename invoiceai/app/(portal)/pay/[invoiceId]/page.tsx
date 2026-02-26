@@ -1,6 +1,7 @@
 import { createClient } from '@/lib/supabase/server';
 import { formatCurrency, formatDate } from '@/lib/utils';
 import { Badge } from '@/components/ui/badge';
+import { PaymentForm } from '@/components/portal/payment-form';
 import type { InvoiceWithDetails } from '@/types/database';
 
 export const dynamic = 'force-dynamic';
@@ -93,10 +94,10 @@ export default async function PaymentPortalPage({
                 <td className="py-3 text-sm">{item.description}</td>
                 <td className="py-3 text-right text-sm font-amount">{item.quantity}</td>
                 <td className="py-3 text-right text-sm font-amount">
-                  {formatCurrency(item.unit_price)}
+                  {formatCurrency(item.unit_price, inv.currency)}
                 </td>
                 <td className="py-3 text-right text-sm font-amount font-medium">
-                  {formatCurrency(item.amount)}
+                  {formatCurrency(item.amount, inv.currency)}
                 </td>
               </tr>
             ))}
@@ -106,24 +107,24 @@ export default async function PaymentPortalPage({
         <div className="mt-4 border-t border-[var(--border)] pt-4">
           <div className="flex justify-between text-sm">
             <span className="text-[var(--muted-foreground)]">Subtotal</span>
-            <span className="font-amount">{formatCurrency(inv.subtotal)}</span>
+            <span className="font-amount">{formatCurrency(inv.subtotal, inv.currency)}</span>
           </div>
           {inv.tax_rate > 0 && (
             <div className="mt-1 flex justify-between text-sm">
               <span className="text-[var(--muted-foreground)]">Tax ({inv.tax_rate}%)</span>
-              <span className="font-amount">{formatCurrency(inv.tax_amount)}</span>
+              <span className="font-amount">{formatCurrency(inv.tax_amount, inv.currency)}</span>
             </div>
           )}
           {inv.discount_amount > 0 && (
             <div className="mt-1 flex justify-between text-sm">
               <span className="text-[var(--muted-foreground)]">Discount</span>
-              <span className="font-amount text-green-600">-{formatCurrency(inv.discount_amount)}</span>
+              <span className="font-amount text-green-600">-{formatCurrency(inv.discount_amount, inv.currency)}</span>
             </div>
           )}
           <div className="mt-3 flex justify-between border-t border-[var(--border)] pt-3">
             <span className="font-heading text-lg font-bold">Amount Due</span>
             <span className="font-amount text-lg font-bold">
-              {formatCurrency(inv.amount_due)}
+              {formatCurrency(inv.amount_due, inv.currency)}
             </span>
           </div>
         </div>
@@ -144,17 +145,12 @@ export default async function PaymentPortalPage({
             </p>
           </div>
         ) : (
-          <div className="text-center">
-            <h2 className="font-heading text-lg font-semibold">Pay This Invoice</h2>
-            <p className="mt-1 text-sm text-[var(--muted-foreground)]">
-              Stripe payment integration will be enabled when Stripe keys are configured.
-            </p>
-            <div className="mt-4 rounded-lg border border-dashed border-[var(--border)] p-8">
-              <p className="text-sm text-[var(--muted-foreground)]">
-                Stripe Elements payment form placeholder
-              </p>
-            </div>
-          </div>
+          <PaymentForm
+            invoiceId={inv.id}
+            amountDue={inv.amount_due}
+            invoiceNumber={inv.invoice_number}
+            currency={inv.currency}
+          />
         )}
       </div>
 

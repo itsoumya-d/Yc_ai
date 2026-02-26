@@ -80,6 +80,7 @@ export function ChapterEditor({ chapter, storyDescription, characters, storyId }
               className="rounded-md border border-[var(--input)] bg-[var(--card)] px-2 py-1 text-xs"
             >
               <option value="draft">Draft</option>
+              <option value="review">In Review</option>
               <option value="published">Published</option>
               <option value="scheduled">Scheduled</option>
             </select>

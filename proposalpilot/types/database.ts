@@ -86,6 +86,31 @@ export interface AIGeneration {
   created_at: string;
 }
 
+export interface ProposalView {
+  id: string;
+  proposal_id: string;
+  viewer_ip: string | null;
+  device_type: string | null;
+  browser: string | null;
+  duration_seconds: number;
+  scroll_depth: number;
+  sections_viewed: string[];
+  created_at: string;
+}
+
+export interface ProposalAnalytics {
+  total_views: number;
+  unique_viewers: number;
+  avg_duration_seconds: number;
+  max_scroll_depth: number;
+  last_viewed_at: string | null;
+  views_by_day: { date: string; count: number }[];
+}
+
+export interface TemplateWithSections extends Template {
+  template_sections?: TemplateSection[];
+}
+
 export interface ProposalWithClient extends Proposal {
   clients?: { name: string; company: string | null } | null;
 }
