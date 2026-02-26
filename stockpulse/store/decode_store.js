@@ -1,0 +1,1 @@
+const fs=require('fs');const b64=fs.readFileSync('E:/Yc_ai/.claude/worktrees/sleepy-franklin/stockpulse/store/store_b64.txt','utf8').trim();const content=Buffer.from(b64,'base64').toString('utf8');fs.writeFileSync('E:/Yc_ai/.claude/worktrees/sleepy-franklin/stockpulse/store/inventory-store.ts',content);console.log('done');

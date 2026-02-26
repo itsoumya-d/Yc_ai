@@ -1,0 +1,25 @@
+{
+  "expo": {
+    "name": "AuraCheck",
+    "slug": "auracheck",
+    "version": "1.0.0",
+    "orientation": "portrait",
+    "icon": "./assets/icon.png",
+    "userInterfaceStyle": "light",
+    "splash": {
+      "backgroundColor": "#0D9488"
+    },
+    "ios": {
+      "bundleIdentifier": "com.auracheck.app",
+      "infoPlist": {
+        "NSCameraUsageDescription": "AuraCheck uses your camera to analyze skin health",
+        "NSPhotoLibraryUsageDescription": "Access photos for skin health analysis"
+      }
+    },
+    "android": {
+      "package": "com.auracheck.app",
+      "permissions": ["CAMERA", "READ_EXTERNAL_STORAGE"]
+    },
+    "plugins": ["expo-router", "expo-camera"]
+  }
+}

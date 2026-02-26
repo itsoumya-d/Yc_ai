@@ -1,0 +1,1 @@
+const fs=require('fs');const c=Buffer.from('aGVsbG8gd29ybGQ=','base64').toString();fs.writeFileSync('E:/Yc_ai/.claude/worktrees/sleepy-franklin/stockpulse/store/test.ts',c);console.log('base64 write ok');

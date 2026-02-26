@@ -66,3 +66,52 @@ export async function deleteActionItem(id: string): Promise<ActionResult> {
   revalidatePath('/dashboard');
   return {};
 }
+
+export async function updateActionItemStatus(
+  id: string,
+  status: ActionItem['status'],
+): Promise<ActionResult<ActionItem>> {
+  const supabase = await createClient();
+  const { data: { user } } = await supabase.auth.getUser();
+  if (!user) return { error: 'Not authenticated' };
+  const { data, error } = await supabase
+    .from('action_items')
+    .update({
+      status,
+      completed_at: status === 'completed' ? new Date().toISOString() : null,
+      updated_at: new Date().toISOString(),
+    })
+    .eq('id', id)
+    .eq('user_id', user.id)
+    .select()
+    .single();
+  if (error) return { error: error.message };
+  revalidatePath('/action-items');
+  revalidatePath('/dashboard');
+  return { data: data as ActionItem };
+}
+
+export async function createBulkActionItems(
+  items: Array<{ title: string; description?: string | null; priority?: string; assignee_name?: string | null }>,
+  meetingId?: string,
+): Promise<ActionResult<ActionItem[]>> {
+  const supabase = await createClient();
+  const { data: { user } } = await supabase.auth.getUser();
+  if (!user) return { error: 'Not authenticated' };
+  const { data, error } = await supabase
+    .from('action_items')
+    .insert(items.map(item => ({
+      user_id: user.id,
+      meeting_id: meetingId ?? null,
+      title: item.title,
+      description: item.description ?? null,
+      status: 'open' as const,
+      priority: item.priority ?? 'medium',
+      assignee_name: item.assignee_name ?? null,
+    })))
+    .select();
+  if (error) return { error: error.message };
+  revalidatePath('/action-items');
+  revalidatePath('/dashboard');
+  return { data: data as ActionItem[] };
+}

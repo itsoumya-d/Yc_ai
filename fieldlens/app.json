@@ -1,0 +1,21 @@
+{
+  "expo": {
+    "name": "FieldLens",
+    "slug": "fieldlens",
+    "version": "1.0.0",
+    "orientation": "portrait",
+    "userInterfaceStyle": "dark",
+    "scheme": "fieldlens",
+    "splash": { "backgroundColor": "#1C1C1E" },
+    "ios": {
+      "infoPlist": {
+        "NSCameraUsageDescription": "FieldLens uses your camera to capture job site photos for AI analysis."
+      }
+    },
+    "android": {
+      "adaptiveIcon": { "backgroundColor": "#1C1C1E" },
+      "permissions": ["CAMERA"]
+    },
+    "plugins": ["expo-router", "expo-camera"]
+  }
+}

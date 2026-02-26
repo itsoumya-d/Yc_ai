@@ -1,0 +1,36 @@
+{
+  "expo": {
+    "name": "RouteAI",
+    "slug": "routeai",
+    "version": "1.0.0",
+    "orientation": "portrait",
+    "userInterfaceStyle": "light",
+    "icon": "./assets/icon.png",
+    "scheme": "routeai",
+    "splash": {
+      "backgroundColor": "#0369A1"
+    },
+    "ios": {
+      "supportsTablet": false,
+      "bundleIdentifier": "com.routeai.app",
+      "infoPlist": {
+        "NSLocationWhenInUseUsageDescription": "RouteAI needs location to optimize your route.",
+        "NSLocationAlwaysUsageDescription": "RouteAI needs location for background route tracking."
+      }
+    },
+    "android": {
+      "adaptiveIcon": {
+        "backgroundColor": "#0369A1"
+      },
+      "package": "com.routeai.app",
+      "permissions": ["ACCESS_FINE_LOCATION", "ACCESS_COARSE_LOCATION"]
+    },
+    "web": {
+      "bundler": "metro"
+    },
+    "plugins": [
+      "expo-router",
+      "expo-location"
+    ]
+  }
+}
