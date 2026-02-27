@@ -4,6 +4,11 @@ import { createClient } from '@/lib/supabase/server';
 import { revalidatePath } from 'next/cache';
 import type { Document, DocumentType } from '@/types/database';
 
+/** Escape SQL LIKE/ILIKE wildcards to prevent pattern injection */
+function escapeLike(str: string): string {
+  return str.replace(/[%_\\]/g, '\\$&');
+}
+
 interface ActionResult<T = null> {
   data?: T;
   error?: string;
@@ -33,7 +38,7 @@ export async function getDocuments(options?: {
 
   if (options?.search) {
     query = query.or(
-      `title.ilike.%${options.search}%,file_name.ilike.%${options.search}%`
+      `title.ilike.%${escapeLike(options.search)}%,file_name.ilike.%${escapeLike(options.search)}%`
     );
   }
 

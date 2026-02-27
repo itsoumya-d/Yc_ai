@@ -14,6 +14,7 @@ import {
   Edit,
   Trash2,
   Calendar,
+  CalendarPlus,
   Clock,
   MapPin,
   Video,
@@ -21,6 +22,8 @@ import {
   Loader2,
   Download,
 } from 'lucide-react';
+import { getGoogleCalendarUrl } from '@/lib/actions/calendar';
+import { Users } from 'lucide-react';
 import type { MeetingWithDetails, MeetingType, MeetingStatus } from '@/types/database';
 
 interface MeetingDetailProps {
@@ -125,6 +128,31 @@ export function MeetingDetail({ meeting }: MeetingDetailProps) {
               Minutes PDF
             </Button>
           </a>
+          {meeting.scheduled_at && (
+            <>
+              <a href={`/api/meetings/${meeting.id}/ical`} download>
+                <Button variant="outline" size="sm">
+                  <CalendarPlus className="w-4 h-4 mr-1" />
+                  iCal
+                </Button>
+              </a>
+              <Button
+                variant="outline"
+                size="sm"
+                onClick={async () => {
+                  const result = await getGoogleCalendarUrl(meeting.id);
+                  if (result.data) {
+                    window.open(result.data, '_blank');
+                  } else {
+                    toast({ title: result.error || 'Could not generate calendar link', variant: 'destructive' });
+                  }
+                }}
+              >
+                <Calendar className="w-4 h-4 mr-1" />
+                Google Cal
+              </Button>
+            </>
+          )}
           <Button
             variant="outline"
             size="sm"
@@ -182,6 +210,37 @@ export function MeetingDetail({ meeting }: MeetingDetailProps) {
           </p>
         )}
       </Card>
+
+      {/* Attendees */}
+      {meeting.attendees && meeting.attendees.length > 0 && (
+        <Card className="p-4">
+          <h3 className="text-sm font-medium text-[var(--muted-foreground)] mb-3 flex items-center gap-1.5">
+            <Users className="w-4 h-4" />
+            Attendees ({meeting.attendees.length})
+          </h3>
+          <div className="space-y-2">
+            {meeting.attendees.map((attendee) => (
+              <div
+                key={attendee.id}
+                className="flex items-center justify-between py-2 border-b border-[var(--border)] last:border-0"
+              >
+                <div>
+                  <p className="text-sm font-medium text-[var(--foreground)]">
+                    {attendee.board_member?.full_name ?? 'Unknown member'}
+                  </p>
+                  <p className="text-xs text-[var(--muted-foreground)]">
+                    {attendee.board_member?.title ?? attendee.board_member?.member_type}
+                    {attendee.board_member?.company && ` at ${attendee.board_member.company}`}
+                  </p>
+                </div>
+                <Badge variant={attendee.status}>
+                  {attendee.status}
+                </Badge>
+              </div>
+            ))}
+          </div>
+        </Card>
+      )}
 
       {meeting.action_items.length > 0 && (
         <Card className="p-4">

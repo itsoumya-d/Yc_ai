@@ -76,7 +76,19 @@ export interface AIGeneration {
   created_at: string;
 }
 
+export type AttendeeStatus = 'invited' | 'confirmed' | 'declined' | 'attended';
+
+export interface MeetingAttendee {
+  id: string;
+  meeting_id: string;
+  board_member_id: string;
+  status: AttendeeStatus;
+  created_at: string;
+  board_member?: BoardMember;
+}
+
 export interface MeetingWithDetails extends Meeting {
   action_items: ActionItem[];
   resolutions: Resolution[];
+  attendees?: MeetingAttendee[];
 }

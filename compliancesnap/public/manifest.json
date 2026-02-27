@@ -1,0 +1,32 @@
+{
+  "name": "ComplianceSnap - AI Safety Inspector",
+  "short_name": "ComplianceSnap",
+  "description": "AI-powered safety compliance inspection and violation tracking for EHS professionals.",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#000000",
+  "theme_color": "#FFC107",
+  "orientation": "portrait-primary",
+  "icons": [
+    { "src": "/icons/icon-192.svg", "sizes": "192x192", "type": "image/svg+xml", "purpose": "any" },
+    { "src": "/icons/icon-512.svg", "sizes": "512x512", "type": "image/svg+xml", "purpose": "any" },
+    { "src": "/icons/icon-maskable-512.svg", "sizes": "512x512", "type": "image/svg+xml", "purpose": "maskable" }
+  ],
+  "shortcuts": [
+    {
+      "name": "Scan Hazards",
+      "short_name": "Scan",
+      "description": "Start AI-powered hazard scanning",
+      "url": "/?tab=scanner",
+      "icons": [{ "src": "/icons/icon-192.svg", "sizes": "192x192" }]
+    },
+    {
+      "name": "Inspections",
+      "short_name": "Inspect",
+      "description": "View and manage inspections",
+      "url": "/?tab=inspections",
+      "icons": [{ "src": "/icons/icon-192.svg", "sizes": "192x192" }]
+    }
+  ],
+  "categories": ["business", "productivity"]
+}

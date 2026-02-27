@@ -3,6 +3,12 @@
 import { createClient } from '@/lib/supabase/server';
 import { revalidatePath } from 'next/cache';
 import type { Client } from '@/types/database';
+import { clientFormSchema } from '@/lib/validations';
+
+/** Escape SQL LIKE/ILIKE wildcards to prevent pattern injection */
+function escapeLike(str: string): string {
+  return str.replace(/[%_\\]/g, '\\$&');
+}
 
 export interface ClientFormData {
   name: string;
@@ -68,7 +74,7 @@ export async function getClients(options?: {
 
   if (search) {
     query = query.or(
-      `name.ilike.%${search}%,company.ilike.%${search}%,email.ilike.%${search}%`
+      `name.ilike.%${escapeLike(search)}%,company.ilike.%${escapeLike(search)}%,email.ilike.%${escapeLike(search)}%`
     );
   }
 
@@ -109,6 +115,12 @@ export async function getClient(id: string): Promise<ActionResult> {
 }
 
 export async function createClientAction(formData: ClientFormData): Promise<ActionResult> {
+  // Validate input with Zod
+  const parsed = clientFormSchema.safeParse(formData);
+  if (!parsed.success) {
+    return { success: false, error: parsed.error.errors[0]?.message ?? 'Invalid input' };
+  }
+
   const supabase = await createClient();
   const {
     data: { user },
@@ -116,14 +128,6 @@ export async function createClientAction(formData: ClientFormData): Promise<Acti
 
   if (!user) {
     return { success: false, error: 'Not authenticated' };
-  }
-
-  if (!formData.name?.trim()) {
-    return { success: false, error: 'Client name is required' };
-  }
-
-  if (!formData.email?.trim()) {
-    return { success: false, error: 'Email is required' };
   }
 
   const { data, error } = await supabase

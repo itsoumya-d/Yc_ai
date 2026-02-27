@@ -4,6 +4,11 @@ import { createClient } from '@/lib/supabase/server';
 import { revalidatePath } from 'next/cache';
 import type { Case, CaseStatus } from '@/types/database';
 
+/** Escape SQL LIKE/ILIKE wildcards to prevent pattern injection */
+function escapeLike(str: string): string {
+  return str.replace(/[%_\\]/g, '\\$&');
+}
+
 export interface ActionResult<T = null> {
   data?: T;
   error?: string;
@@ -38,7 +43,7 @@ export async function getCases(options?: {
 
   if (options?.search) {
     query = query.or(
-      `title.ilike.%${options.search}%,defendant_name.ilike.%${options.search}%,case_number.ilike.%${options.search}%`
+      `title.ilike.%${escapeLike(options.search)}%,defendant_name.ilike.%${escapeLike(options.search)}%,case_number.ilike.%${escapeLike(options.search)}%`
     );
   }
 

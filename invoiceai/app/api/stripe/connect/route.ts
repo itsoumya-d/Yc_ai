@@ -1,6 +1,7 @@
 import { NextResponse } from 'next/server';
 import { createClient } from '@/lib/supabase/server';
 import { getStripe } from '@/lib/stripe/client';
+import { rateLimit } from '@/lib/rate-limit';
 
 // Create or retrieve Stripe Connect account and return onboarding URL
 export async function POST() {
@@ -11,6 +12,14 @@ export async function POST() {
 
   if (!user) {
     return NextResponse.json({ error: 'Not authenticated' }, { status: 401 });
+  }
+
+  const { allowed } = rateLimit(`stripe-connect:${user.id}`, { limit: 5, windowSeconds: 60 });
+  if (!allowed) {
+    return NextResponse.json(
+      { error: 'Rate limit exceeded. Please wait before trying again.' },
+      { status: 429 }
+    );
   }
 
   const { data: profile } = await supabase

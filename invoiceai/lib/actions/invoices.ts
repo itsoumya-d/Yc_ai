@@ -3,6 +3,12 @@
 import { createClient } from '@/lib/supabase/server';
 import { revalidatePath } from 'next/cache';
 import type { Invoice, InvoiceItem, InvoiceWithDetails } from '@/types/database';
+import { invoiceFormSchema } from '@/lib/validations';
+
+/** Escape SQL LIKE/ILIKE wildcards to prevent pattern injection */
+function escapeLike(str: string): string {
+  return str.replace(/[%_\\]/g, '\\$&');
+}
 
 export interface InvoiceItemInput {
   description: string;
@@ -81,7 +87,7 @@ export async function getInvoices(options?: {
   }
 
   if (search) {
-    query = query.or(`invoice_number.ilike.%${search}%`);
+    query = query.or(`invoice_number.ilike.%${escapeLike(search)}%`);
   }
 
   query = query
@@ -121,6 +127,12 @@ export async function getInvoice(id: string): Promise<{ success: boolean; error?
 }
 
 export async function createInvoiceAction(formData: InvoiceFormData): Promise<ActionResult> {
+  // Validate input with Zod
+  const parsed = invoiceFormSchema.safeParse(formData);
+  if (!parsed.success) {
+    return { success: false, error: parsed.error.errors[0]?.message ?? 'Invalid input' };
+  }
+
   const supabase = await createClient();
   const {
     data: { user },
@@ -128,14 +140,6 @@ export async function createInvoiceAction(formData: InvoiceFormData): Promise<Ac
 
   if (!user) {
     return { success: false, error: 'Not authenticated' };
-  }
-
-  if (!formData.client_id) {
-    return { success: false, error: 'Client is required' };
-  }
-
-  if (!formData.items || formData.items.length === 0) {
-    return { success: false, error: 'At least one line item is required' };
   }
 
   // Get user profile for invoice number
@@ -426,4 +430,90 @@ export async function duplicateInvoiceAction(id: string): Promise<ActionResult> 
       unit_price: item.unit_price,
     })),
   });
+}
+
+// ---- Bulk Operations ----
+
+export async function bulkUpdateInvoiceStatus(
+  ids: string[],
+  status: Invoice['status']
+): Promise<{ success: boolean; error?: string; updated: number }> {
+  const supabase = await createClient();
+  const {
+    data: { user },
+  } = await supabase.auth.getUser();
+
+  if (!user) {
+    return { success: false, error: 'Not authenticated', updated: 0 };
+  }
+
+  if (ids.length === 0) {
+    return { success: false, error: 'No invoices selected', updated: 0 };
+  }
+
+  if (ids.length > 50) {
+    return { success: false, error: 'Maximum 50 invoices can be updated at once', updated: 0 };
+  }
+
+  const now = new Date().toISOString();
+  const updateData: Record<string, unknown> = { status };
+
+  if (status === 'sent') updateData.sent_at = now;
+  if (status === 'viewed') updateData.viewed_at = now;
+  if (status === 'paid') updateData.paid_at = now;
+  if (status === 'cancelled') updateData.cancelled_at = now;
+
+  const { data, error } = await supabase
+    .from('invoices')
+    .update(updateData)
+    .in('id', ids)
+    .eq('user_id', user.id)
+    .select('id');
+
+  if (error) {
+    return { success: false, error: error.message, updated: 0 };
+  }
+
+  revalidatePath('/invoices');
+  revalidatePath('/dashboard');
+  return { success: true, updated: data?.length ?? 0 };
+}
+
+export async function bulkDeleteInvoices(
+  ids: string[]
+): Promise<{ success: boolean; error?: string; deleted: number }> {
+  const supabase = await createClient();
+  const {
+    data: { user },
+  } = await supabase.auth.getUser();
+
+  if (!user) {
+    return { success: false, error: 'Not authenticated', deleted: 0 };
+  }
+
+  if (ids.length === 0) {
+    return { success: false, error: 'No invoices selected', deleted: 0 };
+  }
+
+  if (ids.length > 50) {
+    return { success: false, error: 'Maximum 50 invoices can be deleted at once', deleted: 0 };
+  }
+
+  // Delete items first
+  await supabase.from('invoice_items').delete().in('invoice_id', ids);
+
+  const { data, error } = await supabase
+    .from('invoices')
+    .delete()
+    .in('id', ids)
+    .eq('user_id', user.id)
+    .select('id');
+
+  if (error) {
+    return { success: false, error: error.message, deleted: 0 };
+  }
+
+  revalidatePath('/invoices');
+  revalidatePath('/dashboard');
+  return { success: true, deleted: data?.length ?? 0 };
 }

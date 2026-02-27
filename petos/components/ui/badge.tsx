@@ -25,6 +25,8 @@ const badgeVariants = cva(
         mild: 'bg-yellow-50 text-yellow-700',
         moderate: 'bg-orange-50 text-orange-700',
         severe: 'bg-red-50 text-red-700',
+        warning: 'bg-yellow-50 text-yellow-700',
+        destructive: 'bg-red-100 text-red-800',
       },
     },
     defaultVariants: {

@@ -1,0 +1,149 @@
+@import 'tailwindcss';
+
+@theme {
+  /* Sage Green — Primary */
+  --color-sage-50: #f2f7f2;
+  --color-sage-100: #e0ede0;
+  --color-sage-200: #c1dbc1;
+  --color-sage-300: #96c196;
+  --color-sage-400: #72a872;
+  --color-sage-500: #5B8C5A;
+  --color-sage-600: #4a7349;
+  --color-sage-700: #3d5e3d;
+  --color-sage-800: #334c33;
+  --color-sage-900: #2b3f2b;
+
+  /* Gentle Red — Warnings */
+  --color-gentlered-50: #fef2f2;
+  --color-gentlered-100: #fee2e2;
+  --color-gentlered-200: #fecaca;
+  --color-gentlered-300: #fca5a5;
+  --color-gentlered-400: #f87171;
+  --color-gentlered-500: #ef4444;
+  --color-gentlered-600: #dc2626;
+  --color-gentlered-700: #b91c1c;
+  --color-gentlered-800: #991b1b;
+  --color-gentlered-900: #7f1d1d;
+
+  /* Warm Amber — Caution */
+  --color-warmamber-50: #fffbeb;
+  --color-warmamber-100: #fef3c7;
+  --color-warmamber-200: #fde68a;
+  --color-warmamber-300: #fcd34d;
+  --color-warmamber-400: #fbbf24;
+  --color-warmamber-500: #f59e0b;
+  --color-warmamber-600: #d97706;
+  --color-warmamber-700: #b45309;
+  --color-warmamber-800: #92400e;
+  --color-warmamber-900: #78350f;
+
+  /* Trust Blue — Info */
+  --color-trustblue-50: #eff6ff;
+  --color-trustblue-100: #dbeafe;
+  --color-trustblue-200: #bfdbfe;
+  --color-trustblue-300: #93c5fd;
+  --color-trustblue-400: #60a5fa;
+  --color-trustblue-500: #3b82f6;
+  --color-trustblue-600: #2563eb;
+  --color-trustblue-700: #1d4ed8;
+  --color-trustblue-800: #1e40af;
+  --color-trustblue-900: #1e3a5f;
+
+  /* Surfaces & Borders */
+  --color-surface: #FAFAF5;
+  --color-surface-secondary: #f3f2ed;
+  --color-surface-tertiary: #e8e6df;
+  --color-border: #e5e3dc;
+  --color-border-hover: #d1cfc7;
+
+  /* Text */
+  --color-text-primary: #1a1a18;
+  --color-text-secondary: #6b6960;
+  --color-text-muted: #9c9a91;
+  --color-text-inverse: #fafaf5;
+
+  /* Fonts */
+  --font-heading: 'Source Serif 4', serif;
+  --font-sans: 'Inter', sans-serif;
+
+  /* Shadows */
+  --shadow-xs: 0 1px 2px rgba(0, 0, 0, 0.04);
+  --shadow-sm: 0 2px 4px rgba(0, 0, 0, 0.05);
+  --shadow-md: 0 4px 12px rgba(0, 0, 0, 0.07);
+  --shadow-lg: 0 8px 24px rgba(0, 0, 0, 0.10);
+  --shadow-xl: 0 12px 36px rgba(0, 0, 0, 0.14);
+
+  /* Radius */
+  --radius-sm: 6px;
+  --radius-md: 8px;
+  --radius-lg: 12px;
+  --radius-xl: 16px;
+  --radius-2xl: 20px;
+  --radius-full: 9999px;
+}
+
+/* Base */
+body {
+  font-family: var(--font-sans);
+  color: var(--color-text-primary);
+  background-color: #FAFAF5;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+/* Focus */
+*:focus-visible {
+  outline: 2px solid var(--color-sage-500);
+  outline-offset: 2px;
+}
+
+/* Reduced motion */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  ::before,
+  ::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}
+
+/* Scrollbar */
+::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+::-webkit-scrollbar-thumb {
+  background: var(--color-text-muted);
+  border-radius: var(--radius-full);
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: var(--color-text-secondary);
+}
+
+/* Skeleton animation */
+@keyframes skeleton-pulse {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.5; }
+}
+
+.animate-skeleton {
+  animation: skeleton-pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+}
+
+/* Progress bar animation */
+@keyframes progress-fill {
+  from { width: 0; }
+  to { width: var(--progress-width); }
+}
+
+.animate-progress-fill {
+  animation: progress-fill 600ms ease-out forwards;
+}

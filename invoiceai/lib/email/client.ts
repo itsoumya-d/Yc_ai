@@ -1,5 +1,14 @@
 import sgMail from '@sendgrid/mail';
 
+function escapeHtml(str: string): string {
+  return str
+    .replace(/&/g, '&amp;')
+    .replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;')
+    .replace(/"/g, '&quot;')
+    .replace(/'/g, '&#039;');
+}
+
 let initialized = false;
 
 function initSendGrid() {
@@ -62,14 +71,14 @@ export function buildInvoiceEmailHtml(params: {
   <div style="max-width: 600px; margin: 0 auto; padding: 40px 20px;">
     <div style="background: white; border-radius: 12px; padding: 32px; box-shadow: 0 1px 3px rgba(0,0,0,0.1);">
       <div style="text-align: center; margin-bottom: 24px;">
-        <h1 style="color: #16a34a; font-size: 20px; margin: 0;">${params.businessName ?? 'InvoiceAI'}</h1>
+        <h1 style="color: #16a34a; font-size: 20px; margin: 0;">${escapeHtml(params.businessName ?? 'InvoiceAI')}</h1>
       </div>
 
       <p style="color: #333; font-size: 16px; line-height: 1.5;">
-        Hi ${params.clientName},
+        Hi ${escapeHtml(params.clientName)},
       </p>
 
-      ${params.personalMessage ? `<p style="color: #555; font-size: 14px; line-height: 1.6;">${params.personalMessage}</p>` : ''}
+      ${params.personalMessage ? `<p style="color: #555; font-size: 14px; line-height: 1.6;">${escapeHtml(params.personalMessage)}</p>` : ''}
 
       <div style="background: #f0fdf4; border-radius: 8px; padding: 20px; margin: 24px 0; text-align: center;">
         <p style="color: #666; font-size: 12px; text-transform: uppercase; letter-spacing: 1px; margin: 0;">Invoice ${params.invoiceNumber}</p>
@@ -110,10 +119,10 @@ export function buildReminderEmailHtml(params: {
   <div style="max-width: 600px; margin: 0 auto; padding: 40px 20px;">
     <div style="background: white; border-radius: 12px; padding: 32px; box-shadow: 0 1px 3px rgba(0,0,0,0.1);">
       <div style="text-align: center; margin-bottom: 24px;">
-        <h1 style="color: #16a34a; font-size: 20px; margin: 0;">${params.businessName ?? 'InvoiceAI'}</h1>
+        <h1 style="color: #16a34a; font-size: 20px; margin: 0;">${escapeHtml(params.businessName ?? 'InvoiceAI')}</h1>
       </div>
 
-      <div style="color: #333; font-size: 14px; line-height: 1.6; white-space: pre-wrap;">${params.body}</div>
+      <div style="color: #333; font-size: 14px; line-height: 1.6; white-space: pre-wrap;">${escapeHtml(params.body)}</div>
 
       <div style="text-align: center; margin: 24px 0;">
         <a href="${params.portalUrl}" style="display: inline-block; background: #16a34a; color: white; padding: 12px 32px; border-radius: 8px; text-decoration: none; font-weight: 600; font-size: 14px;">

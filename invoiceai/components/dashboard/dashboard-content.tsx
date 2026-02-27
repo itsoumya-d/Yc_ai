@@ -1,5 +1,7 @@
 'use client';
 
+import { useState, useCallback } from 'react';
+import { useSearchParams } from 'next/navigation';
 import { motion } from 'framer-motion';
 import { AnimatedStatCard } from '@/components/ui/animated-stat-card';
 import { RevenueChart } from '@/components/dashboard/revenue-chart';
@@ -9,7 +11,9 @@ import { PaymentMethodsChart } from '@/components/dashboard/payment-methods-char
 import { InvoiceStatusChart } from '@/components/dashboard/invoice-status-chart';
 import { PaymentAgingChart } from '@/components/dashboard/payment-aging-chart';
 import { MRRWidget } from '@/components/dashboard/mrr-widget';
+import { DateRangeFilter } from '@/components/dashboard/date-range-filter';
 import { formatCurrency } from '@/lib/utils';
+import { exportAnalyticsToCSV } from '@/lib/actions/analytics';
 import type { AnalyticsData } from '@/lib/actions/analytics';
 import type { ReportData } from '@/lib/actions/reports';
 
@@ -19,8 +23,49 @@ interface DashboardContentProps {
 }
 
 export function DashboardContent({ analytics, report }: DashboardContentProps) {
+  const searchParams = useSearchParams();
+  const [isExporting, setIsExporting] = useState(false);
+
+  const handleExportCSV = useCallback(async () => {
+    setIsExporting(true);
+    try {
+      const start = searchParams.get('start') || undefined;
+      const end = searchParams.get('end') || undefined;
+
+      const dateRange = start && end
+        ? { start, end }
+        : undefined;
+
+      const result = await exportAnalyticsToCSV(
+        dateRange ?? {
+          start: new Date(new Date().setMonth(new Date().getMonth() - 11)).toISOString().split('T')[0],
+          end: new Date().toISOString().split('T')[0],
+        }
+      );
+
+      if (result.data) {
+        const blob = new Blob([result.data], { type: 'text/csv;charset=utf-8;' });
+        const url = URL.createObjectURL(blob);
+        const link = document.createElement('a');
+        link.href = url;
+        link.download = `invoiceai-analytics-${new Date().toISOString().split('T')[0]}.csv`;
+        document.body.appendChild(link);
+        link.click();
+        document.body.removeChild(link);
+        URL.revokeObjectURL(url);
+      }
+    } catch (error) {
+      console.error('Export failed:', error);
+    } finally {
+      setIsExporting(false);
+    }
+  }, [searchParams]);
+
   return (
     <div className="space-y-6">
+      {/* Date Range Filter + Export */}
+      <DateRangeFilter onExportCSV={handleExportCSV} isExporting={isExporting} />
+
       {/* Stats Grid — 4 animated cards */}
       <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4">
         <AnimatedStatCard

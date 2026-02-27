@@ -4,9 +4,9 @@ import { getReportData } from '@/lib/actions/reports';
 import { getAnalyticsData } from '@/lib/actions/analytics';
 import { EmptyState } from '@/components/ui/empty-state';
 import { Button } from '@/components/ui/button';
-import { formatCurrency } from '@/lib/utils';
 import Link from 'next/link';
 import { DashboardContent } from '@/components/dashboard/dashboard-content';
+import { Suspense } from 'react';
 
 export const dynamic = 'force-dynamic';
 
@@ -14,7 +14,12 @@ export const metadata = {
   title: 'Dashboard',
 };
 
-export default async function DashboardPage() {
+interface DashboardPageProps {
+  searchParams: Promise<{ [key: string]: string | string[] | undefined }>;
+}
+
+export default async function DashboardPage({ searchParams }: DashboardPageProps) {
+  const params = await searchParams;
   const supabase = await createClient();
   const {
     data: { user },
@@ -38,9 +43,14 @@ export default async function DashboardPage() {
   const greeting =
     hour < 12 ? 'Good morning' : hour < 18 ? 'Good afternoon' : 'Good evening';
 
+  // Parse date range from search params
+  const startParam = typeof params.start === 'string' ? params.start : undefined;
+  const endParam = typeof params.end === 'string' ? params.end : undefined;
+  const dateRange = startParam && endParam ? { start: startParam, end: endParam } : undefined;
+
   const [{ data: report }, { data: analytics }] = await Promise.all([
     getReportData(),
-    getAnalyticsData(),
+    getAnalyticsData(dateRange),
   ]);
 
   const hasData =
@@ -78,7 +88,9 @@ export default async function DashboardPage() {
       </div>
 
       {hasData && analytics && report ? (
-        <DashboardContent analytics={analytics} report={report} />
+        <Suspense fallback={<div className="h-96 animate-pulse rounded-lg bg-[var(--muted)]" />}>
+          <DashboardContent analytics={analytics} report={report} />
+        </Suspense>
       ) : (
         <div className="mt-12">
           <EmptyState

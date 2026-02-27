@@ -1,6 +1,14 @@
+import { useCallback, useState } from 'react';
 import { cn, getStatusColor, getSeverityColor, getSeverityLabel } from '@/lib/utils';
 import { useAppStore } from '@/stores/app-store';
-import { Settings, Users, Building2, BookOpen, ClipboardCheck, ChevronRight, User, Bell, Shield, HelpCircle } from 'lucide-react';
+import { useAuthStore } from '@/stores/auth-store';
+import { signOut } from '@/lib/auth';
+import { updateUserProfile } from '@/lib/data-service';
+import { saveSettings } from '@/lib/storage';
+import {
+  Settings, Users, Building2, BookOpen, ClipboardCheck,
+  ChevronRight, User, Bell, Shield, HelpCircle, LogOut, Loader2,
+} from 'lucide-react';
 
 const menuItems = [
   { icon: ClipboardCheck, label: 'Corrective Actions', badgeKey: 'actions' as const },
@@ -13,7 +21,9 @@ const menuItems = [
 ];
 
 export function MoreView() {
-  const { correctiveActions, facilities, userName, userRole, organizationName } = useAppStore();
+  const { correctiveActions, facilities, userName, userRole, organizationName, theme, setTheme } = useAppStore();
+  const { user } = useAuthStore();
+  const [signingOut, setSigningOut] = useState(false);
 
   const activeActions = correctiveActions.filter((a) => a.status !== 'completed');
 
@@ -28,6 +38,32 @@ export function MoreView() {
     return '';
   };
 
+  const handleSignOut = useCallback(async () => {
+    setSigningOut(true);
+    try {
+      await signOut();
+    } catch {
+      // Even if sign-out fails, auth state listener will clear state
+    } finally {
+      setSigningOut(false);
+    }
+  }, []);
+
+  const handleToggleTheme = useCallback(async () => {
+    const next: 'dark' | 'light' | 'system' = theme === 'dark' ? 'light' : theme === 'light' ? 'system' : 'dark';
+    setTheme(next);
+    saveSettings({ theme: next });
+    if (next === 'system') {
+      const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+      document.documentElement.setAttribute('data-theme', prefersDark ? 'dark' : 'light');
+    } else {
+      document.documentElement.setAttribute('data-theme', next);
+    }
+    if (user) {
+      await updateUserProfile(user.id, { theme: next });
+    }
+  }, [theme, setTheme, user]);
+
   return (
     <div className="flex h-full flex-col">
       <div className="bg-bg-surface px-4 pb-4 pt-12">
@@ -35,9 +71,10 @@ export function MoreView() {
           <div className="flex h-12 w-12 items-center justify-center rounded-full bg-safety-yellow">
             <User className="h-6 w-6 text-text-inverse" />
           </div>
-          <div>
+          <div className="flex-1">
             <div className="snap-heading text-base text-text-primary">{userName}</div>
             <div className="text-xs text-text-secondary">{userRole} {'\u2022'} {organizationName}</div>
+            {user && <div className="text-[10px] text-text-secondary/60 mt-0.5">{user.email}</div>}
           </div>
         </div>
       </div>
@@ -48,10 +85,19 @@ export function MoreView() {
           {menuItems.map((item, i) => {
             const badge = getBadge(item.badgeKey);
             return (
-              <button key={item.label} className={cn('flex w-full items-center justify-between px-4 py-3.5', i > 0 && 'border-t border-border-default')}>
+              <button
+                key={item.label}
+                onClick={item.label === 'Settings' ? handleToggleTheme : undefined}
+                className={cn('flex w-full items-center justify-between px-4 py-3.5', i > 0 && 'border-t border-border-default')}
+              >
                 <div className="flex items-center gap-3">
                   <item.icon className="h-5 w-5 text-text-secondary" />
-                  <span className="text-sm text-text-primary">{item.label}</span>
+                  <span className="text-sm text-text-primary">
+                    {item.label}
+                    {item.label === 'Settings' && (
+                      <span className="ml-2 text-[10px] text-text-secondary">({theme})</span>
+                    )}
+                  </span>
                 </div>
                 <div className="flex items-center gap-2">
                   {badge && (
@@ -65,6 +111,18 @@ export function MoreView() {
             );
           })}
         </div>
+
+        {/* Sign Out */}
+        {user && (
+          <button
+            onClick={handleSignOut}
+            disabled={signingOut}
+            className="flex w-full items-center justify-center gap-2 rounded-xl bg-bg-card p-4 text-severity-critical transition-colors active:bg-severity-critical-bg"
+          >
+            {signingOut ? <Loader2 className="h-4 w-4 animate-spin" /> : <LogOut className="h-4 w-4" />}
+            <span className="text-sm font-medium">{signingOut ? 'Signing out...' : 'Sign Out'}</span>
+          </button>
+        )}
 
         {/* Corrective Actions Preview */}
         {activeActions.length > 0 && (
@@ -103,6 +161,9 @@ export function MoreView() {
             <span className="snap-heading text-sm text-text-primary">ComplianceSnap</span>
           </div>
           <p className="mt-1 text-xs text-text-secondary">Version 1.0.0 {'\u2022'} AI Safety Inspector</p>
+          {user && (
+            <p className="mt-0.5 text-[10px] text-compliant">Syncing with cloud</p>
+          )}
         </div>
       </div>
     </div>

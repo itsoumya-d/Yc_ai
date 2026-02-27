@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useTransition } from 'react';
 import { useRouter } from 'next/navigation';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -8,6 +8,7 @@ import { Badge } from '@/components/ui/badge';
 import { EmptyState } from '@/components/ui/empty-state';
 import { DataTable } from '@/components/ui/data-table';
 import { formatCurrency, formatDate } from '@/lib/utils';
+import { bulkUpdateInvoiceStatus, bulkDeleteInvoices } from '@/lib/actions/invoices';
 import type { InvoiceWithDetails } from '@/types/database';
 
 interface InvoiceListProps {
@@ -30,6 +31,8 @@ export function InvoiceList({ initialInvoices, totalCount }: InvoiceListProps) {
   const router = useRouter();
   const [statusFilter, setStatusFilter] = useState<StatusFilter>('all');
   const [search, setSearch] = useState('');
+  const [selectedIds, setSelectedIds] = useState<Set<string>>(new Set());
+  const [isPending, startTransition] = useTransition();
 
   const filteredInvoices = initialInvoices.filter((inv) => {
     if (statusFilter !== 'all' && inv.status !== statusFilter) return false;
@@ -43,20 +46,86 @@ export function InvoiceList({ initialInvoices, totalCount }: InvoiceListProps) {
     return true;
   });
 
-  // Summary stats
-  const totalOutstanding = initialInvoices
-    .filter((inv) => ['sent', 'viewed', 'partial', 'overdue'].includes(inv.status))
-    .reduce((sum, inv) => sum + inv.amount_due, 0);
+  // Summary stats — group by currency
+  const currencyTotals = initialInvoices.reduce<Record<string, { outstanding: number; overdue: number; paid: number }>>((acc, inv) => {
+    const cur = inv.currency || 'USD';
+    if (!acc[cur]) acc[cur] = { outstanding: 0, overdue: 0, paid: 0 };
+    if (['sent', 'viewed', 'partial', 'overdue'].includes(inv.status)) acc[cur].outstanding += inv.amount_due;
+    if (inv.status === 'overdue') acc[cur].overdue += inv.amount_due;
+    if (inv.status === 'paid') acc[cur].paid += inv.total;
+    return acc;
+  }, {});
 
-  const totalOverdue = initialInvoices
-    .filter((inv) => inv.status === 'overdue')
-    .reduce((sum, inv) => sum + inv.amount_due, 0);
+  const primaryCurrency = Object.keys(currencyTotals).sort((a, b) =>
+    (currencyTotals[b].paid + currencyTotals[b].outstanding) - (currencyTotals[a].paid + currencyTotals[a].outstanding)
+  )[0] || 'USD';
 
-  const totalPaid = initialInvoices
-    .filter((inv) => inv.status === 'paid')
-    .reduce((sum, inv) => sum + inv.total, 0);
+  const totalOutstanding = Object.entries(currencyTotals).reduce((sum, [, v]) => sum + v.outstanding, 0);
+  const totalOverdue = Object.entries(currencyTotals).reduce((sum, [, v]) => sum + v.overdue, 0);
+  const totalPaid = Object.entries(currencyTotals).reduce((sum, [, v]) => sum + v.paid, 0);
+
+  // Selection helpers
+  const allFilteredSelected = filteredInvoices.length > 0 && filteredInvoices.every((inv) => selectedIds.has(inv.id));
+
+  function toggleSelectAll() {
+    if (allFilteredSelected) {
+      setSelectedIds(new Set());
+    } else {
+      setSelectedIds(new Set(filteredInvoices.map((inv) => inv.id)));
+    }
+  }
+
+  function toggleSelect(id: string) {
+    setSelectedIds((prev) => {
+      const next = new Set(prev);
+      if (next.has(id)) next.delete(id);
+      else next.add(id);
+      return next;
+    });
+  }
+
+  // Bulk action handlers
+  function handleBulkAction(action: 'mark_paid' | 'mark_sent' | 'delete') {
+    const ids = Array.from(selectedIds);
+    if (ids.length === 0) return;
+
+    startTransition(async () => {
+      if (action === 'delete') {
+        if (!confirm(`Delete ${ids.length} invoice${ids.length > 1 ? 's' : ''}? This cannot be undone.`)) return;
+        await bulkDeleteInvoices(ids);
+      } else {
+        const status = action === 'mark_paid' ? 'paid' : 'sent';
+        await bulkUpdateInvoiceStatus(ids, status);
+      }
+      setSelectedIds(new Set());
+      router.refresh();
+    });
+  }
 
   const columns = [
+    {
+      key: 'select',
+      header: (
+        <input
+          type="checkbox"
+          checked={allFilteredSelected}
+          onChange={toggleSelectAll}
+          className="h-4 w-4 rounded border-[var(--border)] accent-[var(--primary)]"
+        />
+      ),
+      render: (inv: InvoiceWithDetails) => (
+        <input
+          type="checkbox"
+          checked={selectedIds.has(inv.id)}
+          onChange={(e) => {
+            e.stopPropagation();
+            toggleSelect(inv.id);
+          }}
+          onClick={(e) => e.stopPropagation()}
+          className="h-4 w-4 rounded border-[var(--border)] accent-[var(--primary)]"
+        />
+      ),
+    },
     {
       key: 'invoice_number',
       header: 'Invoice',
@@ -100,17 +169,17 @@ export function InvoiceList({ initialInvoices, totalCount }: InvoiceListProps) {
       sortable: true,
       className: 'text-right',
       render: (inv: InvoiceWithDetails) => (
-        <span className="font-amount font-medium">{formatCurrency(inv.total)}</span>
+        <span className="font-amount font-medium">{formatCurrency(inv.total, inv.currency || 'USD')}</span>
       ),
     },
     {
       key: 'amount_due',
-      header: 'Due',
+      header: 'Balance',
       sortable: true,
       className: 'text-right',
       render: (inv: InvoiceWithDetails) => (
         <span className={`font-amount ${inv.amount_due > 0 ? 'text-amber-600' : 'text-green-600'}`}>
-          {formatCurrency(inv.amount_due)}
+          {formatCurrency(inv.amount_due, inv.currency || 'USD')}
         </span>
       ),
     },
@@ -124,6 +193,11 @@ export function InvoiceList({ initialInvoices, totalCount }: InvoiceListProps) {
           <h1 className="font-heading text-2xl font-bold text-[var(--foreground)]">Invoices</h1>
           <p className="mt-1 text-sm text-[var(--muted-foreground)]">
             {totalCount} invoice{totalCount !== 1 ? 's' : ''} total
+            {Object.keys(currencyTotals).length > 1 && (
+              <span className="ml-1">
+                in {Object.keys(currencyTotals).length} currencies
+              </span>
+            )}
           </p>
         </div>
         <Button onClick={() => router.push('/invoices/new')}>
@@ -140,21 +214,71 @@ export function InvoiceList({ initialInvoices, totalCount }: InvoiceListProps) {
           <div className="rounded-lg border border-[var(--border)] bg-[var(--card)] p-4">
             <p className="text-xs font-medium uppercase text-[var(--muted-foreground)]">Outstanding</p>
             <p className="mt-1 font-amount text-xl font-bold text-amber-600">
-              {formatCurrency(totalOutstanding)}
+              {formatCurrency(totalOutstanding, primaryCurrency)}
             </p>
+            {Object.keys(currencyTotals).length > 1 && (
+              <div className="mt-1 space-y-0.5">
+                {Object.entries(currencyTotals).filter(([, v]) => v.outstanding > 0).map(([cur, v]) => (
+                  <p key={cur} className="text-xs text-[var(--muted-foreground)]">
+                    {formatCurrency(v.outstanding, cur)}
+                  </p>
+                ))}
+              </div>
+            )}
           </div>
           <div className="rounded-lg border border-[var(--border)] bg-[var(--card)] p-4">
             <p className="text-xs font-medium uppercase text-[var(--muted-foreground)]">Overdue</p>
             <p className="mt-1 font-amount text-xl font-bold text-red-600">
-              {formatCurrency(totalOverdue)}
+              {formatCurrency(totalOverdue, primaryCurrency)}
             </p>
           </div>
           <div className="rounded-lg border border-[var(--border)] bg-[var(--card)] p-4">
             <p className="text-xs font-medium uppercase text-[var(--muted-foreground)]">Collected</p>
             <p className="mt-1 font-amount text-xl font-bold text-green-600">
-              {formatCurrency(totalPaid)}
+              {formatCurrency(totalPaid, primaryCurrency)}
             </p>
           </div>
+        </div>
+      )}
+
+      {/* Bulk Action Bar */}
+      {selectedIds.size > 0 && (
+        <div className="mt-4 flex items-center gap-3 rounded-lg border border-[var(--primary)]/20 bg-[var(--primary)]/5 px-4 py-3">
+          <span className="text-sm font-medium text-[var(--foreground)]">
+            {selectedIds.size} selected
+          </span>
+          <div className="flex gap-2">
+            <button
+              onClick={() => handleBulkAction('mark_sent')}
+              disabled={isPending}
+              className="rounded-md bg-blue-100 px-3 py-1.5 text-xs font-medium text-blue-700 transition-colors hover:bg-blue-200 disabled:opacity-50"
+            >
+              Mark Sent
+            </button>
+            <button
+              onClick={() => handleBulkAction('mark_paid')}
+              disabled={isPending}
+              className="rounded-md bg-green-100 px-3 py-1.5 text-xs font-medium text-green-700 transition-colors hover:bg-green-200 disabled:opacity-50"
+            >
+              Mark Paid
+            </button>
+            <button
+              onClick={() => handleBulkAction('delete')}
+              disabled={isPending}
+              className="rounded-md bg-red-100 px-3 py-1.5 text-xs font-medium text-red-700 transition-colors hover:bg-red-200 disabled:opacity-50"
+            >
+              Delete
+            </button>
+          </div>
+          <button
+            onClick={() => setSelectedIds(new Set())}
+            className="ml-auto text-xs text-[var(--muted-foreground)] hover:text-[var(--foreground)]"
+          >
+            Clear selection
+          </button>
+          {isPending && (
+            <div className="h-4 w-4 animate-spin rounded-full border-2 border-[var(--muted-foreground)] border-t-transparent" />
+          )}
         </div>
       )}
 
