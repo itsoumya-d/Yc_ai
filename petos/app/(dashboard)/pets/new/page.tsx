@@ -1,6 +1,8 @@
 import { PetForm } from '@/components/pets/pet-form';
 import { PageHeader } from '@/components/layout/page-header';
 
+export const dynamic = 'force-dynamic';
+
 export const metadata = {
   title: 'Add Pet',
 };

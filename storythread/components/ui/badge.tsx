@@ -12,6 +12,7 @@ const badgeVariants = cva(
         completed: 'bg-green-50 text-green-700',
         published: 'bg-rose-50 text-rose-700',
         archived: 'bg-gray-100 text-gray-600',
+        review: 'bg-yellow-50 text-yellow-700 ring-1 ring-yellow-200',
         scheduled: 'bg-amber-50 text-amber-700',
         fantasy: 'bg-purple-50 text-purple-700',
         sci_fi: 'bg-cyan-50 text-cyan-700',

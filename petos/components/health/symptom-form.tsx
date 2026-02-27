@@ -6,6 +6,7 @@ import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
 import { useToast } from '@/components/ui/toast';
 import { createSymptom } from '@/lib/actions/symptoms';
+import { PhotoUpload } from '@/components/ui/photo-upload';
 import type { Pet } from '@/types/database';
 
 interface SymptomFormProps {
@@ -23,6 +24,7 @@ const SEVERITY_OPTIONS = [
 export function SymptomForm({ pets, onSuccess }: SymptomFormProps) {
   const { toast } = useToast();
   const [loading, setLoading] = useState(false);
+  const [photoUrl, setPhotoUrl] = useState<string | null>(null);
 
   async function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault();
@@ -86,11 +88,12 @@ export function SymptomForm({ pets, onSuccess }: SymptomFormProps) {
         </select>
       </div>
 
-      <Input
-        id="photo_url"
-        name="photo_url"
-        label="Photo URL (optional)"
-        placeholder="https://..."
+      <input type="hidden" name="photo_url" value={photoUrl || ''} />
+      <PhotoUpload
+        bucket="symptom-photos"
+        onUpload={(url) => setPhotoUrl(url)}
+        onRemove={() => setPhotoUrl(null)}
+        label="Symptom Photo (optional - enables AI visual analysis)"
       />
 
       <Button type="submit" disabled={loading} className="w-full">

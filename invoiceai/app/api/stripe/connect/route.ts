@@ -1,9 +1,9 @@
-import { NextResponse } from 'next/server';
+import { NextRequest, NextResponse } from 'next/server';
 import { createClient } from '@/lib/supabase/server';
 import { getStripe } from '@/lib/stripe/client';
 
 // Create or retrieve Stripe Connect account and return onboarding URL
-export async function POST() {
+export async function POST(request: NextRequest) {
   const supabase = await createClient();
   const {
     data: { user },
@@ -42,10 +42,13 @@ export async function POST() {
 
   // Create account link for onboarding
   const appUrl = process.env.NEXT_PUBLIC_APP_URL ?? 'http://localhost:3000';
+  const body = await request.json().catch(() => ({}));
+  const returnPath = body.returnTo === 'onboarding' ? '/onboarding?stripe=complete' : '/settings?stripe=complete';
+  const refreshPath = body.returnTo === 'onboarding' ? '/onboarding?stripe=refresh' : '/settings?stripe=refresh';
   const accountLink = await stripe.accountLinks.create({
     account: accountId,
-    refresh_url: `${appUrl}/settings?stripe=refresh`,
-    return_url: `${appUrl}/settings?stripe=complete`,
+    refresh_url: `${appUrl}${refreshPath}`,
+    return_url: `${appUrl}${returnPath}`,
     type: 'account_onboarding',
   });
 

@@ -1,6 +1,7 @@
 import { createClient } from '@/lib/supabase/server';
 import { redirect } from 'next/navigation';
 import { Sidebar } from '@/components/layout/sidebar';
+import { InstallPrompt } from '@/components/pwa/install-prompt';
 
 export default async function DashboardLayout({ children }: { children: React.ReactNode }) {
   const supabase = await createClient();
@@ -18,6 +19,7 @@ export default async function DashboardLayout({ children }: { children: React.Re
       <main className="flex-1">
         <div className="mx-auto max-w-6xl px-8 py-8">{children}</div>
       </main>
+      <InstallPrompt />
     </div>
   );
 }

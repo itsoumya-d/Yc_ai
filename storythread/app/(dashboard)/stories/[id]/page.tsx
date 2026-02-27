@@ -1,4 +1,5 @@
 import { getStory } from '@/lib/actions/stories';
+import { getCollaborators } from '@/lib/actions/collaborators';
 import { StoryDetail } from '@/components/stories/story-detail';
 import { notFound } from 'next/navigation';
 
@@ -12,11 +13,19 @@ export async function generateMetadata({ params }: { params: Promise<{ id: strin
 
 export default async function StoryPage({ params }: { params: Promise<{ id: string }> }) {
   const { id } = await params;
-  const result = await getStory(id);
+  const [storyResult, collabResult] = await Promise.all([
+    getStory(id),
+    getCollaborators(id),
+  ]);
 
-  if (result.error || !result.data) {
+  if (storyResult.error || !storyResult.data) {
     notFound();
   }
 
-  return <StoryDetail story={result.data} />;
+  return (
+    <StoryDetail
+      story={storyResult.data}
+      collaborators={collabResult.data ?? []}
+    />
+  );
 }

@@ -19,6 +19,10 @@ export async function POST(request: NextRequest) {
   if (body.business_email !== undefined) updateData.business_email = body.business_email || null;
   if (body.business_phone !== undefined) updateData.business_phone = body.business_phone || null;
   if (body.business_address !== undefined) updateData.business_address = body.business_address || null;
+  if (body.tax_id !== undefined) updateData.tax_id = body.tax_id || null;
+  if (body.brand_color !== undefined) updateData.brand_color = body.brand_color;
+  if (body.default_currency !== undefined) updateData.default_currency = body.default_currency;
+  if (body.default_payment_terms !== undefined) updateData.default_payment_terms = body.default_payment_terms;
   if (body.default_notes !== undefined) updateData.default_notes = body.default_notes || null;
   if (body.default_terms !== undefined) updateData.default_terms = body.default_terms || null;
   if (body.onboarding_completed !== undefined) updateData.onboarding_completed = body.onboarding_completed;

@@ -371,6 +371,77 @@ export async function deleteInvoiceAction(id: string): Promise<{ success: boolea
   return { success: true };
 }
 
+export async function bulkDeleteInvoicesAction(
+  ids: string[]
+): Promise<{ success: boolean; error?: string; deletedCount?: number }> {
+  const supabase = await createClient();
+  const {
+    data: { user },
+  } = await supabase.auth.getUser();
+
+  if (!user) {
+    return { success: false, error: 'Not authenticated' };
+  }
+
+  if (ids.length === 0) {
+    return { success: false, error: 'No invoices selected' };
+  }
+
+  // Delete items first
+  await supabase.from('invoice_items').delete().in('invoice_id', ids);
+
+  const { error, count } = await supabase
+    .from('invoices')
+    .delete({ count: 'exact' })
+    .in('id', ids);
+
+  if (error) {
+    return { success: false, error: error.message };
+  }
+
+  revalidatePath('/invoices');
+  revalidatePath('/dashboard');
+  return { success: true, deletedCount: count ?? ids.length };
+}
+
+export async function bulkUpdateStatusAction(
+  ids: string[],
+  status: Invoice['status']
+): Promise<{ success: boolean; error?: string; updatedCount?: number }> {
+  const supabase = await createClient();
+  const {
+    data: { user },
+  } = await supabase.auth.getUser();
+
+  if (!user) {
+    return { success: false, error: 'Not authenticated' };
+  }
+
+  if (ids.length === 0) {
+    return { success: false, error: 'No invoices selected' };
+  }
+
+  const now = new Date().toISOString();
+  const updateData: Record<string, unknown> = { status };
+
+  if (status === 'sent') updateData.sent_at = now;
+  if (status === 'paid') updateData.paid_at = now;
+  if (status === 'cancelled') updateData.cancelled_at = now;
+
+  const { error, count } = await supabase
+    .from('invoices')
+    .update(updateData, { count: 'exact' })
+    .in('id', ids);
+
+  if (error) {
+    return { success: false, error: error.message };
+  }
+
+  revalidatePath('/invoices');
+  revalidatePath('/dashboard');
+  return { success: true, updatedCount: count ?? ids.length };
+}
+
 export async function duplicateInvoiceAction(id: string): Promise<ActionResult> {
   const supabase = await createClient();
   const {

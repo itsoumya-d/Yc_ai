@@ -28,7 +28,7 @@ export interface Story {
   updated_at: string;
 }
 
-export type ChapterStatus = 'draft' | 'published' | 'scheduled';
+export type ChapterStatus = 'draft' | 'review' | 'published' | 'scheduled';
 
 export interface Chapter {
   id: string;
@@ -86,6 +86,35 @@ export interface AIGeneration {
   tokens_used: number;
   model: string;
   created_at: string;
+}
+
+export type CollaboratorRole = 'owner' | 'writer' | 'editor' | 'viewer';
+export type CollaboratorStatus = 'pending' | 'accepted' | 'declined' | 'removed';
+
+export interface Collaborator {
+  id: string;
+  story_id: string;
+  user_id: string;
+  email: string;
+  role: CollaboratorRole;
+  status: CollaboratorStatus;
+  assigned_chapters: number[];
+  invited_by: string;
+  accepted_at: string | null;
+  created_at: string;
+  updated_at: string;
+}
+
+export interface Comment {
+  id: string;
+  story_id: string;
+  chapter_id: string | null;
+  user_id: string;
+  parent_id: string | null;
+  content: string;
+  author_name: string | null;
+  created_at: string;
+  updated_at: string;
 }
 
 export interface StoryWithChapters extends Story {

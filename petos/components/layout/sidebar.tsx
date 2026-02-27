@@ -5,6 +5,7 @@ import { usePathname, useRouter } from 'next/navigation';
 import { useState } from 'react';
 import { createClient } from '@/lib/supabase/client';
 import { cn } from '@/lib/utils';
+import { ThemeToggle } from '@/components/ui/theme-toggle';
 import type { User } from '@supabase/supabase-js';
 
 const navigation = [
@@ -199,6 +200,8 @@ export function Sidebar({ user }: SidebarProps) {
             </Link>
           );
         })}
+
+        <ThemeToggle collapsed={collapsed} />
 
         {/* User Profile */}
         <div className={cn(

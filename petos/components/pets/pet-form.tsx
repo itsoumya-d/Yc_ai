@@ -8,6 +8,7 @@ import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { useToast } from '@/components/ui/toast';
 import { createPet, updatePet } from '@/lib/actions/pets';
+import { PhotoUpload } from '@/components/ui/photo-upload';
 import type { Pet } from '@/types/database';
 
 interface PetFormProps {
@@ -28,6 +29,7 @@ export function PetForm({ pet }: PetFormProps) {
   const router = useRouter();
   const { toast } = useToast();
   const [loading, setLoading] = useState(false);
+  const [photoUrl, setPhotoUrl] = useState<string | null>(pet?.photo_url || null);
 
   async function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault();
@@ -177,12 +179,13 @@ export function PetForm({ pet }: PetFormProps) {
             </label>
           </div>
 
-          <Input
-            id="photo_url"
-            name="photo_url"
-            label="Photo URL"
-            placeholder="https://..."
-            defaultValue={pet?.photo_url || ''}
+          <input type="hidden" name="photo_url" value={photoUrl || ''} />
+          <PhotoUpload
+            bucket="pet-photos"
+            currentUrl={pet?.photo_url}
+            onUpload={(url) => setPhotoUrl(url)}
+            onRemove={() => setPhotoUrl(null)}
+            label="Pet Photo"
           />
 
           <Textarea
