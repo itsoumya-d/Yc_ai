@@ -40,6 +40,12 @@ const badgeVariants = cva(
         passed: 'border-transparent bg-green-100 text-green-700',
         failed: 'border-transparent bg-red-100 text-red-700',
 
+        // Attendee status
+        invited: 'border-transparent bg-sky-100 text-sky-700',
+        confirmed: 'border-transparent bg-green-100 text-green-700',
+        declined: 'border-transparent bg-red-100 text-red-700',
+        attended: 'border-transparent bg-emerald-100 text-emerald-700',
+
         // General
         info: 'border-transparent bg-sky-100 text-sky-700',
         success: 'border-transparent bg-green-100 text-green-700',

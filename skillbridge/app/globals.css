@@ -1,0 +1,103 @@
+@import "tailwindcss";
+
+@theme {
+  /* SkillBridge Brand Colors */
+  --color-cream: #FFFBF5;
+
+  /* Warm Teal (Primary) */
+  --color-teal-50: #F0FDFA;
+  --color-teal-100: #CCFBF1;
+  --color-teal-200: #99F6E4;
+  --color-teal-300: #5EEAD4;
+  --color-teal-400: #2DD4BF;
+  --color-teal-500: #14B8A6;
+  --color-teal-600: #0D9488;
+  --color-teal-700: #0F766E;
+  --color-teal-800: #115E59;
+  --color-teal-900: #134E4A;
+
+  /* Sunrise Orange (Accent) */
+  --color-sunrise-50: #FFF7ED;
+  --color-sunrise-100: #FFEDD5;
+  --color-sunrise-200: #FED7AA;
+  --color-sunrise-300: #FDBA74;
+  --color-sunrise-400: #FB923C;
+  --color-sunrise-500: #F97316;
+  --color-sunrise-600: #EA580C;
+  --color-sunrise-700: #C2410C;
+  --color-sunrise-800: #9A3412;
+  --color-sunrise-900: #7C2D12;
+
+  /* Milestone */
+  --color-milestone: #D4A843;
+  --color-milestone-light: #FEF3C7;
+
+  /* Typography */
+  --font-heading: 'Plus Jakarta Sans', system-ui, sans-serif;
+  --font-body: 'Inter', system-ui, sans-serif;
+
+  /* Warm Shadows */
+  --shadow-warm-sm: 0 1px 2px rgba(28, 25, 23, 0.05);
+  --shadow-warm: 0 1px 3px rgba(28, 25, 23, 0.1), 0 1px 2px rgba(28, 25, 23, 0.06);
+  --shadow-warm-md: 0 4px 6px rgba(28, 25, 23, 0.07), 0 2px 4px rgba(28, 25, 23, 0.06);
+  --shadow-warm-lg: 0 10px 15px rgba(28, 25, 23, 0.1), 0 4px 6px rgba(28, 25, 23, 0.05);
+}
+
+/* Base styles */
+html {
+  scroll-behavior: smooth;
+}
+
+body {
+  font-family: var(--font-body);
+  background-color: var(--color-cream);
+  color: #1C1917;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+/* Headings use Plus Jakarta Sans */
+h1, h2, h3, h4, h5, h6 {
+  font-family: var(--font-heading);
+}
+
+/* Reduced motion */
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}
+
+/* Focus visible outline */
+:focus-visible {
+  outline: 2px solid var(--color-teal-600);
+  outline-offset: 2px;
+  border-radius: 4px;
+}
+
+/* Dark mode */
+.dark body {
+  background-color: #1C1917;
+  color: #FAFAF9;
+}
+
+/* Scrollbar styling */
+::-webkit-scrollbar {
+  width: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+::-webkit-scrollbar-thumb {
+  background: #A8A29E;
+  border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: #78716C;
+}

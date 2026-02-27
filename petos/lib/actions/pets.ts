@@ -108,6 +108,53 @@ export async function updatePet(id: string, formData: FormData): Promise<ActionR
   return { data: data as Pet };
 }
 
+export async function uploadPetPhoto(petId: string, formData: FormData): Promise<ActionResult<string>> {
+  const supabase = await createClient();
+  const { data: { user } } = await supabase.auth.getUser();
+  if (!user) return { error: 'Not authenticated' };
+
+  const file = formData.get('photo') as File;
+  if (!file || file.size === 0) return { error: 'No file provided' };
+
+  // Validate file type
+  const allowed = ['image/jpeg', 'image/png', 'image/webp', 'image/gif'];
+  if (!allowed.includes(file.type)) {
+    return { error: 'Invalid file type. Use JPEG, PNG, WebP, or GIF.' };
+  }
+
+  // Validate file size (5MB max)
+  if (file.size > 5 * 1024 * 1024) {
+    return { error: 'File too large. Maximum size is 5MB.' };
+  }
+
+  const ext = file.name.split('.').pop() || 'jpg';
+  const path = `${user.id}/${petId}/${Date.now()}.${ext}`;
+
+  const { error: uploadError } = await supabase.storage
+    .from('pet-photos')
+    .upload(path, file, { cacheControl: '3600', upsert: false });
+
+  if (uploadError) return { error: uploadError.message };
+
+  const { data: { publicUrl } } = supabase.storage
+    .from('pet-photos')
+    .getPublicUrl(path);
+
+  // Update pet record with new photo URL
+  const { error: updateError } = await supabase
+    .from('pets')
+    .update({ photo_url: publicUrl })
+    .eq('id', petId)
+    .eq('user_id', user.id);
+
+  if (updateError) return { error: updateError.message };
+
+  revalidatePath('/pets');
+  revalidatePath(`/pets/${petId}`);
+  revalidatePath('/dashboard');
+  return { data: publicUrl };
+}
+
 export async function deletePet(id: string): Promise<ActionResult> {
   const supabase = await createClient();
   const { data: { user } } = await supabase.auth.getUser();

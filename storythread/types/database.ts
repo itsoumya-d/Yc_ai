@@ -97,3 +97,78 @@ export interface StoryWithDetails extends Story {
   characters: Character[];
   world_elements: WorldElement[];
 }
+
+// --- Writing Goals & Gamification ---
+
+export type GoalPeriod = 'daily' | 'weekly' | 'monthly';
+export type GoalStatus = 'active' | 'completed' | 'failed' | 'paused';
+
+export interface WritingGoal {
+  id: string;
+  user_id: string;
+  target_words: number;
+  period: GoalPeriod;
+  status: GoalStatus;
+  current_words: number;
+  started_at: string;
+  ends_at: string;
+  completed_at: string | null;
+  created_at: string;
+  updated_at: string;
+}
+
+export interface WritingSession {
+  id: string;
+  user_id: string;
+  story_id: string | null;
+  chapter_id: string | null;
+  words_written: number;
+  duration_minutes: number;
+  started_at: string;
+  ended_at: string;
+  created_at: string;
+}
+
+export type AchievementCategory = 'words' | 'streak' | 'stories' | 'chapters' | 'consistency';
+
+export interface Achievement {
+  id: string;
+  key: string;
+  title: string;
+  description: string;
+  category: AchievementCategory;
+  icon: string;
+  threshold: number;
+  created_at: string;
+}
+
+export interface UserAchievement {
+  id: string;
+  user_id: string;
+  achievement_id: string;
+  unlocked_at: string;
+  achievement?: Achievement;
+}
+
+export interface WritingStreak {
+  id: string;
+  user_id: string;
+  current_streak: number;
+  longest_streak: number;
+  last_writing_date: string;
+  updated_at: string;
+}
+
+export interface DashboardStats {
+  storyCount: number;
+  totalWordCount: number;
+  totalChapters: number;
+  recentStories: Story[];
+  weeklyWordCount: number;
+  weeklySessionCount: number;
+  weeklyMinutes: number;
+  streak: { current: number; longest: number; wroteToday: boolean };
+  activeGoals: WritingGoal[];
+  recentAchievements: UserAchievement[];
+  dailyWordCounts: { date: string; words: number }[];
+}

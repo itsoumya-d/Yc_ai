@@ -7,7 +7,7 @@ import { Textarea } from '@/components/ui/textarea';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { useToast } from '@/components/ui/toast';
-import { createPet, updatePet } from '@/lib/actions/pets';
+import { createPet, updatePet, uploadPetPhoto } from '@/lib/actions/pets';
 import type { Pet } from '@/types/database';
 
 interface PetFormProps {
@@ -28,6 +28,16 @@ export function PetForm({ pet }: PetFormProps) {
   const router = useRouter();
   const { toast } = useToast();
   const [loading, setLoading] = useState(false);
+  const [photoPreview, setPhotoPreview] = useState<string | null>(pet?.photo_url || null);
+  const [photoFile, setPhotoFile] = useState<File | null>(null);
+
+  function handlePhotoChange(e: React.ChangeEvent<HTMLInputElement>) {
+    const file = e.target.files?.[0];
+    if (!file) return;
+    setPhotoFile(file);
+    const url = URL.createObjectURL(file);
+    setPhotoPreview(url);
+  }
 
   async function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault();
@@ -42,6 +52,16 @@ export function PetForm({ pet }: PetFormProps) {
       toast({ title: 'Error', description: result.error, variant: 'destructive' });
       setLoading(false);
       return;
+    }
+
+    // Upload photo if a file was selected
+    if (photoFile && result.data) {
+      const photoFormData = new FormData();
+      photoFormData.set('photo', photoFile);
+      const photoResult = await uploadPetPhoto(result.data.id, photoFormData);
+      if (photoResult.error) {
+        toast({ title: 'Photo upload failed', description: photoResult.error, variant: 'destructive' });
+      }
     }
 
     toast({
@@ -177,13 +197,42 @@ export function PetForm({ pet }: PetFormProps) {
             </label>
           </div>
 
-          <Input
-            id="photo_url"
-            name="photo_url"
-            label="Photo URL"
-            placeholder="https://..."
-            defaultValue={pet?.photo_url || ''}
-          />
+          {/* Photo Upload */}
+          <div>
+            <label className="mb-1 block text-sm font-medium text-[var(--foreground)]">
+              Pet Photo
+            </label>
+            <div className="flex items-center gap-4">
+              {photoPreview ? (
+                <img
+                  src={photoPreview}
+                  alt="Preview"
+                  className="h-16 w-16 rounded-full object-cover border border-[var(--border)]"
+                />
+              ) : (
+                <div className="flex h-16 w-16 items-center justify-center rounded-full bg-[var(--muted)] text-2xl">
+                  📷
+                </div>
+              )}
+              <div className="flex-1">
+                <input
+                  type="file"
+                  accept="image/jpeg,image/png,image/webp,image/gif"
+                  onChange={handlePhotoChange}
+                  className="block w-full text-sm text-[var(--muted-foreground)] file:mr-4 file:py-2 file:px-4 file:rounded-lg file:border-0 file:text-sm file:font-medium file:bg-brand-50 file:text-brand-700 hover:file:bg-brand-100"
+                />
+                <p className="mt-1 text-xs text-[var(--muted-foreground)]">
+                  JPEG, PNG, WebP or GIF. Max 5MB.
+                </p>
+              </div>
+            </div>
+            {/* Hidden field to keep existing photo_url if no new file */}
+            <input
+              type="hidden"
+              name="photo_url"
+              value={photoFile ? '' : (pet?.photo_url || '')}
+            />
+          </div>
 
           <Textarea
             id="notes"

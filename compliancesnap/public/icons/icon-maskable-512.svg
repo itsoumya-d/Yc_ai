@@ -1,0 +1,8 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" width="512" height="512">
+  <!-- Maskable: larger safe zone padding -->
+  <rect width="512" height="512" fill="#FFC107"/>
+  <!-- Shield (centered in safe zone) -->
+  <path d="M256 112 L368 168 V280 C368 344 312 388 256 408 C200 388 144 344 144 280 V168 Z" fill="#1C1C1E" opacity="0.9"/>
+  <!-- Checkmark -->
+  <path d="M212 268 L244 300 L300 228" fill="none" stroke="#FFC107" stroke-width="12" stroke-linecap="round" stroke-linejoin="round"/>
+</svg>

@@ -2,6 +2,7 @@ import { getDashboardData } from '@/lib/actions/dashboard';
 import { getPets } from '@/lib/actions/pets';
 import { getUpcomingAppointments } from '@/lib/actions/appointments';
 import { getActiveMedications } from '@/lib/actions/medications';
+import { getOverdueVaccinations } from '@/lib/actions/vaccinations';
 import { StatCard } from '@/components/ui/stat-card';
 import { PetOverviewCard } from '@/components/dashboard/pet-overview-card';
 import { UpcomingSection } from '@/components/dashboard/upcoming-section';
@@ -17,17 +18,19 @@ export const metadata = {
 };
 
 export default async function DashboardPage() {
-  const [dashResult, petsResult, apptsResult, medsResult] = await Promise.all([
+  const [dashResult, petsResult, apptsResult, medsResult, overdueVaxResult] = await Promise.all([
     getDashboardData(),
     getPets(),
     getUpcomingAppointments(),
     getActiveMedications(),
+    getOverdueVaccinations(),
   ]);
 
   const dashboard = dashResult.data;
   const pets = petsResult.data || [];
   const appointments = apptsResult.data || [];
   const medications = medsResult.data || [];
+  const overdueVax = overdueVaxResult.data;
 
   const hasPets = pets.length > 0;
 
@@ -51,6 +54,35 @@ export default async function DashboardPage() {
           </Button>
         </Link>
       </div>
+
+      {/* Overdue Vaccinations Alert */}
+      {overdueVax && overdueVax.count > 0 && (
+        <div className="mb-6 rounded-lg border border-red-200 bg-red-50 p-4">
+          <div className="flex items-start gap-3">
+            <svg className="mt-0.5 h-5 w-5 shrink-0 text-red-600" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+              <path strokeLinecap="round" strokeLinejoin="round" d="M12 9v3.75m-9.303 3.376c-.866 1.5.217 3.374 1.948 3.374h14.71c1.73 0 2.813-1.874 1.948-3.374L13.949 3.378c-.866-1.5-3.032-1.5-3.898 0L2.697 16.126ZM12 15.75h.007v.008H12v-.008Z" />
+            </svg>
+            <div>
+              <h3 className="text-sm font-semibold text-red-800">
+                {overdueVax.count} Overdue Vaccination{overdueVax.count !== 1 ? 's' : ''}
+              </h3>
+              <div className="mt-1 space-y-0.5">
+                {overdueVax.details.slice(0, 5).map((d, i) => (
+                  <p key={i} className="text-xs text-red-700">
+                    <Link href={`/pets/${d.petId}`} className="font-medium underline hover:text-red-900">{d.petName}</Link>
+                    {' '}&mdash; {d.vaccine}
+                  </p>
+                ))}
+                {overdueVax.details.length > 5 && (
+                  <p className="text-xs text-red-600">
+                    and {overdueVax.details.length - 5} more...
+                  </p>
+                )}
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
 
       {/* Stats */}
       <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4">

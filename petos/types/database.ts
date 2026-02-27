@@ -101,6 +101,28 @@ export interface Symptom {
   updated_at: string;
 }
 
+export interface VaccinationScheduleItem {
+  vaccine: string;
+  species: Pet['species'];
+  ageMonths: number;            // when first due (months from birth)
+  boosterMonths: number | null; // repeat interval in months, null = one-time
+  description: string;
+}
+
+export interface VaccinationStatus {
+  vaccine: string;
+  description: string;
+  lastGiven: string | null;     // ISO date string
+  nextDue: string | null;       // ISO date string
+  status: 'up_to_date' | 'due_soon' | 'overdue' | 'not_started';
+}
+
+export interface NotificationPreferences {
+  notify_appointments: boolean;
+  notify_medications: boolean;
+  notify_health_alerts: boolean;
+}
+
 export interface PetWithRecords extends Pet {
   health_records: HealthRecord[];
   medications: Medication[];

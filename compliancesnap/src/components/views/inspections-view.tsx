@@ -1,7 +1,9 @@
 import { useState, useMemo, useCallback } from 'react';
 import { cn, getScoreColor } from '@/lib/utils';
 import { useAppStore } from '@/stores/app-store';
-import { generateId, saveInspection } from '@/lib/storage';
+import { useAuthStore } from '@/stores/auth-store';
+import { generateId } from '@/lib/storage';
+import { upsertInspection } from '@/lib/data-service';
 import type { InspectionStatus, Inspection } from '@/types/database';
 import { ClipboardList, Plus, CheckCircle2, Clock, AlertTriangle, Pencil } from 'lucide-react';
 
@@ -15,7 +17,8 @@ const statusConfig: Record<InspectionStatus, { label: string; color: string; ico
 type FilterType = 'all' | 'in-progress' | 'completed';
 
 export function InspectionsView() {
-  const { inspections, addInspection } = useAppStore();
+  const { inspections, addInspection, userName } = useAppStore();
+  const { user } = useAuthStore();
   const [filter, setFilter] = useState<FilterType>('all');
 
   const filtered = useMemo(() => {
@@ -23,7 +26,7 @@ export function InspectionsView() {
     return inspections.filter((i) => i.status === filter);
   }, [inspections, filter]);
 
-  const handleNewInspection = useCallback(() => {
+  const handleNewInspection = useCallback(async () => {
     const inspection: Inspection = {
       id: generateId(),
       facility: 'New Facility',
@@ -32,11 +35,13 @@ export function InspectionsView() {
       violations_found: 0,
       score: 0,
       date: new Date().toISOString(),
-      inspector: 'You',
+      inspector: userName || 'You',
     };
     addInspection(inspection);
-    saveInspection(inspection);
-  }, [addInspection]);
+    if (user) {
+      await upsertInspection(user.id, inspection);
+    }
+  }, [addInspection, userName, user]);
 
   return (
     <div className="flex h-full flex-col">

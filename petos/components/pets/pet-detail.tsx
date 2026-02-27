@@ -10,16 +10,18 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { useToast } from '@/components/ui/toast';
 import { deletePet } from '@/lib/actions/pets';
-import type { Pet, HealthRecord, Medication, Appointment } from '@/types/database';
+import { VaccinationSchedule } from '@/components/health/vaccination-schedule';
+import type { Pet, HealthRecord, Medication, Appointment, VaccinationStatus } from '@/types/database';
 
 interface PetDetailProps {
   pet: Pet;
   healthRecords: HealthRecord[];
   medications: Medication[];
   appointments: Appointment[];
+  vaccinationStatuses?: VaccinationStatus[];
 }
 
-export function PetDetail({ pet, healthRecords, medications, appointments }: PetDetailProps) {
+export function PetDetail({ pet, healthRecords, medications, appointments, vaccinationStatuses = [] }: PetDetailProps) {
   const router = useRouter();
   const { toast } = useToast();
   const [deleting, setDeleting] = useState(false);
@@ -80,6 +82,14 @@ export function PetDetail({ pet, healthRecords, medications, appointments }: Pet
       <Tabs defaultValue="health" className="mt-8">
         <TabsList>
           <TabsTrigger value="health">Health Records ({healthRecords.length})</TabsTrigger>
+          <TabsTrigger value="vaccinations">
+            Vaccinations
+            {vaccinationStatuses.filter((v) => v.status === 'overdue').length > 0 && (
+              <span className="ml-1.5 inline-flex h-5 w-5 items-center justify-center rounded-full bg-red-100 text-[10px] font-bold text-red-700">
+                {vaccinationStatuses.filter((v) => v.status === 'overdue').length}
+              </span>
+            )}
+          </TabsTrigger>
           <TabsTrigger value="medications">Medications ({medications.length})</TabsTrigger>
           <TabsTrigger value="appointments">Appointments ({appointments.length})</TabsTrigger>
         </TabsList>
@@ -109,6 +119,12 @@ export function PetDetail({ pet, healthRecords, medications, appointments }: Pet
               ))}
             </div>
           )}
+        </TabsContent>
+
+        <TabsContent value="vaccinations">
+          <div className="mt-4">
+            <VaccinationSchedule petId={pet.id} petName={pet.name} />
+          </div>
         </TabsContent>
 
         <TabsContent value="medications">

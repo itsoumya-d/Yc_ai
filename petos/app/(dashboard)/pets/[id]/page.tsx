@@ -3,6 +3,7 @@ import { getPet } from '@/lib/actions/pets';
 import { getHealthRecords } from '@/lib/actions/health-records';
 import { getMedications } from '@/lib/actions/medications';
 import { getAppointments } from '@/lib/actions/appointments';
+import { getVaccinationSchedule } from '@/lib/actions/vaccinations';
 import { PetDetail } from '@/components/pets/pet-detail';
 
 export const dynamic = 'force-dynamic';
@@ -16,11 +17,12 @@ export async function generateMetadata({ params }: { params: Promise<{ id: strin
 export default async function PetDetailPage({ params }: { params: Promise<{ id: string }> }) {
   const { id } = await params;
 
-  const [petResult, healthResult, medsResult, apptsResult] = await Promise.all([
+  const [petResult, healthResult, medsResult, apptsResult, vaxResult] = await Promise.all([
     getPet(id),
     getHealthRecords(id),
     getMedications(id),
     getAppointments(id),
+    getVaccinationSchedule(id),
   ]);
 
   if (!petResult.data) {
@@ -33,6 +35,7 @@ export default async function PetDetailPage({ params }: { params: Promise<{ id: 
       healthRecords={healthResult.data || []}
       medications={medsResult.data || []}
       appointments={apptsResult.data || []}
+      vaccinationStatuses={vaxResult.data || []}
     />
   );
 }
