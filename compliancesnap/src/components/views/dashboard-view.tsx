@@ -1,8 +1,28 @@
 import { useMemo } from 'react';
-import { cn, getScoreColor, getSeverityColor, getSeverityLabel } from '@/lib/utils';
+import { cn, getScoreColor, getScoreRingColor, getSeverityColor, getSeverityLabel } from '@/lib/utils';
 import { useAppStore } from '@/stores/app-store';
-import { computeOverallScore } from '@/lib/storage';
-import { Shield, AlertTriangle, CheckCircle2, Clock, ChevronRight, TrendingUp, Building2 } from 'lucide-react';
+import { computeOverallScore, formatRelativeDate } from '@/lib/storage';
+import { Shield, AlertTriangle, CheckCircle2, Clock, ChevronRight, TrendingUp, Building2, Zap } from 'lucide-react';
+
+function ScoreRing({ score }: { score: number }) {
+  const radius = 28;
+  const circumference = 2 * Math.PI * radius;
+  const strokeDashoffset = circumference - (score / 100) * circumference;
+  const color = getScoreRingColor(score);
+  return (
+    <svg width="72" height="72" className="-rotate-90">
+      <circle cx="36" cy="36" r={radius} fill="none" stroke="rgba(255,255,255,0.08)" strokeWidth="5" />
+      <circle
+        cx="36" cy="36" r={radius} fill="none"
+        stroke={color} strokeWidth="5"
+        strokeDasharray={circumference}
+        strokeDashoffset={strokeDashoffset}
+        strokeLinecap="round"
+        style={{ transition: 'stroke-dashoffset 0.6s ease' }}
+      />
+    </svg>
+  );
+}
 
 export function DashboardView() {
   const { facilities, violations, inspections, correctiveActions, organizationName } = useAppStore();
@@ -24,6 +44,11 @@ export function DashboardView() {
     [correctiveActions],
   );
 
+  const criticalCount = useMemo(() =>
+    violations.filter((v) => v.severity === 'critical' && v.status !== 'completed').length,
+    [violations],
+  );
+
   const recentViolations = useMemo(() =>
     violations
       .slice()
@@ -31,6 +56,11 @@ export function DashboardView() {
       .slice(0, 4),
     [violations],
   );
+
+  const complianceRate = useMemo(() => {
+    const total = resolvedCount + openViolations;
+    return total > 0 ? Math.round((resolvedCount / total) * 100) : 0;
+  }, [resolvedCount, openViolations]);
 
   const stats = [
     { label: 'Open Violations', value: String(openViolations), icon: AlertTriangle, color: 'text-severity-major' },
@@ -48,17 +78,30 @@ export function DashboardView() {
             <h1 className="snap-heading-bold text-2xl text-text-primary">Safety Dashboard</h1>
             <p className="mt-0.5 text-sm text-text-secondary">{organizationName}</p>
           </div>
-          <div className="flex flex-col items-center">
+          <div className="relative flex items-center justify-center">
             {facilities.length > 0 ? (
               <>
-                <span className={cn('score-display text-3xl', getScoreColor(overallScore))}>{overallScore}</span>
-                <span className="text-[10px] text-text-secondary">Compliance</span>
+                <ScoreRing score={overallScore} />
+                <div className="absolute inset-0 flex flex-col items-center justify-center">
+                  <span className={cn('score-display text-xl leading-none', getScoreColor(overallScore))}>{overallScore}</span>
+                  <span className="text-[8px] text-text-secondary">SCORE</span>
+                </div>
               </>
             ) : (
               <span className="text-xs text-text-secondary">No data</span>
             )}
           </div>
         </div>
+
+        {/* Critical alert banner */}
+        {criticalCount > 0 && (
+          <div className="mt-3 flex items-center gap-2 rounded-xl bg-severity-critical/10 px-3 py-2 border border-severity-critical/20">
+            <Zap className="h-4 w-4 shrink-0 text-severity-critical" />
+            <span className="text-xs font-medium text-severity-critical">
+              {criticalCount} critical violation{criticalCount !== 1 ? 's' : ''} require immediate attention
+            </span>
+          </div>
+        )}
       </div>
 
       <div className="flex-1 overflow-auto px-4 pb-4 space-y-4">
@@ -80,6 +123,7 @@ export function DashboardView() {
           <div>
             <div className="mb-2 flex items-center justify-between">
               <h2 className="snap-heading text-sm text-text-primary">Facilities</h2>
+              <span className="text-xs text-text-secondary">{facilities.length} active</span>
             </div>
             <div className="space-y-2">
               {facilities.map((f) => (
@@ -90,7 +134,9 @@ export function DashboardView() {
                     </div>
                     <div>
                       <div className="text-sm font-medium text-text-primary">{f.name}</div>
-                      <div className="text-xs text-text-secondary">{f.violations_open} open violations {'\u2022'} {f.last_inspection}</div>
+                      <div className="text-xs text-text-secondary">
+                        {f.location} {'·'} {f.violations_open} open {'·'} {f.last_inspection}
+                      </div>
                     </div>
                   </div>
                   <div className="flex items-center gap-2">
@@ -108,6 +154,7 @@ export function DashboardView() {
           <div>
             <div className="mb-2 flex items-center justify-between">
               <h2 className="snap-heading text-sm text-text-primary">Recent Violations</h2>
+              <span className="text-xs text-info">{violations.length} total</span>
             </div>
             <div className="space-y-2">
               {recentViolations.map((v) => (
@@ -120,9 +167,12 @@ export function DashboardView() {
                         <div className="mt-1 snap-code text-xs text-info">{v.regulation}</div>
                         <div className="mt-0.5 text-xs text-text-secondary">{v.location}</div>
                       </div>
-                      <span className={cn('shrink-0 rounded-md px-2 py-0.5 text-[10px] font-semibold uppercase', getSeverityColor(v.severity))}>
-                        {getSeverityLabel(v.severity)}
-                      </span>
+                      <div className="flex flex-col items-end gap-1">
+                        <span className={cn('shrink-0 rounded-md px-2 py-0.5 text-[10px] font-semibold uppercase', getSeverityColor(v.severity))}>
+                          {getSeverityLabel(v.severity)}
+                        </span>
+                        <span className="text-[10px] text-text-secondary">{formatRelativeDate(v.detected_at)}</span>
+                      </div>
                     </div>
                   </div>
                 </div>
@@ -140,12 +190,29 @@ export function DashboardView() {
           </div>
         )}
 
-        {/* Trend */}
+        {/* Trend / Overview */}
         {facilities.length > 0 && (
           <div className="rounded-xl bg-bg-card p-4">
-            <div className="flex items-center gap-2">
-              <TrendingUp className="h-4 w-4 text-compliant" />
-              <span className="text-xs text-text-secondary">Monitoring {facilities.length} facilit{facilities.length !== 1 ? 'ies' : 'y'}</span>
+            <div className="mb-3 flex items-center justify-between">
+              <div className="flex items-center gap-2">
+                <TrendingUp className="h-4 w-4 text-compliant" />
+                <span className="text-xs text-text-secondary">Monitoring {facilities.length} facilit{facilities.length !== 1 ? 'ies' : 'y'}</span>
+              </div>
+              <span className="text-xs text-text-secondary">{inspections.length} inspection{inspections.length !== 1 ? 's' : ''}</span>
+            </div>
+            <div className="mb-1.5 flex justify-between text-[10px] text-text-secondary">
+              <span>Violation Resolution Rate</span>
+              <span className={cn('font-medium', getScoreColor(complianceRate))}>{complianceRate}%</span>
+            </div>
+            <div className="h-2 w-full overflow-hidden rounded-full bg-bg-surface">
+              <div
+                className="h-full rounded-full bg-compliant transition-all duration-700"
+                style={{ width: `${complianceRate}%` }}
+              />
+            </div>
+            <div className="mt-2 flex justify-between text-[10px] text-text-secondary">
+              <span>{resolvedCount} resolved</span>
+              <span>{openViolations} open</span>
             </div>
           </div>
         )}

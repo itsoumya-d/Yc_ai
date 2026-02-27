@@ -1,0 +1,42 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(python3:*)",
+      "Bash(done)",
+      "Bash(ls:*)",
+      "Bash(cat:*)",
+      "Bash(grep:*)",
+      "Bash(\"E:/Yc_ai/.claude/worktrees/wonderful-rhodes/compliancesnap-flutter/lib/screens/facilities/facilities_screen.dart\":*)",
+      "Bash(node --version:*)",
+      "Bash(tee:*)",
+      "Bash(powershell.exe -NoProfile -Command \"Write-Host ''PowerShell works''\")",
+      "Bash(node -e:*)",
+      "Bash(powershell.exe -NoProfile -File \"C:/temp_test.ps1\")",
+      "Bash(powershell.exe -NoProfile -File:*)",
+      "Bash(echo:*)",
+      "Bash(printf:*)",
+      "Bash(node /tmp/gen.js:*)",
+      "Bash(PYEXE=\"/c/Users/Soumya Debnath/AppData/Local/Programs/Python/Python313/python\")",
+      "Bash(\"$PYEXE\" -c \"print\\(''Python works''\\)\")",
+      "Bash(/tmp/test_node.js:*)",
+      "Bash(node:*)",
+      "Bash(/tmp/t2.js:*)",
+      "Bash(/tmp/t4.js:*)",
+      "Bash(/tmp/gen_fac2.js:*)",
+      "Bash(/tmp/gen_fac2_v2.js:*)",
+      "Bash(/tmp/small_test.js:*)",
+      "Bash(/tmp/fac_p2.js:*)",
+      "Bash(/tmp/fac_p3.js:*)",
+      "Bash(/tmp/fac_p4.js:*)",
+      "Bash(/tmp/det_p2.js:*)",
+      "Bash(/tmp/tq.js:*)",
+      "Bash(/tmp/det_p2a.js:*)",
+      "Bash(/tmp/det_p2b.js:*)",
+      "Bash(/tmp/rep_p2.js:*)",
+      "Bash(/tmp/rep_p3.js:*)",
+      "Bash(/tmp/rep_p4.js:*)",
+      "Bash(/tmp/update_router.js:*)",
+      "Bash(git add -A)"
+    ]
+  }
+}

@@ -9,6 +9,7 @@ import { Badge } from '@/components/ui/badge';
 import { useToast } from '@/components/ui/toast';
 import { deleteMeeting } from '@/lib/actions/meetings';
 import { generateMeetingSummary } from '@/lib/actions/ai-meetings';
+import { MeetingMinutesGenerator } from '@/components/meetings/meeting-minutes-generator';
 import { formatDateTime, getMeetingTypeLabel, getMeetingStatusLabel } from '@/lib/utils';
 import {
   Edit,
@@ -212,6 +213,8 @@ export function MeetingDetail({ meeting }: MeetingDetailProps) {
           </div>
         </Card>
       )}
+
+      <MeetingMinutesGenerator meeting={meeting} />
 
       {meeting.resolutions.length > 0 && (
         <Card className="p-4">

@@ -1,0 +1,15 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+* { box-sizing: border-box; margin: 0; padding: 0; }
+body { background: #0F172A; color: #F8FAFC; font-family: system-ui, -apple-system, sans-serif; }
+::-webkit-scrollbar { width: 6px; } ::-webkit-scrollbar-track { background: #0F172A; } ::-webkit-scrollbar-thumb { background: #334155; border-radius: 3px; }
+
+@layer components {
+  .btn-primary { @apply inline-flex items-center gap-2 rounded-lg bg-primary px-4 py-2.5 text-sm font-semibold text-white transition-all hover:bg-primary-dark active:scale-95 shadow-sm; }
+  .btn-win { @apply inline-flex items-center gap-2 rounded-lg bg-win px-4 py-2.5 text-sm font-semibold text-white transition-all hover:bg-win-dark active:scale-95; }
+  .btn-outline { @apply inline-flex items-center gap-2 rounded-lg border border-border px-4 py-2.5 text-sm font-semibold text-text-primary transition-all hover:bg-card active:scale-95; }
+  .card { @apply rounded-xl border border-border bg-card p-5; }
+  .input { @apply w-full rounded-lg border border-border bg-surface px-4 py-2.5 text-sm text-text-primary placeholder:text-text-muted focus:border-primary focus:outline-none focus:ring-1 focus:ring-primary; }
+}

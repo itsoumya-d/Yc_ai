@@ -1,4 +1,4 @@
-export type AppTab = 'dashboard' | 'inspections' | 'scanner' | 'reports' | 'more';
+export type AppTab = 'dashboard' | 'inspections' | 'scanner' | 'violations' | 'reports' | 'more';
 export type SeverityLevel = 'critical' | 'major' | 'minor' | 'observation';
 export type InspectionStatus = 'draft' | 'in-progress' | 'completed' | 'syncing';
 export type ActionStatus = 'pending' | 'in-progress' | 'completed' | 'overdue';

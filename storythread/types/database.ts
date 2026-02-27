@@ -73,7 +73,53 @@ export interface WorldElement {
   updated_at: string;
 }
 
-export type AIActionType = 'continue' | 'dialogue' | 'rephrase' | 'fix_prose';
+export type AIActionType =
+  | 'continue'
+  | 'continue_dramatic'
+  | 'continue_subtle'
+  | 'continue_action'
+  | 'continue_dialogue'
+  | 'dialogue'
+  | 'improve_dialogue'
+  | 'rephrase'
+  | 'fix_prose'
+  | 'enhance_description'
+  | 'consistency_check'
+  | 'plot_hole_detect'
+  | 'readability_score'
+  | 'tone_analyze'
+  | 'pacing_analyze';
+
+export interface WritingSession {
+  id: string;
+  user_id: string;
+  story_id: string | null;
+  words_written: number;
+  duration_minutes: number;
+  started_at: string;
+  ended_at: string | null;
+}
+
+export interface UserGoals {
+  user_id: string;
+  daily_word_goal: number;
+  streak_days: number;
+  longest_streak: number;
+  total_words_all_time: number;
+  words_today: number;
+  updated_at: string;
+}
+
+export interface WritingStats {
+  wordsToday: number;
+  wordsThisWeek: number;
+  wordsThisMonth: number;
+  currentStreak: number;
+  longestStreak: number;
+  dailyGoal: number;
+  averageSessionWords: number;
+  bestHour: number | null;
+}
 
 export interface AIGeneration {
   id: string;

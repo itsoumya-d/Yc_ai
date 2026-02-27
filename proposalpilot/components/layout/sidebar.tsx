@@ -6,7 +6,7 @@ import { useState } from 'react';
 import { createClient } from '@/lib/supabase/client';
 import { cn } from '@/lib/utils';
 import type { User } from '@supabase/supabase-js';
-import { LayoutDashboard, FileText, Users, LayoutTemplate, Library, Settings, Plus, Send, Menu, PanelLeftClose, LogOut } from 'lucide-react';
+import { LayoutDashboard, FileText, Users, LayoutTemplate, Library, Settings, Plus, Send, Menu, PanelLeftClose, LogOut, BarChart3 } from 'lucide-react';
 
 const navigation = [
   { name: 'Dashboard', href: '/dashboard', icon: LayoutDashboard },
@@ -14,6 +14,7 @@ const navigation = [
   { name: 'Clients', href: '/clients', icon: Users },
   { name: 'Templates', href: '/templates', icon: LayoutTemplate },
   { name: 'Content Library', href: '/content-library', icon: Library },
+  { name: 'Analytics', href: '/analytics', icon: BarChart3 },
 ];
 
 const bottomNavigation = [
