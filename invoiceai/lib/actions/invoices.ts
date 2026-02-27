@@ -371,6 +371,83 @@ export async function deleteInvoiceAction(id: string): Promise<{ success: boolea
   return { success: true };
 }
 
+export async function recordPaymentAction(
+  invoiceId: string,
+  payment: {
+    amount: number;
+    payment_method: 'card' | 'ach' | 'manual' | 'other';
+    payment_date: string; // YYYY-MM-DD
+    reference_note?: string;
+  }
+): Promise<ActionResult> {
+  const supabase = await createClient();
+  const {
+    data: { user },
+  } = await supabase.auth.getUser();
+
+  if (!user) {
+    return { success: false, error: 'Not authenticated' };
+  }
+
+  const { data: invoice, error: fetchError } = await supabase
+    .from('invoices')
+    .select('id, total, amount_paid, amount_due, currency, status')
+    .eq('id', invoiceId)
+    .eq('user_id', user.id)
+    .single();
+
+  if (fetchError || !invoice) {
+    return { success: false, error: 'Invoice not found' };
+  }
+
+  if (payment.amount <= 0) {
+    return { success: false, error: 'Payment amount must be greater than zero' };
+  }
+
+  if (payment.amount > (invoice.amount_due ?? invoice.total)) {
+    return { success: false, error: 'Payment amount exceeds balance due' };
+  }
+
+  const { error: paymentError } = await supabase.from('payments').insert({
+    invoice_id: invoiceId,
+    amount: payment.amount,
+    currency: invoice.currency ?? 'USD',
+    payment_method: payment.payment_method,
+    status: 'succeeded',
+    payment_date: payment.payment_date,
+    reference_note: payment.reference_note ?? null,
+  });
+
+  if (paymentError) {
+    return { success: false, error: paymentError.message };
+  }
+
+  const newAmountPaid = (invoice.amount_paid ?? 0) + payment.amount;
+  const newAmountDue = Math.max(0, invoice.total - newAmountPaid);
+  const newStatus = newAmountDue <= 0 ? 'paid' : 'partial';
+
+  const { data, error: updateError } = await supabase
+    .from('invoices')
+    .update({
+      amount_paid: Math.round(newAmountPaid * 100) / 100,
+      amount_due: Math.round(newAmountDue * 100) / 100,
+      status: newStatus,
+      paid_at: newStatus === 'paid' ? new Date().toISOString() : null,
+    })
+    .eq('id', invoiceId)
+    .select()
+    .single();
+
+  if (updateError) {
+    return { success: false, error: updateError.message };
+  }
+
+  revalidatePath('/invoices');
+  revalidatePath(`/invoices/${invoiceId}`);
+  revalidatePath('/dashboard');
+  return { success: true, data };
+}
+
 export async function duplicateInvoiceAction(id: string): Promise<ActionResult> {
   const supabase = await createClient();
   const {

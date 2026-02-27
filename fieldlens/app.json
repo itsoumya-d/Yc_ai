@@ -1,0 +1,12 @@
+{
+  "expo": {
+    "name": "FieldLens", "slug": "fieldlens", "version": "1.0.0",
+    "orientation": "portrait", "scheme": "fieldlens",
+    "splash": { "backgroundColor": "#F97316" },
+    "plugins": ["expo-router", "expo-camera", ["expo-av", {}]],
+    "ios": { "bundleIdentifier": "com.fieldlens.app",
+      "infoPlist": { "NSCameraUsageDescription": "FieldLens uses the camera to analyze your work and provide AI coaching.", "NSMicrophoneUsageDescription": "FieldLens uses the microphone for voice commands." }
+    },
+    "android": { "package": "com.fieldlens.app", "permissions": ["CAMERA", "RECORD_AUDIO"] }
+  }
+}

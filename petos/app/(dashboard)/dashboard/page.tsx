@@ -2,6 +2,7 @@ import { getDashboardData } from '@/lib/actions/dashboard';
 import { getPets } from '@/lib/actions/pets';
 import { getUpcomingAppointments } from '@/lib/actions/appointments';
 import { getActiveMedications } from '@/lib/actions/medications';
+import { getVaccinationSchedule } from '@/lib/actions/vaccinations';
 import { StatCard } from '@/components/ui/stat-card';
 import { PetOverviewCard } from '@/components/dashboard/pet-overview-card';
 import { UpcomingSection } from '@/components/dashboard/upcoming-section';
@@ -17,17 +18,20 @@ export const metadata = {
 };
 
 export default async function DashboardPage() {
-  const [dashResult, petsResult, apptsResult, medsResult] = await Promise.all([
+  const [dashResult, petsResult, apptsResult, medsResult, vaccResult] = await Promise.all([
     getDashboardData(),
     getPets(),
     getUpcomingAppointments(),
     getActiveMedications(),
+    getVaccinationSchedule(),
   ]);
 
   const dashboard = dashResult.data;
   const pets = petsResult.data || [];
   const appointments = apptsResult.data || [];
   const medications = medsResult.data || [];
+  // Only show overdue or due within 60 days on dashboard
+  const vaccinations = (vaccResult.data || []).filter((v) => v.days_until_due <= 60);
 
   const hasPets = pets.length > 0;
 
@@ -71,7 +75,11 @@ export default async function DashboardPage() {
           </div>
 
           <div className="mt-8">
-            <UpcomingSection appointments={appointments} medications={medications} />
+            <UpcomingSection
+              appointments={appointments}
+              medications={medications}
+              vaccinations={vaccinations}
+            />
           </div>
         </>
       ) : (

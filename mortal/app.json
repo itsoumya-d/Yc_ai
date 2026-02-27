@@ -1,0 +1,12 @@
+{
+  "expo": {
+    "name": "Mortal", "slug": "mortal", "version": "1.0.0",
+    "orientation": "portrait", "scheme": "mortal",
+    "splash": { "backgroundColor": "#7C3AED" },
+    "plugins": ["expo-router", ["expo-local-authentication", {}], "expo-document-picker"],
+    "ios": { "bundleIdentifier": "com.mortal.app",
+      "infoPlist": { "NSFaceIDUsageDescription": "Mortal uses Face ID to protect your private documents." }
+    },
+    "android": { "package": "com.mortal.app", "permissions": ["USE_BIOMETRIC", "USE_FINGERPRINT"] }
+  }
+}

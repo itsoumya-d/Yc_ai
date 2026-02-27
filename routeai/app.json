@@ -1,0 +1,32 @@
+{
+  "expo": {
+    "name": "RouteAI",
+    "slug": "routeai",
+    "version": "1.0.0",
+    "orientation": "portrait",
+    "icon": "./assets/icon.png",
+    "userInterfaceStyle": "light",
+    "splash": { "backgroundColor": "#0369A1" },
+    "ios": {
+      "bundleIdentifier": "com.routeai.technician",
+      "infoPlist": {
+        "NSLocationWhenInUseUsageDescription": "RouteAI uses your location for real-time route tracking.",
+        "NSLocationAlwaysUsageDescription": "RouteAI tracks your location during active jobs."
+      }
+    },
+    "android": {
+      "package": "com.routeai.technician",
+      "permissions": ["ACCESS_FINE_LOCATION", "ACCESS_BACKGROUND_LOCATION"]
+    },
+    "plugins": [
+      "expo-router",
+      [
+        "expo-location",
+        { "locationAlwaysAndWhenInUsePermission": "Allow RouteAI to track location during job." }
+      ],
+      "expo-notifications"
+    ],
+    "scheme": "routeai",
+    "experiments": { "typedRoutes": true }
+  }
+}

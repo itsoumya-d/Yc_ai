@@ -2,6 +2,7 @@
 
 import { createClient } from '@/lib/supabase/server';
 import { revalidatePath } from 'next/cache';
+import { createHash } from 'crypto';
 import type { Document, DocumentType } from '@/types/database';
 
 interface ActionResult<T = null> {
@@ -71,6 +72,10 @@ export async function uploadDocument(
 
   if (!file) return { error: 'No file provided' };
 
+  // Compute SHA-256 hash for chain of custody
+  const arrayBuffer = await file.arrayBuffer();
+  const sha256 = createHash('sha256').update(Buffer.from(arrayBuffer)).digest('hex');
+
   // Upload to Supabase Storage
   const filepath = `${caseId}/${Date.now()}_${file.name}`;
   const { error: uploadError } = await supabase.storage
@@ -79,7 +84,7 @@ export async function uploadDocument(
 
   if (uploadError) return { error: uploadError.message };
 
-  // Create document record
+  // Create document record (sha256 stored if column exists)
   const { data, error } = await supabase
     .from('documents')
     .insert({
@@ -91,6 +96,7 @@ export async function uploadDocument(
       file_path: filepath,
       document_type: documentType,
       uploaded_by: user.id,
+      sha256_hash: sha256,
     })
     .select()
     .single();
