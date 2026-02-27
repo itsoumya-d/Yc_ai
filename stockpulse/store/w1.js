@@ -1,0 +1,1 @@
+const fs=require('fs');const W='E:/Yc_ai/.claude/worktrees/sleepy-franklin/stockpulse';fs.writeFileSync(W+'/store/inventory-store.ts','// placeholder');console.log('ok');

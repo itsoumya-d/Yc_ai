@@ -1,8 +1,9 @@
 import { getSharedProposal } from '@/lib/actions/sharing';
 import { Card } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
+import { ProposalActions } from '@/components/public/proposal-actions';
 import { formatCurrency, formatDate, getStatusLabel, getPricingLabel } from '@/lib/utils';
-import type { ProposalStatus, PricingModel, SectionType } from '@/types/database';
+import type { ProposalStatus, PricingModel } from '@/types/database';
 
 const sectionTypeLabels: Record<string, string> = {
   executive_summary: 'Executive Summary',
@@ -32,19 +33,26 @@ export default async function SharedProposalPage({ params }: { params: Promise<{
 
   const proposal = result.data;
   const profile = proposal.user_profile;
+  const isActionable = !['won', 'lost', 'expired', 'archived'].includes(proposal.status);
 
   return (
     <div className="min-h-screen bg-[var(--background)]">
-      <div className="max-w-3xl mx-auto py-12 px-4">
+      {/* Top brand bar */}
+      <div className="border-b border-[var(--border)] bg-[var(--card)]">
+        <div className="max-w-3xl mx-auto px-4 py-3 flex items-center justify-between">
+          {profile.business_name ? (
+            <span className="text-sm font-semibold text-brand-600">{profile.business_name}</span>
+          ) : (
+            <span className="text-sm font-medium text-[var(--muted-foreground)]">Proposal</span>
+          )}
+          <Badge variant={proposal.status as ProposalStatus}>{getStatusLabel(proposal.status)}</Badge>
+        </div>
+      </div>
+
+      <div className="max-w-3xl mx-auto py-10 px-4">
         {/* Header */}
         <div className="mb-8">
-          {profile.business_name && (
-            <p className="text-sm font-medium text-blue-600 mb-1">{profile.business_name}</p>
-          )}
-          <div className="flex items-center gap-3 mb-2">
-            <h1 className="font-heading text-3xl font-bold text-[var(--foreground)]">{proposal.title}</h1>
-            <Badge variant={proposal.status as ProposalStatus}>{getStatusLabel(proposal.status)}</Badge>
-          </div>
+          <h1 className="font-heading text-3xl font-bold text-[var(--foreground)] mb-1">{proposal.title}</h1>
           {profile.full_name && (
             <p className="text-sm text-[var(--muted-foreground)]">Prepared by {profile.full_name}</p>
           )}
@@ -52,24 +60,28 @@ export default async function SharedProposalPage({ params }: { params: Promise<{
 
         {/* Client info */}
         {proposal.clients && (
-          <Card className="p-4 mb-6 bg-blue-50/50">
+          <Card className="p-4 mb-6 bg-blue-50/50 border-blue-100">
             <p className="text-xs uppercase tracking-wide text-[var(--muted-foreground)] mb-1">Prepared For</p>
             <p className="text-lg font-semibold text-[var(--foreground)]">{proposal.clients.name}</p>
             {proposal.clients.company && (
-              <p className="text-sm text-blue-600">{proposal.clients.company}</p>
+              <p className="text-sm text-brand-600">{proposal.clients.company}</p>
             )}
           </Card>
         )}
 
         {/* Meta */}
-        <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-8">
+        <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-10">
           <Card className="p-4">
             <p className="text-xs uppercase tracking-wide text-[var(--muted-foreground)] mb-1">Value</p>
-            <p className="text-lg font-semibold font-mono text-[var(--foreground)]">{formatCurrency(proposal.value, proposal.currency)}</p>
+            <p className="text-lg font-semibold font-mono-pricing text-[var(--foreground)]">
+              {formatCurrency(proposal.value, proposal.currency)}
+            </p>
           </Card>
           <Card className="p-4">
             <p className="text-xs uppercase tracking-wide text-[var(--muted-foreground)] mb-1">Pricing</p>
-            <p className="mt-1"><Badge variant={proposal.pricing_model as PricingModel}>{getPricingLabel(proposal.pricing_model)}</Badge></p>
+            <p className="mt-1">
+              <Badge variant={proposal.pricing_model as PricingModel}>{getPricingLabel(proposal.pricing_model)}</Badge>
+            </p>
           </Card>
           <Card className="p-4">
             <p className="text-xs uppercase tracking-wide text-[var(--muted-foreground)] mb-1">Date</p>
@@ -77,12 +89,14 @@ export default async function SharedProposalPage({ params }: { params: Promise<{
           </Card>
           <Card className="p-4">
             <p className="text-xs uppercase tracking-wide text-[var(--muted-foreground)] mb-1">Valid Until</p>
-            <p className="text-sm font-medium text-[var(--foreground)]">{proposal.valid_until ? formatDate(proposal.valid_until) : 'No deadline'}</p>
+            <p className="text-sm font-medium text-[var(--foreground)]">
+              {proposal.valid_until ? formatDate(proposal.valid_until) : 'No deadline'}
+            </p>
           </Card>
         </div>
 
         {/* Sections */}
-        <div className="space-y-6">
+        <div className="space-y-6 mb-10">
           {proposal.proposal_sections.map((section) => (
             <Card key={section.id} className="p-6">
               <h2 className="text-lg font-semibold text-[var(--foreground)] mb-3 border-b border-[var(--border)] pb-2">
@@ -99,10 +113,30 @@ export default async function SharedProposalPage({ params }: { params: Promise<{
 
         {/* Notes */}
         {proposal.notes && (
-          <Card className="p-4 mt-6 border-l-4 border-l-amber-400 bg-amber-50/50">
+          <Card className="p-4 mb-10 border-l-4 border-l-amber-400 bg-amber-50/50">
             <p className="text-xs font-semibold uppercase tracking-wide text-amber-800 mb-1">Notes</p>
             <p className="text-sm text-amber-900">{proposal.notes}</p>
           </Card>
+        )}
+
+        {/* Accept / Decline / E-Signature */}
+        {isActionable && (
+          <div className="mb-10">
+            <ProposalActions
+              proposalId={proposal.id}
+              proposalTitle={proposal.title}
+              status={proposal.status}
+            />
+          </div>
+        )}
+
+        {/* Won/Lost states already shown in ProposalActions */}
+        {!isActionable && (
+          <ProposalActions
+            proposalId={proposal.id}
+            proposalTitle={proposal.title}
+            status={proposal.status}
+          />
         )}
 
         {/* Footer */}

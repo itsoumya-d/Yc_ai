@@ -1,0 +1,1 @@
+const fs=require("fs");const B="E:/Yc_ai/.claude/worktrees/sleepy-franklin/stockpulse";

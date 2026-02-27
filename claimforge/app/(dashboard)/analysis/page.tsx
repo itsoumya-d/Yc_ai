@@ -1,23 +1,17 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { PageHeader } from '@/components/layout/page-header';
-import { cn, formatCurrency, getConfidenceColor, getFraudPatternLabel, getEntityColor, getEntityLabel, formatPercentage } from '@/lib/utils';
-import {
-  BarChart3,
-  Network,
-  TrendingUp,
-  Search,
-  AlertTriangle,
-  PieChart,
-  Activity,
-  Eye,
-  Zap,
-} from 'lucide-react';
-import type { FraudPatternType, ConfidenceLevel, EntityType } from '@/types/database';
+import { NetworkGraph } from '@/components/cases/network-graph';
+import { getNetworkData } from '@/lib/actions/network';
+import { computeBenfordAnalysis, type BenfordResult } from '@/lib/actions/benford';
+import { cn, formatCurrency, getFraudPatternLabel, getEntityColor, getEntityLabel } from '@/lib/utils';
+import { AlertTriangle, Zap } from 'lucide-react';
+import type { FraudPatternType, NetworkNode, NetworkEdge } from '@/types/database';
 
 const analysisTabs = ['Fraud Patterns', 'Entity Network', "Benford's Law", 'Statistical Anomalies'];
 
+// ── Static demo data (fraud patterns + anomalies) ─────────────────────────
 const fraudSummary: Array<{
   type: FraudPatternType;
   count: number;
@@ -34,29 +28,6 @@ const fraudSummary: Array<{
   { type: 'quality_substitution', count: 1, total_amount: 75_000, avg_confidence: 0.41 },
 ];
 
-const benfordData = [
-  { digit: 1, expected: 30.1, actual: 22.4, suspicious: true },
-  { digit: 2, expected: 17.6, actual: 18.2, suspicious: false },
-  { digit: 3, expected: 12.5, actual: 11.8, suspicious: false },
-  { digit: 4, expected: 9.7, actual: 15.3, suspicious: true },
-  { digit: 5, expected: 7.9, actual: 12.1, suspicious: true },
-  { digit: 6, expected: 6.7, actual: 5.9, suspicious: false },
-  { digit: 7, expected: 5.8, actual: 4.2, suspicious: false },
-  { digit: 8, expected: 5.1, actual: 5.8, suspicious: false },
-  { digit: 9, expected: 4.6, actual: 4.3, suspicious: false },
-];
-
-const networkNodes: Array<{ id: string; label: string; type: EntityType; connections: number; flagged: boolean }> = [
-  { id: 'n1', label: 'Apex Health Systems', type: 'organization', connections: 15, flagged: true },
-  { id: 'n2', label: 'Dr. Robert Chen', type: 'person', connections: 8, flagged: true },
-  { id: 'n3', label: 'MedBill Services LLC', type: 'organization', connections: 6, flagged: true },
-  { id: 'n4', label: 'Medicare Region 4', type: 'organization', connections: 12, flagged: false },
-  { id: 'n5', label: 'Payment #4421', type: 'payment', connections: 3, flagged: true },
-  { id: 'n6', label: 'Service Agreement', type: 'contract', connections: 4, flagged: false },
-  { id: 'n7', label: 'NYC Regional Office', type: 'location', connections: 5, flagged: false },
-  { id: 'n8', label: 'Jane Smith', type: 'person', connections: 7, flagged: false },
-];
-
 const anomalies = [
   { id: 'a1', description: 'Invoice amounts cluster around $999 threshold', metric: 'Amount Distribution', expected: 'Normal', actual: 'Bimodal at $999', significance: 'high' as const },
   { id: 'a2', description: 'Billing frequency spikes at end of fiscal quarters', metric: 'Temporal Distribution', expected: 'Uniform', actual: '+340% Q4 spike', significance: 'high' as const },
@@ -65,11 +36,58 @@ const anomalies = [
   { id: 'a5', description: 'Service codes inconsistent with provider specialty', metric: 'Code Validity', expected: '95%+ match', actual: '72% match', significance: 'low' as const },
 ];
 
+// Fallback Benford data for demo / no live data
+const FALLBACK_BENFORD = [
+  { digit: 1, expected: 30.1, actual: 22.4, suspicious: true, count: 0 },
+  { digit: 2, expected: 17.6, actual: 18.2, suspicious: false, count: 0 },
+  { digit: 3, expected: 12.5, actual: 11.8, suspicious: false, count: 0 },
+  { digit: 4, expected: 9.7, actual: 15.3, suspicious: true, count: 0 },
+  { digit: 5, expected: 7.9, actual: 12.1, suspicious: true, count: 0 },
+  { digit: 6, expected: 6.7, actual: 5.9, suspicious: false, count: 0 },
+  { digit: 7, expected: 5.8, actual: 4.2, suspicious: false, count: 0 },
+  { digit: 8, expected: 5.1, actual: 5.8, suspicious: false, count: 0 },
+  { digit: 9, expected: 4.6, actual: 4.3, suspicious: false, count: 0 },
+];
+
 export default function AnalysisPage() {
   const [activeTab, setActiveTab] = useState('Fraud Patterns');
 
-  const totalFraud = fraudSummary.reduce((sum, f) => sum + f.total_amount, 0);
-  const totalPatterns = fraudSummary.reduce((sum, f) => sum + f.count, 0);
+  // Entity network state (lazy-loaded on tab visit)
+  const [networkNodes, setNetworkNodes] = useState<NetworkNode[]>([]);
+  const [networkEdges, setNetworkEdges] = useState<NetworkEdge[]>([]);
+  const [networkLoading, setNetworkLoading] = useState(false);
+  const [networkLoaded, setNetworkLoaded] = useState(false);
+
+  // Benford state (lazy-loaded on tab visit)
+  const [benfordResult, setBenfordResult] = useState<BenfordResult | null>(null);
+  const [benfordLoading, setBenfordLoading] = useState(false);
+  const [benfordLoaded, setBenfordLoaded] = useState(false);
+
+  useEffect(() => {
+    if (activeTab !== 'Entity Network' || networkLoaded) return;
+    setNetworkLoading(true);
+    getNetworkData().then(res => {
+      if (res.data) { setNetworkNodes(res.data.nodes); setNetworkEdges(res.data.edges); }
+      setNetworkLoading(false);
+      setNetworkLoaded(true);
+    });
+  }, [activeTab, networkLoaded]);
+
+  useEffect(() => {
+    if (activeTab !== "Benford's Law" || benfordLoaded) return;
+    setBenfordLoading(true);
+    computeBenfordAnalysis().then(res => {
+      if (res.data) setBenfordResult(res.data);
+      setBenfordLoading(false);
+      setBenfordLoaded(true);
+    });
+  }, [activeTab, benfordLoaded]);
+
+  const totalFraud = fraudSummary.reduce((s, f) => s + f.total_amount, 0);
+  const totalPatterns = fraudSummary.reduce((s, f) => s + f.count, 0);
+
+  const benfordData = benfordResult?.digitData ?? FALLBACK_BENFORD;
+  const isLiveBenford = benfordResult !== null && benfordResult.totalAmounts > 0;
 
   return (
     <div className="flex h-full flex-col">
@@ -99,10 +117,10 @@ export default function AnalysisPage() {
       </div>
 
       <div className="flex-1 overflow-auto p-6 space-y-6">
-        {/* Fraud Patterns Tab */}
+
+        {/* ── Fraud Patterns Tab ─────────────────────────────────────────── */}
         {activeTab === 'Fraud Patterns' && (
           <>
-            {/* Summary Row */}
             <div className="grid grid-cols-3 gap-4">
               <div className="rounded-xl border border-border-default bg-bg-surface p-4">
                 <div className="text-[10px] text-text-tertiary">Total Fraud Detected</div>
@@ -118,7 +136,6 @@ export default function AnalysisPage() {
               </div>
             </div>
 
-            {/* Pattern Breakdown */}
             <div className="rounded-xl border border-border-default bg-bg-surface">
               <div className="border-b border-border-default px-4 py-3">
                 <h3 className="legal-heading text-sm text-text-primary">Pattern Breakdown</h3>
@@ -134,10 +151,7 @@ export default function AnalysisPage() {
                       </div>
                       <div className="flex-1">
                         <div className="h-2 rounded-full bg-bg-surface-raised">
-                          <div
-                            className="h-2 rounded-full bg-fraud-red transition-all"
-                            style={{ width: `${pct * 100}%` }}
-                          />
+                          <div className="h-2 rounded-full bg-fraud-red transition-all" style={{ width: `${pct * 100}%` }} />
                         </div>
                       </div>
                       <div className="w-24 text-right">
@@ -156,180 +170,168 @@ export default function AnalysisPage() {
           </>
         )}
 
-        {/* Entity Network Tab */}
+        {/* ── Entity Network Tab ─────────────────────────────────────────── */}
         {activeTab === 'Entity Network' && (
           <>
-            {/* Network Visualization Placeholder */}
-            <div className="rounded-xl border border-border-default bg-bg-surface p-1">
-              <svg viewBox="0 0 800 400" className="h-80 w-full">
-                <defs>
-                  <marker id="arrowhead" markerWidth="10" markerHeight="7" refX="10" refY="3.5" orient="auto">
-                    <polygon points="0 0, 10 3.5, 0 7" fill="#57534E" />
-                  </marker>
-                </defs>
-                {/* Edges */}
-                <line x1="200" y1="180" x2="400" y2="120" stroke="#44403C" strokeWidth="1.5" markerEnd="url(#arrowhead)" />
-                <line x1="200" y1="180" x2="350" y2="280" stroke="#44403C" strokeWidth="1.5" markerEnd="url(#arrowhead)" />
-                <line x1="400" y1="120" x2="550" y2="200" stroke="#DC2626" strokeWidth="2" strokeDasharray="4" markerEnd="url(#arrowhead)" />
-                <line x1="400" y1="120" x2="600" y2="100" stroke="#44403C" strokeWidth="1.5" markerEnd="url(#arrowhead)" />
-                <line x1="350" y1="280" x2="550" y2="200" stroke="#DC2626" strokeWidth="2" strokeDasharray="4" markerEnd="url(#arrowhead)" />
-                <line x1="550" y1="200" x2="650" y2="300" stroke="#44403C" strokeWidth="1" markerEnd="url(#arrowhead)" />
-                <line x1="600" y1="100" x2="400" y2="120" stroke="#44403C" strokeWidth="1" />
-                <line x1="200" y1="180" x2="650" y2="300" stroke="#44403C" strokeWidth="1" opacity="0.5" />
+            <NetworkGraph nodes={networkNodes} edges={networkEdges} loading={networkLoading} />
 
-                {/* Nodes */}
-                <circle cx="200" cy="180" r="24" fill="#1E40AF" opacity="0.8" className="node-glow" style={{ color: '#3B82F6' }} />
-                <text x="200" y="184" textAnchor="middle" fontSize="9" fill="white" fontWeight="600">AHS</text>
-                <text x="200" y="215" textAnchor="middle" fontSize="9" fill="#A8A29E">Apex Health</text>
-
-                <circle cx="400" cy="120" r="18" fill="#3B82F6" opacity="0.8" />
-                <text x="400" y="124" textAnchor="middle" fontSize="8" fill="white">RC</text>
-                <text x="400" y="148" textAnchor="middle" fontSize="9" fill="#A8A29E">Dr. Chen</text>
-
-                <rect x="320" y="260" width="60" height="40" rx="4" fill="#B45309" opacity="0.8" />
-                <text x="350" y="284" textAnchor="middle" fontSize="8" fill="white">MedBill</text>
-                <text x="350" y="312" textAnchor="middle" fontSize="9" fill="#A8A29E">MedBill LLC</text>
-
-                <circle cx="550" cy="200" r="20" fill="#B45309" opacity="0.6" />
-                <text x="550" y="204" textAnchor="middle" fontSize="8" fill="white">MR4</text>
-                <text x="550" y="230" textAnchor="middle" fontSize="9" fill="#A8A29E">Medicare R4</text>
-
-                <polygon points="600,80 620,100 600,120 580,100" fill="#059669" opacity="0.8" />
-                <text x="600" y="104" textAnchor="middle" fontSize="7" fill="white">$</text>
-                <text x="600" y="134" textAnchor="middle" fontSize="9" fill="#A8A29E">Pmt #4421</text>
-
-                <circle cx="650" cy="300" r="14" fill="#8B5CF6" opacity="0.6" />
-                <text x="650" y="304" textAnchor="middle" fontSize="7" fill="white">NY</text>
-                <text x="650" y="324" textAnchor="middle" fontSize="9" fill="#A8A29E">NYC Office</text>
-
-                {/* Legend */}
-                <circle cx="40" cy="360" r="5" fill="#3B82F6" />
-                <text x="52" y="364" fontSize="9" fill="#78716C">Person</text>
-                <rect x="95" y="355" width="10" height="10" rx="2" fill="#B45309" />
-                <text x="112" y="364" fontSize="9" fill="#78716C">Org</text>
-                <polygon points="155,355 160,360 155,365 150,360" fill="#059669" />
-                <text x="168" y="364" fontSize="9" fill="#78716C">Payment</text>
-                <line x1="225" y1="360" x2="250" y2="360" stroke="#DC2626" strokeWidth="2" strokeDasharray="4" />
-                <text x="258" y="364" fontSize="9" fill="#78716C">Flagged</text>
-              </svg>
-            </div>
-
-            {/* Entity List */}
-            <div className="rounded-xl border border-border-default bg-bg-surface">
-              <div className="border-b border-border-default px-4 py-3">
-                <h3 className="legal-heading text-sm text-text-primary">Entity Directory</h3>
-              </div>
-              <div className="divide-y divide-border-muted">
-                {networkNodes.map((n) => (
-                  <div key={n.id} className="flex items-center gap-3 px-4 py-3 transition-colors hover:bg-bg-surface-raised">
-                    <div className="h-3 w-3 rounded-full" style={{ backgroundColor: getEntityColor(n.type) }} />
-                    <div className="flex-1">
-                      <span className="text-sm text-text-primary">{n.label}</span>
-                      <span className="ml-2 text-[10px] text-text-tertiary">{getEntityLabel(n.type)}</span>
+            {!networkLoading && networkNodes.length > 0 && (
+              <div className="rounded-xl border border-border-default bg-bg-surface">
+                <div className="border-b border-border-default px-4 py-3">
+                  <h3 className="legal-heading text-sm text-text-primary">Entity Directory</h3>
+                </div>
+                <div className="divide-y divide-border-muted">
+                  {networkNodes.map((n) => (
+                    <div key={n.id} className="flex items-center gap-3 px-4 py-3 transition-colors hover:bg-bg-surface-raised">
+                      <div className="h-3 w-3 rounded-full shrink-0" style={{ backgroundColor: getEntityColor(n.type) }} />
+                      <div className="flex-1 min-w-0">
+                        <span className="text-sm text-text-primary truncate block">{n.label}</span>
+                        <span className="text-[10px] text-text-tertiary">{getEntityLabel(n.type)}</span>
+                      </div>
+                      <span className="text-xs text-text-tertiary shrink-0">
+                        {networkEdges.filter(e => e.source === n.id || e.target === n.id).length} connections
+                      </span>
+                      {n.flagged && <AlertTriangle className="h-3.5 w-3.5 text-fraud-red shrink-0" />}
                     </div>
-                    <span className="text-xs text-text-tertiary">{n.connections} connections</span>
-                    {n.flagged && <AlertTriangle className="h-3 w-3 text-fraud-red" />}
-                  </div>
-                ))}
+                  ))}
+                </div>
               </div>
-            </div>
+            )}
+
+            {!networkLoading && networkNodes.length === 0 && networkLoaded && (
+              <div className="rounded-xl border border-border-default bg-bg-surface px-4 py-8 text-center">
+                <p className="text-sm text-text-secondary">No entity data available</p>
+                <p className="mt-1 text-xs text-text-tertiary">
+                  Upload and analyze documents in active cases to populate the entity network.
+                </p>
+              </div>
+            )}
           </>
         )}
 
-        {/* Benford's Law Tab */}
+        {/* ── Benford's Law Tab ──────────────────────────────────────────── */}
         {activeTab === "Benford's Law" && (
-          <>
-            <div className="rounded-xl border border-border-default bg-bg-surface p-5">
-              <div className="mb-4">
+          <div className="rounded-xl border border-border-default bg-bg-surface p-5">
+            <div className="mb-4 flex items-start justify-between gap-4">
+              <div>
                 <h3 className="legal-heading text-sm text-text-primary">First-Digit Frequency Analysis</h3>
                 <p className="mt-1 text-xs text-text-secondary">
-                  Comparing the distribution of leading digits in billing amounts against the expected distribution.
+                  Comparing the distribution of leading digits in billing amounts against the expected Benford distribution.
                   Significant deviations may indicate fabricated or manipulated data.
                 </p>
               </div>
-
-              {/* Bar Chart */}
-              <div className="mb-6">
-                <div className="flex items-end justify-between gap-2" style={{ height: 200 }}>
-                  {benfordData.map((d) => {
-                    const maxVal = 35;
-                    const expectedHeight = (d.expected / maxVal) * 100;
-                    const actualHeight = (d.actual / maxVal) * 100;
-                    return (
-                      <div key={d.digit} className="flex flex-1 flex-col items-center gap-1">
-                        <div className="flex w-full items-end justify-center gap-1" style={{ height: 180 }}>
-                          <div
-                            className="w-5 rounded-t bg-primary opacity-40"
-                            style={{ height: `${expectedHeight}%` }}
-                            title={`Expected: ${d.expected}%`}
-                          />
-                          <div
-                            className={cn('w-5 rounded-t', d.suspicious ? 'bg-fraud-red' : 'bg-verified-green')}
-                            style={{ height: `${actualHeight}%` }}
-                            title={`Actual: ${d.actual}%`}
-                          />
-                        </div>
-                        <span className="text-xs font-medium text-text-secondary">{d.digit}</span>
-                      </div>
-                    );
-                  })}
-                </div>
-                <div className="mt-3 flex items-center justify-center gap-6 text-[10px] text-text-tertiary">
-                  <div className="flex items-center gap-1.5">
-                    <div className="h-2.5 w-2.5 rounded-sm bg-primary opacity-40" />
-                    <span>Expected (Benford)</span>
+              {isLiveBenford && benfordResult && (
+                <div className="shrink-0 text-right">
+                  <div className="text-[10px] text-text-tertiary">χ² Statistic</div>
+                  <div className={cn(
+                    'financial-figure text-xl font-semibold',
+                    benfordResult.fraudIndicator === 'high' ? 'text-fraud-red' :
+                    benfordResult.fraudIndicator === 'medium' ? 'text-warning' : 'text-verified-green',
+                  )}>
+                    {benfordResult.chiSquare}
                   </div>
-                  <div className="flex items-center gap-1.5">
-                    <div className="h-2.5 w-2.5 rounded-sm bg-verified-green" />
-                    <span>Actual (Normal)</span>
-                  </div>
-                  <div className="flex items-center gap-1.5">
-                    <div className="h-2.5 w-2.5 rounded-sm bg-fraud-red" />
-                    <span>Actual (Suspicious)</span>
+                  <div className={cn('text-[10px] font-semibold uppercase tracking-wider',
+                    benfordResult.fraudIndicator === 'high' ? 'text-fraud-red' :
+                    benfordResult.fraudIndicator === 'medium' ? 'text-warning' : 'text-verified-green',
+                  )}>
+                    {benfordResult.fraudIndicator} risk
                   </div>
                 </div>
-              </div>
-
-              {/* Digit Table */}
-              <div className="rounded-lg border border-border-muted">
-                <table className="w-full text-sm">
-                  <thead>
-                    <tr className="border-b border-border-muted text-left text-xs text-text-tertiary">
-                      <th className="px-3 py-2 font-medium">Digit</th>
-                      <th className="px-3 py-2 font-medium">Expected</th>
-                      <th className="px-3 py-2 font-medium">Actual</th>
-                      <th className="px-3 py-2 font-medium">Deviation</th>
-                      <th className="px-3 py-2 font-medium">Status</th>
-                    </tr>
-                  </thead>
-                  <tbody className="divide-y divide-border-muted">
-                    {benfordData.map((d) => (
-                      <tr key={d.digit} className={cn(d.suspicious && 'bg-fraud-red-muted')}>
-                        <td className="px-3 py-2 financial-figure font-medium text-text-primary">{d.digit}</td>
-                        <td className="px-3 py-2 financial-figure text-text-secondary">{d.expected}%</td>
-                        <td className="px-3 py-2 financial-figure text-text-secondary">{d.actual}%</td>
-                        <td className={cn('px-3 py-2 financial-figure font-medium', d.suspicious ? 'text-fraud-red' : 'text-verified-green')}>
-                          {d.actual > d.expected ? '+' : ''}{(d.actual - d.expected).toFixed(1)}%
-                        </td>
-                        <td className="px-3 py-2">
-                          {d.suspicious ? (
-                            <span className="inline-flex items-center gap-1 text-xs font-medium text-fraud-red">
-                              <AlertTriangle className="h-3 w-3" /> Anomalous
-                            </span>
-                          ) : (
-                            <span className="text-xs text-verified-green">Normal</span>
-                          )}
-                        </td>
-                      </tr>
-                    ))}
-                  </tbody>
-                </table>
-              </div>
+              )}
             </div>
-          </>
+
+            {benfordLoading ? (
+              <div className="flex h-48 items-center justify-center">
+                <div className="h-8 w-8 animate-spin rounded-full border-2 border-primary border-t-transparent" />
+              </div>
+            ) : (
+              <>
+                {/* Bar Chart */}
+                <div className="mb-6">
+                  <div className="flex items-end justify-between gap-2" style={{ height: 200 }}>
+                    {benfordData.map((d) => {
+                      const maxVal = 35;
+                      return (
+                        <div key={d.digit} className="flex flex-1 flex-col items-center gap-1">
+                          <div className="flex w-full items-end justify-center gap-1" style={{ height: 180 }}>
+                            <div
+                              className="w-5 rounded-t bg-primary opacity-40"
+                              style={{ height: `${(d.expected / maxVal) * 100}%` }}
+                              title={`Expected: ${d.expected}%`}
+                            />
+                            <div
+                              className={cn('w-5 rounded-t', d.suspicious ? 'bg-fraud-red' : 'bg-verified-green')}
+                              style={{ height: `${(d.actual / maxVal) * 100}%` }}
+                              title={`Actual: ${d.actual}%`}
+                            />
+                          </div>
+                          <span className="text-xs font-medium text-text-secondary">{d.digit}</span>
+                        </div>
+                      );
+                    })}
+                  </div>
+                  <div className="mt-3 flex items-center justify-center gap-6 text-[10px] text-text-tertiary">
+                    <div className="flex items-center gap-1.5">
+                      <div className="h-2.5 w-2.5 rounded-sm bg-primary opacity-40" />
+                      <span>Expected (Benford)</span>
+                    </div>
+                    <div className="flex items-center gap-1.5">
+                      <div className="h-2.5 w-2.5 rounded-sm bg-verified-green" />
+                      <span>Actual (Normal)</span>
+                    </div>
+                    <div className="flex items-center gap-1.5">
+                      <div className="h-2.5 w-2.5 rounded-sm bg-fraud-red" />
+                      <span>Actual (Suspicious)</span>
+                    </div>
+                  </div>
+                </div>
+
+                {/* Table */}
+                <div className="rounded-lg border border-border-muted">
+                  <table className="w-full text-sm">
+                    <thead>
+                      <tr className="border-b border-border-muted text-left text-xs text-text-tertiary">
+                        <th className="px-3 py-2 font-medium">Digit</th>
+                        <th className="px-3 py-2 font-medium">Expected</th>
+                        <th className="px-3 py-2 font-medium">Actual</th>
+                        <th className="px-3 py-2 font-medium">Deviation</th>
+                        <th className="px-3 py-2 font-medium">Status</th>
+                        {isLiveBenford && <th className="px-3 py-2 font-medium">Count</th>}
+                      </tr>
+                    </thead>
+                    <tbody className="divide-y divide-border-muted">
+                      {benfordData.map((d) => (
+                        <tr key={d.digit} className={cn(d.suspicious && 'bg-fraud-red-muted')}>
+                          <td className="px-3 py-2 financial-figure font-medium text-text-primary">{d.digit}</td>
+                          <td className="px-3 py-2 financial-figure text-text-secondary">{d.expected}%</td>
+                          <td className="px-3 py-2 financial-figure text-text-secondary">{d.actual}%</td>
+                          <td className={cn('px-3 py-2 financial-figure font-medium', d.suspicious ? 'text-fraud-red' : 'text-verified-green')}>
+                            {d.actual > d.expected ? '+' : ''}{(d.actual - d.expected).toFixed(1)}%
+                          </td>
+                          <td className="px-3 py-2">
+                            {d.suspicious
+                              ? <span className="inline-flex items-center gap-1 text-xs font-medium text-fraud-red"><AlertTriangle className="h-3 w-3" /> Anomalous</span>
+                              : <span className="text-xs text-verified-green">Normal</span>
+                            }
+                          </td>
+                          {isLiveBenford && <td className="px-3 py-2 financial-figure text-text-tertiary">{d.count}</td>}
+                        </tr>
+                      ))}
+                    </tbody>
+                  </table>
+                </div>
+
+                {isLiveBenford && benfordResult && (
+                  <p className="mt-3 text-[10px] text-text-tertiary">
+                    Analysis based on {benfordResult.totalAmounts} amount samples. χ² critical values: p=0.05 → 15.507, p=0.01 → 20.09 (8 df).
+                  </p>
+                )}
+              </>
+            )}
+          </div>
         )}
 
-        {/* Statistical Anomalies Tab */}
+        {/* ── Statistical Anomalies Tab ──────────────────────────────────── */}
         {activeTab === 'Statistical Anomalies' && (
           <div className="rounded-xl border border-border-default bg-bg-surface">
             <div className="border-b border-border-default px-4 py-3">
@@ -348,22 +350,13 @@ export default function AnalysisPage() {
                         <span className="text-sm font-medium text-text-primary">{a.description}</span>
                       </div>
                       <div className="mt-2 grid grid-cols-3 gap-4 text-xs">
-                        <div>
-                          <span className="text-text-tertiary">Metric: </span>
-                          <span className="text-text-secondary">{a.metric}</span>
-                        </div>
-                        <div>
-                          <span className="text-text-tertiary">Expected: </span>
-                          <span className="text-text-secondary">{a.expected}</span>
-                        </div>
-                        <div>
-                          <span className="text-text-tertiary">Actual: </span>
-                          <span className="financial-figure text-fraud-red">{a.actual}</span>
-                        </div>
+                        <div><span className="text-text-tertiary">Metric: </span><span className="text-text-secondary">{a.metric}</span></div>
+                        <div><span className="text-text-tertiary">Expected: </span><span className="text-text-secondary">{a.expected}</span></div>
+                        <div><span className="text-text-tertiary">Actual: </span><span className="financial-figure text-fraud-red">{a.actual}</span></div>
                       </div>
                     </div>
                     <span className={cn(
-                      'rounded-full px-2 py-0.5 text-[10px] font-medium',
+                      'ml-4 rounded-full px-2 py-0.5 text-[10px] font-medium',
                       a.significance === 'high' ? 'bg-fraud-red-muted text-fraud-red' :
                       a.significance === 'medium' ? 'bg-warning-muted text-warning' :
                       'bg-bg-surface-raised text-text-tertiary',
@@ -376,6 +369,7 @@ export default function AnalysisPage() {
             </div>
           </div>
         )}
+
       </div>
     </div>
   );

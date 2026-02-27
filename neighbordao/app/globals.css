@@ -1,0 +1,153 @@
+@import "tailwindcss";
+
+@layer base {
+  :root {
+    /* ── Brand Palette ──────────────────────────────────────── */
+    --color-leaf-50:  #F0FDF4;
+    --color-leaf-100: #DCFCE7;
+    --color-leaf-200: #BBF7D0;
+    --color-leaf-300: #86EFAC;
+    --color-leaf-400: #4ADE80;
+    --color-leaf-500: #22C55E;
+    --color-leaf-600: #16A34A;
+    --color-leaf-700: #15803D;
+    --color-leaf-800: #166534;
+    --color-leaf-900: #14532D;
+
+    --color-earth-600: #CA8A04;
+    --color-earth-700: #A16207;
+    --color-earth-800: #854D0E;
+
+    --color-sky-400: #38BDF8;
+    --color-sky-600: #0284C7;
+
+    /* ── Semantic ────────────────────────────────────────────── */
+    --color-alert:     #DC2626;
+    --color-event:     #7C3AED;
+    --color-vote:      #2563EB;
+    --color-warning:   #F59E0B;
+    --color-treasury:  #CA8A04;
+
+    /* ── Light Mode ─────────────────────────────────────────── */
+    --bg-page:       #FEFCE8;
+    --bg-surface:    #FFFFFF;
+    --bg-elevated:   #FFFFFF;
+    --bg-subtle:     #F5F5F4;
+    --text-primary:  #1C1917;
+    --text-secondary: #57534E;
+    --text-tertiary: #A8A29E;
+    --border:        #E7E5E4;
+    --border-focus:  #16A34A;
+
+    /* ── Shadows ─────────────────────────────────────────────── */
+    --shadow-card:        0 1px 3px rgba(28,25,23,0.08), 0 1px 2px rgba(28,25,23,0.04);
+    --shadow-card-hover:  0 4px 12px rgba(28,25,23,0.1), 0 2px 4px rgba(28,25,23,0.06);
+    --shadow-modal:       0 20px 60px rgba(28,25,23,0.15);
+    --shadow-dropdown:    0 4px 16px rgba(28,25,23,0.12);
+
+    /* ── Transitions ─────────────────────────────────────────── */
+    --transition-fast:   150ms ease-out;
+    --transition-base:   200ms ease-out;
+    --transition-slow:   300ms ease-in-out;
+    --transition-spring: 300ms cubic-bezier(0.34, 1.56, 0.64, 1);
+  }
+
+  [data-theme='dark'] {
+    --bg-page:       #1C1917;
+    --bg-surface:    #292524;
+    --bg-elevated:   #44403C;
+    --bg-subtle:     #292524;
+    --text-primary:  #FAFAF9;
+    --text-secondary: #D6D3D1;
+    --text-tertiary: #A8A29E;
+    --border:        #44403C;
+    --border-focus:  #22C55E;
+  }
+
+  * { box-sizing: border-box; }
+
+  html {
+    font-family: 'Inter', system-ui, sans-serif;
+    font-size: 16px;
+    scroll-behavior: smooth;
+  }
+
+  body {
+    background: var(--bg-page);
+    color: var(--text-primary);
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+  }
+
+  h1, h2, h3, h4, h5, h6 {
+    font-family: 'Nunito', system-ui, sans-serif;
+    font-weight: 700;
+    line-height: 1.25;
+    letter-spacing: -0.01em;
+  }
+
+  :focus-visible {
+    outline: 2px solid var(--border-focus);
+    outline-offset: 2px;
+    border-radius: 4px;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    *, *::before, *::after {
+      animation-duration: 0.01ms !important;
+      animation-iteration-count: 1 !important;
+      transition-duration: 0.01ms !important;
+    }
+  }
+}
+
+@layer utilities {
+  .bg-page     { background: var(--bg-page); }
+  .bg-surface  { background: var(--bg-surface); }
+  .bg-subtle   { background: var(--bg-subtle); }
+  .text-primary   { color: var(--text-primary); }
+  .text-secondary { color: var(--text-secondary); }
+  .text-tertiary  { color: var(--text-tertiary); }
+  .border-default { border-color: var(--border); }
+  .shadow-card     { box-shadow: var(--shadow-card); }
+  .shadow-card-hover { box-shadow: var(--shadow-card-hover); }
+
+  /* Category badge colors */
+  .badge-alert       { background: #DC2626; color: white; }
+  .badge-event       { background: #7C3AED; color: white; }
+  .badge-question    { background: #2563EB; color: white; }
+  .badge-recommendation { background: #16A34A; color: white; }
+  .badge-marketplace { background: #A16207; color: white; }
+  .badge-safety      { background: #DC2626; color: white; }
+  .badge-general     { background: #78716C; color: white; }
+  .badge-lost_found  { background: #F59E0B; color: #1C1917; }
+
+  /* Status order badges */
+  .badge-open      { background: #16A34A; color: white; }
+  .badge-locked    { background: #F59E0B; color: #1C1917; }
+  .badge-ordered   { background: #2563EB; color: white; }
+  .badge-delivered { background: #7C3AED; color: white; }
+  .badge-completed { background: #78716C; color: white; }
+  .badge-cancelled { background: #DC2626; color: white; }
+
+  /* Skeleton animation */
+  .skeleton {
+    background: linear-gradient(90deg, var(--bg-subtle) 25%, var(--border) 50%, var(--bg-subtle) 75%);
+    background-size: 200% 100%;
+    animation: shimmer 1.5s infinite;
+  }
+
+  @keyframes shimmer {
+    0%   { background-position: 200% 0; }
+    100% { background-position: -200% 0; }
+  }
+
+  /* Alert pulse for map markers */
+  @keyframes alert-pulse {
+    0%, 100% { transform: scale(1); opacity: 1; }
+    50%       { transform: scale(1.15); opacity: 0.85; }
+  }
+  .animate-alert-pulse {
+    animation: alert-pulse 2s ease-in-out infinite;
+  }
+}
