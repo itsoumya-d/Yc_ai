@@ -2,10 +2,10 @@ import { useMemo } from 'react';
 import { cn, getScoreColor, getSeverityColor, getSeverityLabel } from '@/lib/utils';
 import { useAppStore } from '@/stores/app-store';
 import { computeOverallScore } from '@/lib/storage';
-import { Shield, AlertTriangle, CheckCircle2, Clock, ChevronRight, TrendingUp, Building2 } from 'lucide-react';
+import { Shield, AlertTriangle, CheckCircle2, Clock, ChevronRight, TrendingUp, Building2, ArrowRight } from 'lucide-react';
 
 export function DashboardView() {
-  const { facilities, violations, inspections, correctiveActions, organizationName } = useAppStore();
+  const { facilities, violations, inspections, correctiveActions, organizationName, setSubView } = useAppStore();
 
   const overallScore = useMemo(() => computeOverallScore(facilities), [facilities]);
 
@@ -65,10 +65,17 @@ export function DashboardView() {
         {/* Stats */}
         <div className="grid grid-cols-2 gap-3">
           {stats.map((s) => (
-            <div key={s.label} className="rounded-xl bg-bg-card p-4">
+            <div
+              key={s.label}
+              className={cn('rounded-xl bg-bg-card p-4', s.label === 'Open Violations' && 'cursor-pointer active:opacity-80')}
+              onClick={s.label === 'Open Violations' ? () => setSubView('violations') : undefined}
+            >
               <div className="flex items-center gap-2">
                 <s.icon className={cn('h-4 w-4', s.color)} />
                 <span className="text-xs text-text-secondary">{s.label}</span>
+                {s.label === 'Open Violations' && openViolations > 0 && (
+                  <ArrowRight className="ml-auto h-3.5 w-3.5 text-text-secondary" />
+                )}
               </div>
               <div className={cn('score-display mt-1 text-2xl', s.color)}>{s.value}</div>
             </div>
@@ -108,6 +115,12 @@ export function DashboardView() {
           <div>
             <div className="mb-2 flex items-center justify-between">
               <h2 className="snap-heading text-sm text-text-primary">Recent Violations</h2>
+              <button
+                onClick={() => setSubView('violations')}
+                className="flex items-center gap-1 text-xs text-safety-yellow font-medium"
+              >
+                View All <ArrowRight className="h-3.5 w-3.5" />
+              </button>
             </div>
             <div className="space-y-2">
               {recentViolations.map((v) => (

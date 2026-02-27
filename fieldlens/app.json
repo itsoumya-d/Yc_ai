@@ -1,0 +1,33 @@
+{
+  "expo": {
+    "name": "FieldLens",
+    "slug": "fieldlens",
+    "version": "1.0.0",
+    "orientation": "portrait",
+    "icon": "./assets/icon.png",
+    "userInterfaceStyle": "dark",
+    "scheme": "fieldlens",
+    "plugins": [
+      "expo-router",
+      "expo-camera",
+      "expo-av",
+      ["expo-notifications", {"sounds": ["./assets/notification.wav"]}]
+    ],
+    "ios": {
+      "supportsTablet": false,
+      "bundleIdentifier": "com.fieldlens.app",
+      "infoPlist": {
+        "NSMicrophoneUsageDescription": "FieldLens uses the microphone for voice commands during inspections.",
+        "NSCameraUsageDescription": "FieldLens uses the camera to analyze your trade work with AI."
+      }
+    },
+    "android": {
+      "adaptiveIcon": {
+        "foregroundImage": "./assets/adaptive-icon.png",
+        "backgroundColor": "#d97706"
+      },
+      "package": "com.fieldlens.app",
+      "permissions": ["CAMERA", "RECORD_AUDIO", "READ_EXTERNAL_STORAGE"]
+    }
+  }
+}

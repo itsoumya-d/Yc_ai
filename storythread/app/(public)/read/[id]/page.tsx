@@ -1,6 +1,12 @@
 import { getPublicStory } from '@/lib/actions/sharing';
+import { getComments, getReactions, isFollowingAuthor } from '@/lib/actions/social';
+import { createClient } from '@/lib/supabase/server';
 import { getGenreLabel, getGenreEmoji, formatWordCount, formatDate } from '@/lib/utils';
+import { StoryReactions } from '@/components/social/story-reactions';
+import { StoryComments } from '@/components/social/story-comments';
+import { FollowButton } from '@/components/social/follow-button';
 import { notFound } from 'next/navigation';
+import Link from 'next/link';
 import type { Metadata } from 'next';
 
 export const dynamic = 'force-dynamic';
@@ -16,30 +22,56 @@ export async function generateMetadata({ params }: { params: Promise<{ id: strin
   return {
     title: `${story.title} by ${author}`,
     description: story.description || `Read "${story.title}" on StoryThread`,
+    openGraph: {
+      title: `${story.title} by ${author}`,
+      description: story.description || `Read "${story.title}" on StoryThread`,
+      type: 'article',
+    },
   };
 }
 
 export default async function PublicStoryPage({ params }: { params: Promise<{ id: string }> }) {
   const { id } = await params;
-  const result = await getPublicStory(id);
 
-  if (result.error || !result.data) {
+  // Get current user (may be null for unauthenticated visitors)
+  const supabase = await createClient();
+  const { data: { user } } = await supabase.auth.getUser();
+
+  const [storyResult, commentsResult, reactionsResult, followingResult] = await Promise.all([
+    getPublicStory(id),
+    getComments(id),
+    getReactions(id),
+    user ? isFollowingAuthor(id) : Promise.resolve({ data: false }),
+  ]);
+
+  if (storyResult.error || !storyResult.data) {
     notFound();
   }
 
-  const { story, chapters } = result.data;
+  const { story, chapters } = storyResult.data;
   const author = story.author_pen_name || story.author_name || 'Anonymous';
   const totalWords = chapters.reduce((sum, ch) => sum + ch.word_count, 0);
   const estimatedReadTime = Math.max(1, Math.round(totalWords / 250));
+  const comments = commentsResult.data ?? [];
+  const reactionCounts = reactionsResult.data ?? {
+    like: 0, love: 0, fire: 0, mind_blown: 0, sad: 0, userReaction: null,
+  };
+  const isFollowing = followingResult.data ?? false;
 
   return (
     <div className="min-h-screen bg-[#faf9f7]">
       {/* Header */}
-      <header className="border-b border-gray-200 bg-white">
-        <div className="mx-auto max-w-3xl px-6 py-4 flex items-center justify-between">
-          <a href="/" className="text-sm font-medium text-gray-500 hover:text-gray-900 transition-colors">
+      <header className="border-b border-gray-200 bg-white sticky top-0 z-10">
+        <div className="mx-auto max-w-3xl px-6 py-4 flex items-center justify-between gap-4">
+          <Link href="/discover" className="text-sm font-medium text-gray-500 hover:text-gray-900 transition-colors flex items-center gap-1">
+            <svg className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+              <path strokeLinecap="round" strokeLinejoin="round" d="M10.5 19.5 3 12m0 0 7.5-7.5M3 12h18" />
+            </svg>
+            Discover
+          </Link>
+          <Link href="/discover" className="text-sm font-semibold text-brand-600">
             StoryThread
-          </a>
+          </Link>
           <span className="text-xs text-gray-400">
             {getGenreLabel(story.genre)}
           </span>
@@ -58,8 +90,15 @@ export default async function PublicStoryPage({ params }: { params: Promise<{ id
               {story.description}
             </p>
           )}
-          <div className="mt-6 flex items-center justify-center gap-4 text-sm text-gray-500">
-            <span>by <span className="font-medium text-gray-700">{author}</span></span>
+          <div className="mt-6 flex items-center justify-center gap-4 text-sm text-gray-500 flex-wrap">
+            <div className="flex items-center gap-2">
+              <span>by <span className="font-medium text-gray-700">{author}</span></span>
+              <FollowButton
+                authorId={story.user_id}
+                initialIsFollowing={isFollowing}
+                currentUserId={user?.id}
+              />
+            </div>
             <span className="text-gray-300">|</span>
             <span>{formatWordCount(totalWords)} words</span>
             <span className="text-gray-300">|</span>
@@ -70,12 +109,13 @@ export default async function PublicStoryPage({ params }: { params: Promise<{ id
           {story.tags && story.tags.length > 0 && (
             <div className="mt-4 flex flex-wrap justify-center gap-2">
               {story.tags.map((tag) => (
-                <span
+                <Link
                   key={tag}
-                  className="inline-block rounded-full bg-gray-100 px-3 py-1 text-xs text-gray-600"
+                  href={`/discover?q=${encodeURIComponent(tag)}`}
+                  className="inline-block rounded-full bg-gray-100 px-3 py-1 text-xs text-gray-600 hover:bg-brand-50 hover:text-brand-600 transition-colors"
                 >
                   {tag}
-                </span>
+                </Link>
               ))}
             </div>
           )}
@@ -112,7 +152,7 @@ export default async function PublicStoryPage({ params }: { params: Promise<{ id
       )}
 
       {/* Chapters */}
-      <div className="mx-auto max-w-3xl px-6 pb-24">
+      <div className="mx-auto max-w-3xl px-6 pb-12">
         {chapters.length === 0 ? (
           <div className="text-center py-16 text-gray-500">
             <p>This story has no published chapters yet.</p>
@@ -147,6 +187,34 @@ export default async function PublicStoryPage({ params }: { params: Promise<{ id
         )}
       </div>
 
+      {/* Reactions */}
+      <div className="mx-auto max-w-3xl px-6 pb-8">
+        <div className="rounded-xl border border-gray-200 bg-white p-6">
+          <h3 className="text-sm font-semibold text-gray-500 mb-3">React to this story</h3>
+          {user ? (
+            <StoryReactions storyId={story.id} initialCounts={reactionCounts} />
+          ) : (
+            <div className="flex items-center gap-3">
+              {['👍', '❤️', '🔥', '🤯', '😢'].map((e) => (
+                <span key={e} className="text-2xl opacity-40">{e}</span>
+              ))}
+              <Link href="/login" className="ml-2 text-sm text-brand-600 hover:underline">
+                Sign in to react
+              </Link>
+            </div>
+          )}
+        </div>
+      </div>
+
+      {/* Comments */}
+      <div className="mx-auto max-w-3xl px-6 pb-24">
+        <StoryComments
+          storyId={story.id}
+          initialComments={comments}
+          currentUserId={user?.id}
+        />
+      </div>
+
       {/* Footer */}
       <footer className="border-t border-gray-200 bg-white py-8">
         <div className="mx-auto max-w-3xl px-6 text-center text-sm text-gray-500">
@@ -155,7 +223,7 @@ export default async function PublicStoryPage({ params }: { params: Promise<{ id
           </p>
           <p className="mt-1">
             Published on {formatDate(story.updated_at)} &middot; Written on{' '}
-            <a href="/" className="text-brand-600 hover:underline">StoryThread</a>
+            <Link href="/discover" className="text-brand-600 hover:underline">StoryThread</Link>
           </p>
         </div>
       </footer>

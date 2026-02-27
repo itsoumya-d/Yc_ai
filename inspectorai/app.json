@@ -1,0 +1,60 @@
+{
+  "expo": {
+    "name": "InspectorAI",
+    "slug": "inspectorai",
+    "version": "1.0.0",
+    "scheme": "inspectorai",
+    "orientation": "portrait",
+    "icon": "./assets/icon.png",
+    "userInterfaceStyle": "light",
+    "splash": {
+      "image": "./assets/splash.png",
+      "resizeMode": "contain",
+      "backgroundColor": "#dc2626"
+    },
+    "assetBundlePatterns": ["**/*"],
+    "ios": {
+      "supportsTablet": true,
+      "bundleIdentifier": "com.inspectorai.app",
+      "infoPlist": {
+        "NSCameraUsageDescription": "InspectorAI needs camera access to capture damage photos for assessment.",
+        "NSPhotoLibraryUsageDescription": "InspectorAI needs photo library access to upload damage photos.",
+        "NSLocationWhenInUseUsageDescription": "InspectorAI uses location to tag inspection sites."
+      }
+    },
+    "android": {
+      "adaptiveIcon": {
+        "foregroundImage": "./assets/adaptive-icon.png",
+        "backgroundColor": "#dc2626"
+      },
+      "package": "com.inspectorai.app",
+      "permissions": ["CAMERA", "READ_EXTERNAL_STORAGE", "ACCESS_FINE_LOCATION"]
+    },
+    "web": {
+      "favicon": "./assets/favicon.png",
+      "bundler": "metro"
+    },
+    "plugins": [
+      "expo-router",
+      "expo-camera",
+      "expo-image-picker",
+      [
+        "expo-location",
+        {
+          "locationWhenInUsePermission": "Allow InspectorAI to use your location."
+        }
+      ]
+    ],
+    "experiments": {
+      "typedRoutes": true
+    },
+    "extra": {
+      "router": {
+        "origin": false
+      },
+      "eas": {
+        "projectId": "your-project-id"
+      }
+    }
+  }
+}

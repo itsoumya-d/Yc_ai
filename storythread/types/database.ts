@@ -97,3 +97,75 @@ export interface StoryWithDetails extends Story {
   characters: Character[];
   world_elements: WorldElement[];
 }
+
+export type ReactionType = 'like' | 'love' | 'fire' | 'mind_blown' | 'sad';
+
+export interface Comment {
+  id: string;
+  story_id: string;
+  chapter_id: string | null;
+  user_id: string;
+  parent_id: string | null;
+  content: string;
+  created_at: string;
+  updated_at: string;
+}
+
+export interface CommentWithAuthor extends Comment {
+  author_name: string | null;
+  author_pen_name: string | null;
+  replies?: CommentWithAuthor[];
+}
+
+export interface Reaction {
+  id: string;
+  story_id: string;
+  chapter_id: string | null;
+  user_id: string;
+  reaction_type: ReactionType;
+  created_at: string;
+}
+
+export interface ReactionCounts {
+  like: number;
+  love: number;
+  fire: number;
+  mind_blown: number;
+  sad: number;
+  userReaction: ReactionType | null;
+}
+
+export interface StoryFollow {
+  id: string;
+  follower_id: string;
+  author_id: string;
+  created_at: string;
+}
+
+export interface PublicAuthor {
+  id: string;
+  full_name: string | null;
+  pen_name: string | null;
+  bio: string | null;
+  avatar_url: string | null;
+  story_count: number;
+  total_word_count: number;
+  follower_count: number;
+}
+
+export interface WritingSession {
+  id: string;
+  user_id: string;
+  story_id: string;
+  chapter_id: string | null;
+  words_written: number;
+  session_date: string;
+  created_at: string;
+}
+
+export interface PublicStoryCard extends Story {
+  author_name: string | null;
+  author_pen_name: string | null;
+  reaction_count: number;
+  comment_count: number;
+}

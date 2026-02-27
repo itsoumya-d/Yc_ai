@@ -1,0 +1,29 @@
+{
+  "expo": {
+    "name": "GovPass",
+    "slug": "govpass",
+    "version": "1.0.0",
+    "orientation": "portrait",
+    "icon": "./assets/icon.png",
+    "userInterfaceStyle": "light",
+    "scheme": "govpass",
+    "plugins": [
+      "expo-router",
+      "expo-camera",
+      "expo-secure-store",
+      "expo-notifications",
+      ["expo-local-authentication", {"faceIDPermission": "Allow GovPass to use Face ID"}]
+    ],
+    "ios": {
+      "supportsTablet": false,
+      "bundleIdentifier": "com.govpass.app"
+    },
+    "android": {
+      "adaptiveIcon": {
+        "foregroundImage": "./assets/adaptive-icon.png",
+        "backgroundColor": "#1d4ed8"
+      },
+      "package": "com.govpass.app"
+    }
+  }
+}

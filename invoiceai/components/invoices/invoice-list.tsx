@@ -7,7 +7,9 @@ import { Input } from '@/components/ui/input';
 import { Badge } from '@/components/ui/badge';
 import { EmptyState } from '@/components/ui/empty-state';
 import { DataTable } from '@/components/ui/data-table';
+import { useToast } from '@/components/ui/toast';
 import { formatCurrency, formatDate } from '@/lib/utils';
+import { updateInvoiceStatus, deleteInvoiceAction } from '@/lib/actions/invoices';
 import type { InvoiceWithDetails } from '@/types/database';
 
 interface InvoiceListProps {
@@ -28,8 +30,11 @@ const statusFilters: { label: string; value: StatusFilter }[] = [
 
 export function InvoiceList({ initialInvoices, totalCount }: InvoiceListProps) {
   const router = useRouter();
+  const { toast } = useToast();
   const [statusFilter, setStatusFilter] = useState<StatusFilter>('all');
   const [search, setSearch] = useState('');
+  const [selectedIds, setSelectedIds] = useState<Set<string>>(new Set());
+  const [bulkLoading, setBulkLoading] = useState(false);
 
   const filteredInvoices = initialInvoices.filter((inv) => {
     if (statusFilter !== 'all' && inv.status !== statusFilter) return false;
@@ -56,7 +61,103 @@ export function InvoiceList({ initialInvoices, totalCount }: InvoiceListProps) {
     .filter((inv) => inv.status === 'paid')
     .reduce((sum, inv) => sum + inv.total, 0);
 
+  // Selection helpers
+  const allVisibleSelected =
+    filteredInvoices.length > 0 && filteredInvoices.every((inv) => selectedIds.has(inv.id));
+
+  const toggleAll = () => {
+    if (allVisibleSelected) {
+      setSelectedIds(new Set());
+    } else {
+      setSelectedIds(new Set(filteredInvoices.map((inv) => inv.id)));
+    }
+  };
+
+  const toggleOne = (id: string) => {
+    setSelectedIds((prev) => {
+      const next = new Set(prev);
+      if (next.has(id)) next.delete(id);
+      else next.add(id);
+      return next;
+    });
+  };
+
+  // Bulk actions
+  const handleBulkMarkSent = async () => {
+    if (selectedIds.size === 0) return;
+    setBulkLoading(true);
+    const ids = Array.from(selectedIds);
+    const results = await Promise.all(ids.map((id) => updateInvoiceStatus(id, 'sent')));
+    setBulkLoading(false);
+    const errors = results.filter((r) => !r.success);
+    if (errors.length === 0) {
+      toast({ title: `${ids.length} invoice${ids.length > 1 ? 's' : ''} marked as sent`, variant: 'success' });
+      setSelectedIds(new Set());
+      router.refresh();
+    } else {
+      toast({ title: `${errors.length} errors occurred`, variant: 'destructive' });
+    }
+  };
+
+  const handleBulkMarkPaid = async () => {
+    if (selectedIds.size === 0) return;
+    setBulkLoading(true);
+    const ids = Array.from(selectedIds);
+    const results = await Promise.all(ids.map((id) => updateInvoiceStatus(id, 'paid')));
+    setBulkLoading(false);
+    const errors = results.filter((r) => !r.success);
+    if (errors.length === 0) {
+      toast({ title: `${ids.length} invoice${ids.length > 1 ? 's' : ''} marked as paid`, variant: 'success' });
+      setSelectedIds(new Set());
+      router.refresh();
+    } else {
+      toast({ title: `${errors.length} errors occurred`, variant: 'destructive' });
+    }
+  };
+
+  const handleBulkDelete = async () => {
+    if (selectedIds.size === 0) return;
+    if (!confirm(`Delete ${selectedIds.size} invoice${selectedIds.size > 1 ? 's' : ''}? This cannot be undone.`)) return;
+    setBulkLoading(true);
+    const ids = Array.from(selectedIds);
+    const results = await Promise.all(ids.map((id) => deleteInvoiceAction(id)));
+    setBulkLoading(false);
+    const errors = results.filter((r) => !r.success);
+    if (errors.length === 0) {
+      toast({ title: `${ids.length} invoice${ids.length > 1 ? 's' : ''} deleted`, variant: 'success' });
+      setSelectedIds(new Set());
+      router.refresh();
+    } else {
+      toast({ title: `${errors.length} errors occurred`, variant: 'destructive' });
+    }
+  };
+
   const columns = [
+    {
+      key: 'select',
+      header: (
+        <input
+          type="checkbox"
+          checked={allVisibleSelected}
+          onChange={toggleAll}
+          className="rounded border-[var(--border)] text-brand-600 focus:ring-brand-500"
+          aria-label="Select all invoices"
+        />
+      ),
+      render: (inv: InvoiceWithDetails) => (
+        <input
+          type="checkbox"
+          checked={selectedIds.has(inv.id)}
+          onChange={(e) => {
+            e.stopPropagation();
+            toggleOne(inv.id);
+          }}
+          onClick={(e) => e.stopPropagation()}
+          className="rounded border-[var(--border)] text-brand-600 focus:ring-brand-500"
+          aria-label={`Select invoice ${inv.invoice_number}`}
+        />
+      ),
+    },
     {
       key: 'invoice_number',
       header: 'Invoice',
@@ -154,6 +255,50 @@ export function InvoiceList({ initialInvoices, totalCount }: InvoiceListProps) {
             <p className="mt-1 font-amount text-xl font-bold text-green-600">
               {formatCurrency(totalPaid)}
             </p>
+          </div>
+        </div>
+      )}
+
+      {/* Bulk actions bar — shown when items are selected */}
+      {selectedIds.size > 0 && (
+        <div className="mt-6 flex items-center gap-3 rounded-lg border border-brand-200 bg-brand-50 px-4 py-3">
+          <span className="text-sm font-medium text-brand-700">
+            {selectedIds.size} selected
+          </span>
+          <div className="ml-auto flex items-center gap-2">
+            <Button
+              variant="outline"
+              size="sm"
+              onClick={handleBulkMarkSent}
+              disabled={bulkLoading}
+            >
+              Mark as Sent
+            </Button>
+            <Button
+              variant="outline"
+              size="sm"
+              onClick={handleBulkMarkPaid}
+              disabled={bulkLoading}
+            >
+              Mark as Paid
+            </Button>
+            <Button
+              variant="outline"
+              size="sm"
+              onClick={handleBulkDelete}
+              disabled={bulkLoading}
+              className="border-red-200 text-red-600 hover:bg-red-50"
+            >
+              Delete
+            </Button>
+            <Button
+              variant="outline"
+              size="sm"
+              onClick={() => setSelectedIds(new Set())}
+              disabled={bulkLoading}
+            >
+              Clear
+            </Button>
           </div>
         </div>
       )}

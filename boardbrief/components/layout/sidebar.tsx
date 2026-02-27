@@ -6,6 +6,7 @@ import { usePathname, useRouter } from 'next/navigation';
 import {
   LayoutDashboard,
   Calendar,
+  CalendarDays,
   Users,
   CheckSquare,
   Vote,
@@ -23,6 +24,7 @@ import { Avatar } from '@/components/ui/avatar';
 const navItems = [
   { label: 'Dashboard', href: '/dashboard', icon: LayoutDashboard },
   { label: 'Meetings', href: '/meetings', icon: Calendar },
+  { label: 'Calendar', href: '/calendar', icon: CalendarDays },
   { label: 'Board Members', href: '/board-members', icon: Users },
   { label: 'Action Items', href: '/action-items', icon: CheckSquare },
   { label: 'Resolutions', href: '/resolutions', icon: Vote },

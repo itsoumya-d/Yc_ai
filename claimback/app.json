@@ -1,0 +1,50 @@
+{
+  "expo": {
+    "name": "Claimback",
+    "slug": "claimback",
+    "version": "1.0.0",
+    "scheme": "claimback",
+    "orientation": "portrait",
+    "icon": "./assets/icon.png",
+    "userInterfaceStyle": "light",
+    "splash": {
+      "image": "./assets/splash.png",
+      "resizeMode": "contain",
+      "backgroundColor": "#16a34a"
+    },
+    "assetBundlePatterns": ["**/*"],
+    "ios": {
+      "supportsTablet": true,
+      "bundleIdentifier": "com.claimback.app",
+      "infoPlist": {
+        "NSCameraUsageDescription": "Claimback needs camera access to scan your bills",
+        "NSPhotoLibraryUsageDescription": "Claimback needs photo library access to import bill images"
+      }
+    },
+    "android": {
+      "adaptiveIcon": {
+        "foregroundImage": "./assets/adaptive-icon.png",
+        "backgroundColor": "#16a34a"
+      },
+      "package": "com.claimback.app",
+      "permissions": ["CAMERA", "READ_EXTERNAL_STORAGE"]
+    },
+    "web": {
+      "favicon": "./assets/favicon.png",
+      "bundler": "metro"
+    },
+    "plugins": [
+      "expo-router",
+      "expo-camera",
+      "expo-image-picker",
+      ["expo-notifications", {"icon": "./assets/icon.png", "color": "#16a34a"}]
+    ],
+    "experiments": {
+      "typedRoutes": true
+    },
+    "extra": {
+      "router": {"origin": false},
+      "eas": {"projectId": "YOUR_PROJECT_ID"}
+    }
+  }
+}

@@ -1,0 +1,16 @@
+{
+  "expo": {
+    "name": "Mortal",
+    "slug": "mortal",
+    "version": "1.0.0",
+    "scheme": "mortal",
+    "orientation": "portrait",
+    "userInterfaceStyle": "dark",
+    "icon": "./assets/icon.png",
+    "splash": { "backgroundColor": "#0f0f1a" },
+    "ios": { "supportsTablet": true, "bundleIdentifier": "com.mortal.app" },
+    "android": { "package": "com.mortal.app", "adaptiveIcon": { "backgroundColor": "#0f0f1a" } },
+    "plugins": ["expo-router", "expo-secure-store", "expo-local-authentication", "expo-notifications"],
+    "experiments": { "typedRoutes": true }
+  }
+}

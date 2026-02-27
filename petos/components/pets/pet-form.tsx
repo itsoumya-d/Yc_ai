@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useRef } from 'react';
 import { useRouter } from 'next/navigation';
 import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
@@ -28,6 +28,40 @@ export function PetForm({ pet }: PetFormProps) {
   const router = useRouter();
   const { toast } = useToast();
   const [loading, setLoading] = useState(false);
+  const [photoUrl, setPhotoUrl] = useState(pet?.photo_url ?? '');
+  const [photoUploading, setPhotoUploading] = useState(false);
+  const [photoPreview, setPhotoPreview] = useState<string | null>(pet?.photo_url ?? null);
+  const fileInputRef = useRef<HTMLInputElement>(null);
+
+  const handlePhotoSelect = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+
+    const objectUrl = URL.createObjectURL(file);
+    setPhotoPreview(objectUrl);
+
+    setPhotoUploading(true);
+    try {
+      const fd = new FormData();
+      fd.append('file', file);
+      if (pet?.id) fd.append('pet_id', pet.id);
+
+      const res = await fetch('/api/upload-photo', { method: 'POST', body: fd });
+      const json = await res.json();
+
+      if (!res.ok || json.error) {
+        throw new Error(json.error ?? 'Upload failed');
+      }
+
+      setPhotoUrl(json.url);
+      toast({ title: 'Photo uploaded', variant: 'success' });
+    } catch (err: any) {
+      toast({ title: 'Upload failed', description: err.message, variant: 'destructive' });
+      setPhotoPreview(pet?.photo_url ?? null);
+    } finally {
+      setPhotoUploading(false);
+    }
+  };
 
   async function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault();
@@ -177,13 +211,58 @@ export function PetForm({ pet }: PetFormProps) {
             </label>
           </div>
 
-          <Input
-            id="photo_url"
-            name="photo_url"
-            label="Photo URL"
-            placeholder="https://..."
-            defaultValue={pet?.photo_url || ''}
-          />
+          {/* Photo Upload */}
+          <div>
+            <label className="mb-1 block text-sm font-medium text-[var(--foreground)]">
+              Photo
+            </label>
+            <div className="flex items-center gap-4">
+              {photoPreview ? (
+                <div className="relative h-20 w-20 overflow-hidden rounded-full border-2 border-[var(--border)]">
+                  <img
+                    src={photoPreview}
+                    alt="Pet photo"
+                    className="h-full w-full object-cover"
+                  />
+                </div>
+              ) : (
+                <div className="flex h-20 w-20 items-center justify-center rounded-full border-2 border-dashed border-[var(--border)] bg-[var(--muted)] text-2xl">
+                  🐾
+                </div>
+              )}
+              <div className="flex flex-col gap-2">
+                <input
+                  ref={fileInputRef}
+                  type="file"
+                  accept="image/jpeg,image/png,image/webp,image/gif"
+                  className="hidden"
+                  onChange={handlePhotoSelect}
+                />
+                <input type="hidden" name="photo_url" value={photoUrl} />
+                <Button
+                  type="button"
+                  variant="outline"
+                  size="sm"
+                  onClick={() => fileInputRef.current?.click()}
+                  disabled={photoUploading}
+                >
+                  {photoUploading ? 'Uploading...' : 'Upload Photo'}
+                </Button>
+                {photoUrl && (
+                  <button
+                    type="button"
+                    onClick={() => { setPhotoUrl(''); setPhotoPreview(null); }}
+                    className="text-xs text-red-600 hover:text-red-700"
+                  >
+                    Remove photo
+                  </button>
+                )}
+                <p className="text-xs text-[var(--muted-foreground)]">
+                  JPEG, PNG, WebP or GIF · Max 5MB
+                </p>
+              </div>
+            </div>
+          </div>
 
           <Textarea
             id="notes"

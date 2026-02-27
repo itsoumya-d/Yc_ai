@@ -9,7 +9,10 @@ import { Badge } from '@/components/ui/badge';
 import { useToast } from '@/components/ui/toast';
 import { deleteMeeting } from '@/lib/actions/meetings';
 import { generateMeetingSummary } from '@/lib/actions/ai-meetings';
+import { getGoogleCalendarLink, getOutlookCalendarLink } from '@/lib/calendar-utils';
 import { formatDateTime, getMeetingTypeLabel, getMeetingStatusLabel } from '@/lib/utils';
+import { MeetingTranscription } from '@/components/meetings/meeting-transcription';
+import { CalendarSync } from '@/components/meetings/calendar-sync';
 import {
   Edit,
   Trash2,
@@ -234,6 +237,15 @@ export function MeetingDetail({ meeting }: MeetingDetailProps) {
           </div>
         </Card>
       )}
+
+      {/* Meeting Transcription */}
+      <MeetingTranscription meetingId={meeting.id} meetingTitle={meeting.title} />
+
+      {/* Calendar Sync */}
+      <CalendarSync
+        googleCalendarUrl={getGoogleCalendarLink(meeting)}
+        outlookCalendarUrl={getOutlookCalendarLink(meeting)}
+      />
     </div>
   );
 }
