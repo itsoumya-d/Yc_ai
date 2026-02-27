@@ -1,6 +1,7 @@
 import { getSharedProposal } from '@/lib/actions/sharing';
 import { Card } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
+import { SignaturePadComponent } from '@/components/proposals/signature-pad';
 import { formatCurrency, formatDate, getStatusLabel, getPricingLabel } from '@/lib/utils';
 import type { ProposalStatus, PricingModel, SectionType } from '@/types/database';
 
@@ -103,6 +104,13 @@ export default async function SharedProposalPage({ params }: { params: Promise<{
             <p className="text-xs font-semibold uppercase tracking-wide text-amber-800 mb-1">Notes</p>
             <p className="text-sm text-amber-900">{proposal.notes}</p>
           </Card>
+        )}
+
+        {/* E-Signature */}
+        {['draft', 'sent', 'viewed'].includes(proposal.status) && (
+          <div className="mt-8">
+            <SignaturePadComponent proposalId={proposal.id} proposalTitle={proposal.title} />
+          </div>
         )}
 
         {/* Footer */}

@@ -9,6 +9,7 @@ import { Badge } from '@/components/ui/badge';
 import { useToast } from '@/components/ui/toast';
 import { deleteMeeting } from '@/lib/actions/meetings';
 import { generateMeetingSummary } from '@/lib/actions/ai-meetings';
+import { TranscriptionPanel } from './transcription-panel';
 import { formatDateTime, getMeetingTypeLabel, getMeetingStatusLabel } from '@/lib/utils';
 import {
   Edit,
@@ -147,6 +148,8 @@ export function MeetingDetail({ meeting }: MeetingDetailProps) {
           </p>
         </Card>
       )}
+
+      <TranscriptionPanel meetingId={meeting.id} initialTranscription={meeting.transcription} />
 
       <Card className="p-4">
         <div className="flex items-center justify-between mb-2">

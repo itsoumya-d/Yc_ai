@@ -32,6 +32,8 @@ export interface Meeting {
   location: string | null;
   video_link: string | null;
   notes: string | null;
+  transcription: string | null;
+  recording_url: string | null;
   created_at: string;
   updated_at: string;
 }

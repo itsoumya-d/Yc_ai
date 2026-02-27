@@ -1,25 +1,30 @@
 'use client';
 
 import { useState } from 'react';
+import { useRouter } from 'next/navigation';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
 import { Card } from '@/components/ui/card';
 import { useToast } from '@/components/ui/toast';
-import { generateProposalSections } from '@/lib/actions/ai-proposals';
-import { Sparkles, Loader2, Copy } from 'lucide-react';
+import { generateProposalSections, generateAndSaveProposalSections } from '@/lib/actions/ai-proposals';
+import { Sparkles, Loader2, Plus, CheckCircle } from 'lucide-react';
+import type { GeneratedSection } from '@/lib/actions/openai';
 
 interface AIProposalPanelProps {
   clientName?: string;
   industry?: string;
+  proposalId?: string;
 }
 
-export function AIProposalPanel({ clientName, industry }: AIProposalPanelProps) {
+export function AIProposalPanel({ clientName, industry, proposalId }: AIProposalPanelProps) {
+  const router = useRouter();
   const { toast } = useToast();
   const [brief, setBrief] = useState('');
   const [services, setServices] = useState('');
-  const [result, setResult] = useState('');
+  const [sections, setSections] = useState<GeneratedSection[]>([]);
   const [loading, setLoading] = useState(false);
+  const [saving, setSaving] = useState(false);
 
   async function handleGenerate() {
     if (!brief.trim()) {
@@ -27,19 +32,31 @@ export function AIProposalPanel({ clientName, industry }: AIProposalPanelProps) 
       return;
     }
     setLoading(true);
-    setResult('');
+    setSections([]);
     const res = await generateProposalSections(brief, clientName ?? '', industry ?? '', services);
     setLoading(false);
     if (res.error) {
       toast({ title: res.error, variant: 'destructive' });
       return;
     }
-    setResult(res.data ?? '');
+    setSections(res.data ?? []);
   }
 
-  async function handleCopy() {
-    await navigator.clipboard.writeText(result);
-    toast({ title: 'Copied to clipboard' });
+  async function handleAddToProposal() {
+    if (!proposalId) {
+      toast({ title: 'Save the proposal first before adding sections', variant: 'destructive' });
+      return;
+    }
+    setSaving(true);
+    const res = await generateAndSaveProposalSections(proposalId, brief, clientName ?? '', industry ?? '', services);
+    setSaving(false);
+    if (res.error) {
+      toast({ title: res.error, variant: 'destructive' });
+      return;
+    }
+    toast({ title: `${res.data?.length ?? 0} sections added to proposal`, variant: 'success' });
+    setSections([]);
+    router.refresh();
   }
 
   return (
@@ -57,16 +74,35 @@ export function AIProposalPanel({ clientName, industry }: AIProposalPanelProps) 
           <label className="block text-sm font-medium text-[var(--foreground)] mb-1">Services Offered</label>
           <Input value={services} onChange={(e) => setServices(e.target.value)} placeholder="e.g. Web Development, UI/UX Design, SEO" />
         </div>
-        <Button onClick={handleGenerate} disabled={loading}>
-          {loading ? <><Loader2 className="w-4 h-4 mr-2 animate-spin" />Generating...</> : <><Sparkles className="w-4 h-4 mr-2" />Generate Proposal</>}
-        </Button>
-        {result && (
-          <div className="mt-4">
-            <div className="flex items-center justify-between mb-2">
-              <span className="text-sm font-medium text-[var(--foreground)]">Generated Content</span>
-              <Button variant="ghost" size="sm" onClick={handleCopy}><Copy className="w-4 h-4 mr-1" />Copy</Button>
-            </div>
-            <div className="p-4 bg-[var(--muted)] rounded-lg text-sm whitespace-pre-wrap text-[var(--foreground)]">{result}</div>
+
+        <div className="flex gap-2 flex-wrap">
+          <Button onClick={handleGenerate} disabled={loading || saving}>
+            {loading
+              ? <><Loader2 className="w-4 h-4 mr-2 animate-spin" />Generating...</>
+              : <><Sparkles className="w-4 h-4 mr-2" />Generate</>}
+          </Button>
+          {sections.length > 0 && proposalId && (
+            <Button variant="outline" onClick={handleAddToProposal} disabled={saving || loading}>
+              {saving
+                ? <><Loader2 className="w-4 h-4 mr-2 animate-spin" />Adding...</>
+                : <><Plus className="w-4 h-4 mr-2" />Add {sections.length} sections to proposal</>}
+            </Button>
+          )}
+        </div>
+
+        {sections.length > 0 && (
+          <div className="mt-2 space-y-2">
+            <p className="text-sm font-medium text-[var(--foreground)]">{sections.length} sections generated:</p>
+            {sections.map((section, i) => (
+              <div key={i} className="rounded-lg border border-[var(--border)] bg-[var(--muted)]/30 p-3">
+                <div className="flex items-center gap-2 mb-1">
+                  <CheckCircle className="w-3.5 h-3.5 text-green-500 flex-shrink-0" />
+                  <p className="text-sm font-medium text-[var(--foreground)]">{section.title}</p>
+                  <span className="ml-auto text-xs text-[var(--muted-foreground)] capitalize">{section.section_type.replace('_', ' ')}</span>
+                </div>
+                <p className="text-xs text-[var(--muted-foreground)] line-clamp-2 ml-5">{section.content}</p>
+              </div>
+            ))}
           </div>
         )}
       </div>

@@ -1,6 +1,7 @@
 'use server';
 
 import OpenAI from 'openai';
+import type { ChatCompletionContentPart } from 'openai/resources/chat/completions';
 
 interface ActionResult<T = null> {
   data?: T;
@@ -23,21 +24,38 @@ export async function analyzeSymptoms(
   species: string,
   breed: string,
   age: string,
-  severity: string
+  severity: string,
+  photoUrl?: string
 ): Promise<ActionResult<{ analysis: string; recommendation: string }>> {
   try {
     const openai = getOpenAI();
 
+    // Build user message — include image if provided (GPT-4o Vision)
+    const userContent: ChatCompletionContentPart[] = [
+      {
+        type: 'text',
+        text: `My ${species} (${breed}, ${age}) is experiencing the following symptoms with ${severity} severity:\n\n${description}\n\nPlease analyze these symptoms and provide a recommendation.`,
+      },
+    ];
+
+    if (photoUrl) {
+      userContent.push({
+        type: 'image_url',
+        image_url: { url: photoUrl, detail: 'high' },
+      });
+    }
+
     const response = await openai.chat.completions.create({
-      model: 'gpt-4o-mini',
+      // Use gpt-4o when a photo is provided (Vision), gpt-4o-mini for text-only
+      model: photoUrl ? 'gpt-4o' : 'gpt-4o-mini',
       messages: [
         {
           role: 'system',
-          content: `You are a veterinary health assistant. Analyze pet symptoms and provide helpful guidance. Always recommend consulting a veterinarian for serious concerns. Format your response as JSON with "analysis" and "recommendation" fields. Keep each field under 300 words.`,
+          content: `You are a veterinary health assistant. Analyze pet symptoms${photoUrl ? ', including any photo provided,' : ''} and provide helpful guidance. Always recommend consulting a veterinarian for serious concerns. Format your response as JSON with "analysis" and "recommendation" fields. Keep each field under 300 words.`,
         },
         {
           role: 'user',
-          content: `My ${species} (${breed}, ${age}) is experiencing the following symptoms with ${severity} severity:\n\n${description}\n\nPlease analyze these symptoms and provide a recommendation.`,
+          content: userContent,
         },
       ],
       response_format: { type: 'json_object' },

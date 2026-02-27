@@ -1,0 +1,19 @@
+{
+  "expo": {
+    "name": "Mortal",
+    "slug": "mortal",
+    "version": "1.0.0",
+    "orientation": "portrait",
+    "icon": "./assets/images/icon.png",
+    "scheme": "mortal",
+    "userInterfaceStyle": "dark",
+    "splash": { "backgroundColor": "#0f0f1a" },
+    "ios": {
+      "bundleIdentifier": "com.mortal.app",
+      "infoPlist": { "NSFaceIDUsageDescription": "Authenticate to access your private wishes and documents" }
+    },
+    "android": { "package": "com.mortal.app", "permissions": ["android.permission.USE_BIOMETRIC"] },
+    "plugins": ["expo-router", "expo-secure-store", "expo-local-authentication", ["expo-notifications", { "sounds": [] }]],
+    "experiments": { "typedRoutes": true }
+  }
+}

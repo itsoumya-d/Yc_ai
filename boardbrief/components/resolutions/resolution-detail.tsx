@@ -7,8 +7,8 @@ import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Card } from '@/components/ui/card';
 import { useToast } from '@/components/ui/toast';
-import { deleteResolution } from '@/lib/actions/resolutions';
-import { Edit, Trash2, ThumbsUp, ThumbsDown, MinusCircle } from 'lucide-react';
+import { deleteResolution, castVote } from '@/lib/actions/resolutions';
+import { Edit, Trash2, ThumbsUp, ThumbsDown, MinusCircle, Loader2 } from 'lucide-react';
 import type { Resolution } from '@/types/database';
 
 interface ResolutionDetailProps {
@@ -19,15 +19,39 @@ export function ResolutionDetail({ resolution }: ResolutionDetailProps) {
   const router = useRouter();
   const { toast } = useToast();
   const [deleting, setDeleting] = useState(false);
+  const [voting, setVoting] = useState<'for' | 'against' | 'abstain' | null>(null);
+  const [votes, setVotes] = useState({
+    for: resolution.votes_for ?? 0,
+    against: resolution.votes_against ?? 0,
+    abstain: resolution.votes_abstain ?? 0,
+  });
 
-  const votesFor = resolution.votes_for ?? 0;
-  const votesAgainst = resolution.votes_against ?? 0;
-  const votesAbstain = resolution.votes_abstain ?? 0;
+  const votesFor = votes.for;
+  const votesAgainst = votes.against;
+  const votesAbstain = votes.abstain;
   const totalVotes = votesFor + votesAgainst + votesAbstain;
 
   function getBarWidth(count: number): string {
     if (totalVotes === 0) return '0%';
     return `${Math.round((count / totalVotes) * 100)}%`;
+  }
+
+  async function handleVote(voteType: 'for' | 'against' | 'abstain') {
+    setVoting(voteType);
+    const result = await castVote(resolution.id, voteType);
+    setVoting(null);
+    if (result.error) {
+      toast({ title: result.error, variant: 'destructive' });
+      return;
+    }
+    if (result.data) {
+      setVotes({
+        for: result.data.votes_for,
+        against: result.data.votes_against,
+        abstain: result.data.votes_abstain,
+      });
+      toast({ title: 'Vote recorded' });
+    }
   }
 
   async function handleDelete() {
@@ -72,6 +96,40 @@ export function ResolutionDetail({ resolution }: ResolutionDetailProps) {
           </Button>
         </div>
       </div>
+
+      {resolution.status === 'voting' && (
+        <Card className="p-4 border-blue-200 bg-blue-50/40">
+          <h3 className="text-sm font-medium text-blue-800 mb-3">Cast Your Vote</h3>
+          <div className="flex gap-3">
+            <Button
+              onClick={() => handleVote('for')}
+              disabled={voting !== null}
+              className="flex-1 bg-green-600 hover:bg-green-700 text-white"
+            >
+              {voting === 'for' ? <Loader2 className="w-4 h-4 animate-spin mr-1" /> : <ThumbsUp className="w-4 h-4 mr-1" />}
+              For
+            </Button>
+            <Button
+              onClick={() => handleVote('against')}
+              disabled={voting !== null}
+              variant="outline"
+              className="flex-1 border-red-300 text-red-700 hover:bg-red-50"
+            >
+              {voting === 'against' ? <Loader2 className="w-4 h-4 animate-spin mr-1" /> : <ThumbsDown className="w-4 h-4 mr-1" />}
+              Against
+            </Button>
+            <Button
+              onClick={() => handleVote('abstain')}
+              disabled={voting !== null}
+              variant="outline"
+              className="flex-1"
+            >
+              {voting === 'abstain' ? <Loader2 className="w-4 h-4 animate-spin mr-1" /> : <MinusCircle className="w-4 h-4 mr-1" />}
+              Abstain
+            </Button>
+          </div>
+        </Card>
+      )}
 
       <Card className="p-4">
         <h3 className="text-sm font-medium text-[var(--muted-foreground)] mb-3">
