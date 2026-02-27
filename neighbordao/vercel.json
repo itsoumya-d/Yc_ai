@@ -1,0 +1,23 @@
+{
+  "framework": "nextjs",
+  "buildCommand": "npm run build",
+  "installCommand": "npm install",
+  "env": {
+    "NEXT_PUBLIC_SUPABASE_URL": "@neighbordao_supabase_url",
+    "NEXT_PUBLIC_SUPABASE_ANON_KEY": "@neighbordao_supabase_anon_key",
+    "SUPABASE_SERVICE_ROLE_KEY": "@neighbordao_supabase_service_role_key",
+    "OPENAI_API_KEY": "@neighbordao_openai_api_key",
+    "STRIPE_SECRET_KEY": "@neighbordao_stripe_secret_key",
+    "NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY": "@neighbordao_stripe_publishable_key",
+    "NEXT_PUBLIC_APP_URL": "@neighbordao_app_url"
+  },
+  "headers": [
+    {
+      "source": "/(.*)",
+      "headers": [
+        { "key": "X-Frame-Options", "value": "DENY" },
+        { "key": "X-Content-Type-Options", "value": "nosniff" }
+      ]
+    }
+  ]
+}

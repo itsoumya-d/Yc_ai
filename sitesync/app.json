@@ -1,0 +1,36 @@
+{
+  "expo": {
+    "name": "SiteSync",
+    "slug": "sitesync",
+    "version": "1.0.0",
+    "orientation": "portrait",
+    "icon": "./assets/icon.png",
+    "userInterfaceStyle": "light",
+    "splash": {
+      "backgroundColor": "#0F2027"
+    },
+    "ios": {
+      "supportsTablet": true,
+      "bundleIdentifier": "com.sitesync.app",
+      "infoPlist": {
+        "NSCameraUsageDescription": "SiteSync uses your camera to document construction site progress and capture GPS-tagged photos.",
+        "NSLocationWhenInUseUsageDescription": "SiteSync tags your photos with GPS coordinates to map site documentation.",
+        "NSPhotoLibraryUsageDescription": "SiteSync saves site documentation photos to your library."
+      }
+    },
+    "android": {
+      "adaptiveIcon": {
+        "backgroundColor": "#0F2027"
+      },
+      "package": "com.sitesync.app",
+      "permissions": ["android.permission.CAMERA", "android.permission.ACCESS_FINE_LOCATION", "android.permission.WRITE_EXTERNAL_STORAGE"]
+    },
+    "plugins": [
+      "expo-router",
+      "expo-camera",
+      "expo-location",
+      "expo-media-library"
+    ],
+    "scheme": "sitesync"
+  }
+}

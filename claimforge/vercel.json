@@ -1,0 +1,23 @@
+{
+  "framework": "nextjs",
+  "buildCommand": "npm run build",
+  "installCommand": "npm install",
+  "env": {
+    "NEXT_PUBLIC_SUPABASE_URL": "@claimforge_supabase_url",
+    "NEXT_PUBLIC_SUPABASE_ANON_KEY": "@claimforge_supabase_anon_key",
+    "SUPABASE_SERVICE_ROLE_KEY": "@claimforge_supabase_service_role_key",
+    "OPENAI_API_KEY": "@claimforge_openai_api_key",
+    "NEXT_PUBLIC_APP_URL": "@claimforge_app_url"
+  },
+  "headers": [
+    {
+      "source": "/(.*)",
+      "headers": [
+        { "key": "X-Frame-Options", "value": "DENY" },
+        { "key": "X-Content-Type-Options", "value": "nosniff" },
+        { "key": "Referrer-Policy", "value": "strict-origin-when-cross-origin" },
+        { "key": "Permissions-Policy", "value": "camera=(), microphone=(), geolocation=()" }
+      ]
+    }
+  ]
+}

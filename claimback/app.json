@@ -1,0 +1,16 @@
+{
+  "expo": {
+    "name": "Claimback",
+    "slug": "claimback",
+    "version": "1.0.0",
+    "orientation": "portrait",
+    "userInterfaceStyle": "automatic",
+    "icon": "./assets/icon.png",
+    "splash": { "backgroundColor": "#0F172A" },
+    "ios": { "supportsTablet": false, "bundleIdentifier": "com.claimback.app", "infoPlist": { "NSCameraUsageDescription": "Claimback uses your camera to scan bills." } },
+    "android": { "package": "com.claimback.app", "adaptiveIcon": { "foregroundImage": "./assets/adaptive-icon.png", "backgroundColor": "#0F172A" }, "permissions": ["CAMERA"], "versionCode": 1 },
+    "plugins": ["expo-router", "expo-camera"],
+    "scheme": "claimback",
+    "web": { "bundler": "metro" }
+  }
+}

@@ -1,0 +1,27 @@
+{
+  "expo": {
+    "name": "Mortal",
+    "slug": "mortal",
+    "version": "1.0.0",
+    "orientation": "portrait",
+    "userInterfaceStyle": "automatic",
+    "icon": "./assets/icon.png",
+    "splash": { "backgroundColor": "#1C1917" },
+    "ios": {
+      "supportsTablet": false,
+      "bundleIdentifier": "com.mortal.app",
+      "infoPlist": {
+        "NSFaceIDUsageDescription": "Mortal uses Face ID to protect your sensitive documents."
+      }
+    },
+    "android": {
+      "package": "com.mortal.app",
+      "adaptiveIcon": { "foregroundImage": "./assets/adaptive-icon.png", "backgroundColor": "#1C1917" },
+      "permissions": ["USE_BIOMETRIC", "USE_FINGERPRINT"],
+      "versionCode": 1
+    },
+    "plugins": ["expo-router", ["expo-local-authentication", { "faceIDPermission": "Allow Mortal to use Face ID." }]],
+    "scheme": "mortal",
+    "web": { "bundler": "metro" }
+  }
+}

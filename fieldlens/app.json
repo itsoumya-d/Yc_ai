@@ -1,0 +1,35 @@
+{
+  "expo": {
+    "name": "FieldLens",
+    "slug": "fieldlens",
+    "version": "1.0.0",
+    "orientation": "portrait",
+    "icon": "./assets/icon.png",
+    "userInterfaceStyle": "dark",
+    "splash": {
+      "backgroundColor": "#0D1117"
+    },
+    "ios": {
+      "supportsTablet": false,
+      "bundleIdentifier": "com.fieldlens.app",
+      "infoPlist": {
+        "NSCameraUsageDescription": "FieldLens uses your camera to analyze your work technique and provide real-time coaching feedback.",
+        "NSMicrophoneUsageDescription": "FieldLens uses your microphone for voice coaching instructions.",
+        "NSPhotoLibraryUsageDescription": "FieldLens saves coaching session recordings to your photo library."
+      }
+    },
+    "android": {
+      "adaptiveIcon": {
+        "backgroundColor": "#0D1117"
+      },
+      "package": "com.fieldlens.app",
+      "permissions": ["android.permission.CAMERA", "android.permission.RECORD_AUDIO", "android.permission.WRITE_EXTERNAL_STORAGE"]
+    },
+    "plugins": [
+      "expo-router",
+      "expo-camera",
+      ["expo-av", { "microphonePermission": "FieldLens uses the microphone for voice coaching." }]
+    ],
+    "scheme": "fieldlens"
+  }
+}
