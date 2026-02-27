@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useRef } from 'react';
 import { useRouter } from 'next/navigation';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -9,6 +9,7 @@ import { Select } from '@/components/ui/select';
 import { Card } from '@/components/ui/card';
 import { useToast } from '@/components/ui/toast';
 import { createProposalSection, updateProposalSection, deleteProposalSection } from '@/lib/actions/proposal-sections';
+import { TemplateVariablePicker } from '@/components/proposals/template-variable-picker';
 import { Trash2 } from 'lucide-react';
 import type { ProposalSection, SectionType } from '@/types/database';
 
@@ -32,12 +33,32 @@ export function ProposalSectionEditor({ section, proposalId }: ProposalSectionEd
   const router = useRouter();
   const { toast } = useToast();
   const [loading, setLoading] = useState(false);
+  const [content, setContent] = useState(section?.content ?? '');
+  const textareaRef = useRef<HTMLTextAreaElement>(null);
   const isEditing = !!section;
+
+  function handleInsertVariable(token: string) {
+    const el = textareaRef.current;
+    if (!el) {
+      setContent((prev) => prev + token);
+      return;
+    }
+    const start = el.selectionStart ?? content.length;
+    const end   = el.selectionEnd   ?? content.length;
+    const next  = content.slice(0, start) + token + content.slice(end);
+    setContent(next);
+    requestAnimationFrame(() => {
+      el.selectionStart = start + token.length;
+      el.selectionEnd   = start + token.length;
+      el.focus();
+    });
+  }
 
   async function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault();
     setLoading(true);
     const formData = new FormData(e.currentTarget);
+    formData.set('content', content);
     const result = isEditing
       ? await updateProposalSection(section.id, formData)
       : await createProposalSection(proposalId, formData);
@@ -79,8 +100,24 @@ export function ProposalSectionEditor({ section, proposalId }: ProposalSectionEd
           </div>
         </div>
         <div>
-          <label className="block text-sm font-medium text-[var(--foreground)] mb-1">Content</label>
-          <Textarea name="content" rows={12} defaultValue={section?.content ?? ''} placeholder="Write your section content here..." className="font-mono text-sm" />
+          <div className="mb-1 flex items-center justify-between">
+            <label className="block text-sm font-medium text-[var(--foreground)]">Content</label>
+            <TemplateVariablePicker onInsert={handleInsertVariable} />
+          </div>
+          <Textarea
+            ref={textareaRef}
+            name="content"
+            rows={12}
+            value={content}
+            onChange={(e) => setContent(e.target.value)}
+            placeholder="Write your section content here… use 'Insert Variable' to add dynamic fields like {{client_name}}."
+            className="font-mono text-sm"
+          />
+          {content.includes('{{') && (
+            <p className="mt-1 text-[10px] text-[var(--muted-foreground)]">
+              Variables in <code className="font-mono">{'{{braces}}'}</code> are replaced with real values when the proposal is sent or exported.
+            </p>
+          )}
         </div>
         <div className="flex items-center gap-3 pt-2">
           <Button type="submit" disabled={loading}>{loading ? 'Saving...' : (isEditing ? 'Save Section' : 'Add Section')}</Button>

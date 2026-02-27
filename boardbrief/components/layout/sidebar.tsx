@@ -15,18 +15,20 @@ import {
   LogOut,
   PanelLeftClose,
   PanelLeft,
+  BarChart3,
 } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { createClient } from '@/lib/supabase/client';
 import { Avatar } from '@/components/ui/avatar';
 
 const navItems = [
-  { label: 'Dashboard', href: '/dashboard', icon: LayoutDashboard },
-  { label: 'Meetings', href: '/meetings', icon: Calendar },
+  { label: 'Dashboard',     href: '/dashboard',     icon: LayoutDashboard },
+  { label: 'Meetings',      href: '/meetings',      icon: Calendar },
+  { label: 'KPI Tracker',   href: '/kpis',          icon: BarChart3 },
   { label: 'Board Members', href: '/board-members', icon: Users },
-  { label: 'Action Items', href: '/action-items', icon: CheckSquare },
-  { label: 'Resolutions', href: '/resolutions', icon: Vote },
-  { label: 'Settings', href: '/settings', icon: Settings },
+  { label: 'Action Items',  href: '/action-items',  icon: CheckSquare },
+  { label: 'Resolutions',   href: '/resolutions',   icon: Vote },
+  { label: 'Settings',      href: '/settings',      icon: Settings },
 ];
 
 export function Sidebar() {
