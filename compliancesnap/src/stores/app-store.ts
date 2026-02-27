@@ -1,10 +1,14 @@
 import { create } from 'zustand';
-import type { AppTab, Facility, Violation, Inspection, CorrectiveAction } from '@/types/database';
+import type { AppTab, Facility, Violation, Inspection, CorrectiveAction, ActionStatus } from '@/types/database';
 
 interface AppState {
   // Navigation
   currentTab: AppTab;
   setTab: (tab: AppTab) => void;
+
+  // Sub-view navigation (within a tab, e.g. 'violations' overlay on dashboard)
+  subView: string | null;
+  setSubView: (view: string | null) => void;
 
   // Online status
   isOnline: boolean;
@@ -19,6 +23,7 @@ interface AppState {
   violations: Violation[];
   setViolations: (violations: Violation[]) => void;
   addViolation: (violation: Violation) => void;
+  updateViolation: (id: string, status: ActionStatus) => void;
 
   // Inspections
   inspections: Inspection[];
@@ -44,7 +49,11 @@ interface AppState {
 export const useAppStore = create<AppState>((set) => ({
   // Navigation
   currentTab: 'dashboard',
-  setTab: (tab) => set({ currentTab: tab }),
+  setTab: (tab) => set({ currentTab: tab, subView: null }),
+
+  // Sub-view
+  subView: null,
+  setSubView: (subView) => set({ subView }),
 
   // Online status
   isOnline: true,
@@ -59,6 +68,10 @@ export const useAppStore = create<AppState>((set) => ({
   violations: [],
   setViolations: (violations) => set({ violations }),
   addViolation: (violation) => set((s) => ({ violations: [...s.violations, violation] })),
+  updateViolation: (id, status) =>
+    set((s) => ({
+      violations: s.violations.map((v) => (v.id === id ? { ...v, status } : v)),
+    })),
 
   // Inspections
   inspections: [],

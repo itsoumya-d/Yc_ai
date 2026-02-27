@@ -15,11 +15,15 @@ import {
   Menu,
   PanelLeftClose,
   LogOut,
+  Compass,
+  BarChart2,
 } from 'lucide-react';
 
 const navigation = [
   { name: 'Dashboard', href: '/dashboard', icon: LayoutDashboard },
   { name: 'My Stories', href: '/stories', icon: BookOpen },
+  { name: 'Analytics', href: '/analytics', icon: BarChart2 },
+  { name: 'Discover', href: '/discover', icon: Compass },
 ];
 
 const bottomNavigation = [

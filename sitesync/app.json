@@ -1,0 +1,64 @@
+{
+  "expo": {
+    "name": "SiteSync",
+    "slug": "sitesync",
+    "version": "1.0.0",
+    "orientation": "portrait",
+    "icon": "./assets/icon.png",
+    "userInterfaceStyle": "light",
+    "scheme": "sitesync",
+    "splash": {
+      "image": "./assets/splash.png",
+      "resizeMode": "contain",
+      "backgroundColor": "#d97706"
+    },
+    "assetBundlePatterns": ["**/*"],
+    "ios": {
+      "supportsTablet": true,
+      "bundleIdentifier": "com.sitesync.app",
+      "infoPlist": {
+        "NSCameraUsageDescription": "SiteSync uses your camera to capture job site photos.",
+        "NSLocationWhenInUseUsageDescription": "SiteSync uses your location to tag job site photos with GPS coordinates.",
+        "NSPhotoLibraryUsageDescription": "SiteSync accesses your photo library to upload site photos."
+      }
+    },
+    "android": {
+      "adaptiveIcon": {
+        "foregroundImage": "./assets/adaptive-icon.png",
+        "backgroundColor": "#d97706"
+      },
+      "package": "com.sitesync.app",
+      "permissions": [
+        "CAMERA",
+        "ACCESS_FINE_LOCATION",
+        "ACCESS_COARSE_LOCATION",
+        "READ_EXTERNAL_STORAGE",
+        "WRITE_EXTERNAL_STORAGE"
+      ]
+    },
+    "web": {
+      "bundler": "metro",
+      "output": "static",
+      "favicon": "./assets/favicon.png"
+    },
+    "plugins": [
+      "expo-router",
+      "expo-camera",
+      [
+        "expo-location",
+        {
+          "locationAlwaysAndWhenInUsePermission": "Allow SiteSync to use your location to tag site photos."
+        }
+      ],
+      [
+        "expo-image-picker",
+        {
+          "photosPermission": "SiteSync accesses photos to document job site progress."
+        }
+      ]
+    ],
+    "experiments": {
+      "typedRoutes": true
+    }
+  }
+}

@@ -7,8 +7,12 @@ import { InspectionsView } from '@/components/views/inspections-view';
 import { ScannerView } from '@/components/views/scanner-view';
 import { ReportsView } from '@/components/views/reports-view';
 import { MoreView } from '@/components/views/more-view';
+import { ViolationsView } from '@/components/views/violations-view';
 
-function renderTab(tab: string) {
+function renderTab(tab: string, subView: string | null) {
+  // Sub-view overlays (replace current tab when active)
+  if (subView === 'violations') return <ViolationsView />;
+
   switch (tab) {
     case 'dashboard': return <DashboardView />;
     case 'inspections': return <InspectionsView />;
@@ -22,10 +26,12 @@ function renderTab(tab: string) {
 export function App() {
   const {
     currentTab,
+    subView,
     setTheme, setOrganizationName, setUserName, setUserRole,
     setFacilities, setViolations, setInspections, setCorrectiveActions,
   } = useAppStore();
-  const showTabBar = currentTab !== 'scanner';
+  // Hide tab bar when in scanner or a sub-view
+  const showTabBar = currentTab !== 'scanner' && subView === null;
 
   useEffect(() => {
     // Load settings
@@ -60,7 +66,7 @@ export function App() {
   return (
     <div className="flex h-screen flex-col bg-bg-root">
       <div className="flex-1 overflow-hidden">
-        {renderTab(currentTab)}
+        {renderTab(currentTab, subView)}
       </div>
       {showTabBar && <TabBar />}
     </div>

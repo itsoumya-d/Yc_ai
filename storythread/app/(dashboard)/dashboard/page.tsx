@@ -1,4 +1,5 @@
 import { getDashboardData } from '@/lib/actions/dashboard';
+import { getWeeklyWordCount } from '@/lib/actions/social';
 import { WritingStats } from '@/components/dashboard/writing-stats';
 import { RecentActivity } from '@/components/dashboard/recent-activity';
 import { EmptyState } from '@/components/ui/empty-state';
@@ -10,7 +11,7 @@ export const dynamic = 'force-dynamic';
 export const metadata = { title: 'Dashboard' };
 
 export default async function DashboardPage() {
-  const result = await getDashboardData();
+  const [result, weeklyResult] = await Promise.all([getDashboardData(), getWeeklyWordCount()]);
   const data = result.data;
   const hasStories = (data?.storyCount ?? 0) > 0;
 
@@ -30,6 +31,7 @@ export default async function DashboardPage() {
         storyCount={data?.storyCount ?? 0}
         totalWordCount={data?.totalWordCount ?? 0}
         totalChapters={data?.totalChapters ?? 0}
+        weeklyWordCount={weeklyResult.data ?? 0}
       />
 
       {hasStories ? (

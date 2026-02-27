@@ -1,0 +1,57 @@
+{
+  "expo": {
+    "name": "RouteAI",
+    "slug": "routeai",
+    "version": "1.0.0",
+    "orientation": "portrait",
+    "icon": "./assets/icon.png",
+    "userInterfaceStyle": "light",
+    "scheme": "routeai",
+    "splash": {
+      "image": "./assets/splash.png",
+      "resizeMode": "contain",
+      "backgroundColor": "#0369a1"
+    },
+    "assetBundlePatterns": ["**/*"],
+    "ios": {
+      "supportsTablet": true,
+      "bundleIdentifier": "com.routeai.app",
+      "infoPlist": {
+        "NSLocationWhenInUseUsageDescription": "RouteAI uses your location to show you optimized routes and your current position on the map.",
+        "NSLocationAlwaysAndWhenInUseUsageDescription": "RouteAI uses your background location to update dispatch with your real-time position.",
+        "NSPhotoLibraryUsageDescription": "RouteAI accesses your camera to document job completion photos."
+      }
+    },
+    "android": {
+      "adaptiveIcon": {
+        "foregroundImage": "./assets/adaptive-icon.png",
+        "backgroundColor": "#0369a1"
+      },
+      "package": "com.routeai.app",
+      "permissions": [
+        "ACCESS_FINE_LOCATION",
+        "ACCESS_COARSE_LOCATION",
+        "ACCESS_BACKGROUND_LOCATION",
+        "CAMERA",
+        "READ_EXTERNAL_STORAGE"
+      ]
+    },
+    "web": {
+      "bundler": "metro",
+      "output": "static",
+      "favicon": "./assets/favicon.png"
+    },
+    "plugins": [
+      "expo-router",
+      [
+        "expo-location",
+        {
+          "locationAlwaysAndWhenInUsePermission": "Allow RouteAI to track your location for route optimization."
+        }
+      ]
+    ],
+    "experiments": {
+      "typedRoutes": true
+    }
+  }
+}

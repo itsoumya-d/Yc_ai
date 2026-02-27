@@ -26,10 +26,21 @@ interface InvoiceDetailProps {
   invoice: InvoiceWithDetails;
 }
 
+const TEMPLATE_OPTIONS = [
+  { value: 'classic', label: 'Classic' },
+  { value: 'modern', label: 'Modern' },
+  { value: 'minimal', label: 'Minimal' },
+  { value: 'bold', label: 'Bold' },
+  { value: 'creative', label: 'Creative' },
+] as const;
+
 export function InvoiceDetail({ invoice }: InvoiceDetailProps) {
   const router = useRouter();
   const { toast } = useToast();
   const [actionLoading, setActionLoading] = useState(false);
+  const [selectedTemplate, setSelectedTemplate] = useState<string>(
+    (invoice as any).template ?? 'modern'
+  );
 
   const handleStatusChange = async (status: Invoice['status']) => {
     setActionLoading(true);
@@ -113,15 +124,44 @@ export function InvoiceDetail({ invoice }: InvoiceDetailProps) {
         </div>
 
         <div className="flex items-center gap-2">
-          <Button
-            variant="outline"
-            onClick={() => window.open(`/api/invoices/${invoice.id}/pdf`, '_blank')}
-          >
-            <svg className="mr-2 h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
-              <path strokeLinecap="round" strokeLinejoin="round" d="M3 16.5v2.25A2.25 2.25 0 0 0 5.25 21h13.5A2.25 2.25 0 0 0 21 18.75V16.5M16.5 12 12 16.5m0 0L7.5 12m4.5 4.5V3" />
-            </svg>
-            PDF
-          </Button>
+          <DropdownMenu>
+            <DropdownMenuTrigger asChild>
+              <Button variant="outline">
+                <svg className="mr-2 h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                  <path strokeLinecap="round" strokeLinejoin="round" d="M3 16.5v2.25A2.25 2.25 0 0 0 5.25 21h13.5A2.25 2.25 0 0 0 21 18.75V16.5M16.5 12 12 16.5m0 0L7.5 12m4.5 4.5V3" />
+                </svg>
+                Download PDF
+                <svg className="ml-1 h-3 w-3" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                  <path strokeLinecap="round" strokeLinejoin="round" d="m19.5 8.25-7.5 7.5-7.5-7.5" />
+                </svg>
+              </Button>
+            </DropdownMenuTrigger>
+            <DropdownMenuContent align="end">
+              <div className="px-2 py-1.5">
+                <p className="text-xs font-medium text-[var(--muted-foreground)] uppercase">
+                  Choose Template
+                </p>
+              </div>
+              <DropdownMenuSeparator />
+              {TEMPLATE_OPTIONS.map((tpl) => (
+                <DropdownMenuItem
+                  key={tpl.value}
+                  onClick={() => {
+                    setSelectedTemplate(tpl.value);
+                    window.open(`/api/invoices/${invoice.id}/pdf?template=${tpl.value}`, '_blank');
+                  }}
+                  className="flex items-center justify-between"
+                >
+                  <span>{tpl.label}</span>
+                  {selectedTemplate === tpl.value && (
+                    <svg className="ml-2 h-4 w-4 text-brand-600" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                      <path strokeLinecap="round" strokeLinejoin="round" d="m4.5 12.75 6 6 9-13.5" />
+                    </svg>
+                  )}
+                </DropdownMenuItem>
+              ))}
+            </DropdownMenuContent>
+          </DropdownMenu>
 
           {invoice.status === 'draft' && (
             <Button onClick={() => handleStatusChange('sent')} disabled={actionLoading}>

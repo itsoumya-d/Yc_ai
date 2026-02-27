@@ -1,0 +1,21 @@
+import type { Metadata } from 'next';
+import { Inter, JetBrains_Mono } from 'next/font/google';
+import './globals.css';
+
+const inter = Inter({ variable: '--font-inter', subsets: ['latin'], display: 'swap' });
+const jetbrainsMono = JetBrains_Mono({ variable: '--font-jetbrains-mono', subsets: ['latin'], display: 'swap' });
+
+export const metadata: Metadata = {
+  title: { default: 'SkillBridge - AI Career Transition Platform', template: '%s | SkillBridge' },
+  description: 'AI-powered career transition platform that maps your skills to new careers, creates personalized learning plans, and matches you with jobs.',
+};
+
+export default function RootLayout({ children }: Readonly<{ children: React.ReactNode }>) {
+  return (
+    <html lang="en" suppressHydrationWarning>
+      <body className={`${inter.variable} ${jetbrainsMono.variable} antialiased`}>
+        {children}
+      </body>
+    </html>
+  );
+}
