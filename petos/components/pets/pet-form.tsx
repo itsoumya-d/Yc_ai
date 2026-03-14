@@ -6,6 +6,7 @@ import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { ImageUpload } from '@/components/ui/image-upload';
 import { useToast } from '@/components/ui/toast';
 import { createPet, updatePet } from '@/lib/actions/pets';
 import type { Pet } from '@/types/database';
@@ -28,12 +29,20 @@ export function PetForm({ pet }: PetFormProps) {
   const router = useRouter();
   const { toast } = useToast();
   const [loading, setLoading] = useState(false);
+  const [photoUrl, setPhotoUrl] = useState(pet?.photo_url ?? '');
 
   async function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault();
     setLoading(true);
 
     const formData = new FormData(e.currentTarget);
+    // Inject the uploaded photo URL (managed separately from form state)
+    if (photoUrl) {
+      formData.set('photo_url', photoUrl);
+    } else {
+      formData.delete('photo_url');
+    }
+
     const result = pet
       ? await updatePet(pet.id, formData)
       : await createPet(formData);
@@ -61,6 +70,15 @@ export function PetForm({ pet }: PetFormProps) {
           <CardTitle>{pet ? 'Edit Pet' : 'Add New Pet'}</CardTitle>
         </CardHeader>
         <CardContent className="space-y-6">
+          {/* Photo upload */}
+          <ImageUpload
+            value={photoUrl}
+            onChange={setPhotoUrl}
+            bucket="pet-photos"
+            label="Pet Photo"
+            placeholder="Upload Photo"
+          />
+
           <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
             <Input
               id="name"
@@ -176,14 +194,6 @@ export function PetForm({ pet }: PetFormProps) {
               Spayed / Neutered
             </label>
           </div>
-
-          <Input
-            id="photo_url"
-            name="photo_url"
-            label="Photo URL"
-            placeholder="https://..."
-            defaultValue={pet?.photo_url || ''}
-          />
 
           <Textarea
             id="notes"

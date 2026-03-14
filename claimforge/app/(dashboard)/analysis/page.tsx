@@ -1,20 +1,14 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import { PageHeader } from '@/components/layout/page-header';
-import { cn, formatCurrency, getConfidenceColor, getFraudPatternLabel, getEntityColor, getEntityLabel, formatPercentage } from '@/lib/utils';
+import { cn, formatCurrency, getConfidenceColor, getFraudPatternLabel, getEntityColor, getEntityLabel } from '@/lib/utils';
 import {
-  BarChart3,
-  Network,
-  TrendingUp,
-  Search,
   AlertTriangle,
-  PieChart,
-  Activity,
-  Eye,
   Zap,
+  RefreshCw,
 } from 'lucide-react';
-import type { FraudPatternType, ConfidenceLevel, EntityType } from '@/types/database';
+import type { FraudPatternType, EntityType } from '@/types/database';
 
 const analysisTabs = ['Fraud Patterns', 'Entity Network', "Benford's Law", 'Statistical Anomalies'];
 
@@ -32,18 +26,6 @@ const fraudSummary: Array<{
   { type: 'time_anomaly', count: 4, total_amount: 180_000, avg_confidence: 0.72 },
   { type: 'unbundling', count: 2, total_amount: 95_000, avg_confidence: 0.58 },
   { type: 'quality_substitution', count: 1, total_amount: 75_000, avg_confidence: 0.41 },
-];
-
-const benfordData = [
-  { digit: 1, expected: 30.1, actual: 22.4, suspicious: true },
-  { digit: 2, expected: 17.6, actual: 18.2, suspicious: false },
-  { digit: 3, expected: 12.5, actual: 11.8, suspicious: false },
-  { digit: 4, expected: 9.7, actual: 15.3, suspicious: true },
-  { digit: 5, expected: 7.9, actual: 12.1, suspicious: true },
-  { digit: 6, expected: 6.7, actual: 5.9, suspicious: false },
-  { digit: 7, expected: 5.8, actual: 4.2, suspicious: false },
-  { digit: 8, expected: 5.1, actual: 5.8, suspicious: false },
-  { digit: 9, expected: 4.6, actual: 4.3, suspicious: false },
 ];
 
 const networkNodes: Array<{ id: string; label: string; type: EntityType; connections: number; flagged: boolean }> = [
@@ -65,11 +47,66 @@ const anomalies = [
   { id: 'a5', description: 'Service codes inconsistent with provider specialty', metric: 'Code Validity', expected: '95%+ match', actual: '72% match', significance: 'low' as const },
 ];
 
+interface BenfordDigitData {
+  digit: number;
+  expected: number;
+  actual: number;
+  deviation: number;
+  suspicious: boolean;
+}
+
+interface BenfordAnalysisResult {
+  caseId: string;
+  totalAmounts: number;
+  chiSquareStat: number;
+  pValue: number;
+  overallSuspicious: boolean;
+  digits: BenfordDigitData[];
+  suspiciousDigits: number[];
+  interpretation: string;
+}
+
 export default function AnalysisPage() {
   const [activeTab, setActiveTab] = useState('Fraud Patterns');
+  const [benfordData, setBenfordData] = useState<BenfordAnalysisResult | null>(null);
+  const [benfordLoading, setBenfordLoading] = useState(false);
+  const [benfordError, setBenfordError] = useState<string | null>(null);
+
+  const loadBenfordData = useCallback(async () => {
+    setBenfordLoading(true);
+    setBenfordError(null);
+    try {
+      const res = await fetch('/api/analysis/benford');
+      if (!res.ok) throw new Error('Failed to load analysis');
+      const data: BenfordAnalysisResult = await res.json();
+      setBenfordData(data);
+    } catch (err) {
+      setBenfordError(err instanceof Error ? err.message : 'Failed to load');
+    } finally {
+      setBenfordLoading(false);
+    }
+  }, []);
+
+  useEffect(() => {
+    if (activeTab === "Benford's Law" && !benfordData && !benfordLoading) {
+      loadBenfordData();
+    }
+  }, [activeTab, benfordData, benfordLoading, loadBenfordData]);
 
   const totalFraud = fraudSummary.reduce((sum, f) => sum + f.total_amount, 0);
   const totalPatterns = fraudSummary.reduce((sum, f) => sum + f.count, 0);
+
+  const displayBenford = benfordData?.digits ?? [
+    { digit: 1, expected: 30.1, actual: 22.4, deviation: -7.7, suspicious: true },
+    { digit: 2, expected: 17.6, actual: 18.2, deviation: 0.6, suspicious: false },
+    { digit: 3, expected: 12.5, actual: 11.8, deviation: -0.7, suspicious: false },
+    { digit: 4, expected: 9.7, actual: 15.3, deviation: 5.6, suspicious: true },
+    { digit: 5, expected: 7.9, actual: 12.1, deviation: 4.2, suspicious: true },
+    { digit: 6, expected: 6.7, actual: 5.9, deviation: -0.8, suspicious: false },
+    { digit: 7, expected: 5.8, actual: 4.2, deviation: -1.6, suspicious: false },
+    { digit: 8, expected: 5.1, actual: 5.8, deviation: 0.7, suspicious: false },
+    { digit: 9, expected: 4.6, actual: 4.3, deviation: -0.3, suspicious: false },
+  ];
 
   return (
     <div className="flex h-full flex-col">
@@ -102,7 +139,6 @@ export default function AnalysisPage() {
         {/* Fraud Patterns Tab */}
         {activeTab === 'Fraud Patterns' && (
           <>
-            {/* Summary Row */}
             <div className="grid grid-cols-3 gap-4">
               <div className="rounded-xl border border-border-default bg-bg-surface p-4">
                 <div className="text-[10px] text-text-tertiary">Total Fraud Detected</div>
@@ -118,7 +154,6 @@ export default function AnalysisPage() {
               </div>
             </div>
 
-            {/* Pattern Breakdown */}
             <div className="rounded-xl border border-border-default bg-bg-surface">
               <div className="border-b border-border-default px-4 py-3">
                 <h3 className="legal-heading text-sm text-text-primary">Pattern Breakdown</h3>
@@ -159,7 +194,6 @@ export default function AnalysisPage() {
         {/* Entity Network Tab */}
         {activeTab === 'Entity Network' && (
           <>
-            {/* Network Visualization Placeholder */}
             <div className="rounded-xl border border-border-default bg-bg-surface p-1">
               <svg viewBox="0 0 800 400" className="h-80 w-full">
                 <defs>
@@ -167,7 +201,6 @@ export default function AnalysisPage() {
                     <polygon points="0 0, 10 3.5, 0 7" fill="#57534E" />
                   </marker>
                 </defs>
-                {/* Edges */}
                 <line x1="200" y1="180" x2="400" y2="120" stroke="#44403C" strokeWidth="1.5" markerEnd="url(#arrowhead)" />
                 <line x1="200" y1="180" x2="350" y2="280" stroke="#44403C" strokeWidth="1.5" markerEnd="url(#arrowhead)" />
                 <line x1="400" y1="120" x2="550" y2="200" stroke="#DC2626" strokeWidth="2" strokeDasharray="4" markerEnd="url(#arrowhead)" />
@@ -176,33 +209,24 @@ export default function AnalysisPage() {
                 <line x1="550" y1="200" x2="650" y2="300" stroke="#44403C" strokeWidth="1" markerEnd="url(#arrowhead)" />
                 <line x1="600" y1="100" x2="400" y2="120" stroke="#44403C" strokeWidth="1" />
                 <line x1="200" y1="180" x2="650" y2="300" stroke="#44403C" strokeWidth="1" opacity="0.5" />
-
-                {/* Nodes */}
-                <circle cx="200" cy="180" r="24" fill="#1E40AF" opacity="0.8" className="node-glow" style={{ color: '#3B82F6' }} />
+                <circle cx="200" cy="180" r="24" fill="#1E40AF" opacity="0.8" />
                 <text x="200" y="184" textAnchor="middle" fontSize="9" fill="white" fontWeight="600">AHS</text>
                 <text x="200" y="215" textAnchor="middle" fontSize="9" fill="#A8A29E">Apex Health</text>
-
                 <circle cx="400" cy="120" r="18" fill="#3B82F6" opacity="0.8" />
                 <text x="400" y="124" textAnchor="middle" fontSize="8" fill="white">RC</text>
                 <text x="400" y="148" textAnchor="middle" fontSize="9" fill="#A8A29E">Dr. Chen</text>
-
                 <rect x="320" y="260" width="60" height="40" rx="4" fill="#B45309" opacity="0.8" />
                 <text x="350" y="284" textAnchor="middle" fontSize="8" fill="white">MedBill</text>
                 <text x="350" y="312" textAnchor="middle" fontSize="9" fill="#A8A29E">MedBill LLC</text>
-
                 <circle cx="550" cy="200" r="20" fill="#B45309" opacity="0.6" />
                 <text x="550" y="204" textAnchor="middle" fontSize="8" fill="white">MR4</text>
                 <text x="550" y="230" textAnchor="middle" fontSize="9" fill="#A8A29E">Medicare R4</text>
-
                 <polygon points="600,80 620,100 600,120 580,100" fill="#059669" opacity="0.8" />
                 <text x="600" y="104" textAnchor="middle" fontSize="7" fill="white">$</text>
                 <text x="600" y="134" textAnchor="middle" fontSize="9" fill="#A8A29E">Pmt #4421</text>
-
                 <circle cx="650" cy="300" r="14" fill="#8B5CF6" opacity="0.6" />
                 <text x="650" y="304" textAnchor="middle" fontSize="7" fill="white">NY</text>
                 <text x="650" y="324" textAnchor="middle" fontSize="9" fill="#A8A29E">NYC Office</text>
-
-                {/* Legend */}
                 <circle cx="40" cy="360" r="5" fill="#3B82F6" />
                 <text x="52" y="364" fontSize="9" fill="#78716C">Person</text>
                 <rect x="95" y="355" width="10" height="10" rx="2" fill="#B45309" />
@@ -214,7 +238,6 @@ export default function AnalysisPage() {
               </svg>
             </div>
 
-            {/* Entity List */}
             <div className="rounded-xl border border-border-default bg-bg-surface">
               <div className="border-b border-border-default px-4 py-3">
                 <h3 className="legal-heading text-sm text-text-primary">Entity Directory</h3>
@@ -239,19 +262,66 @@ export default function AnalysisPage() {
         {/* Benford's Law Tab */}
         {activeTab === "Benford's Law" && (
           <>
-            <div className="rounded-xl border border-border-default bg-bg-surface p-5">
-              <div className="mb-4">
-                <h3 className="legal-heading text-sm text-text-primary">First-Digit Frequency Analysis</h3>
-                <p className="mt-1 text-xs text-text-secondary">
-                  Comparing the distribution of leading digits in billing amounts against the expected distribution.
-                  Significant deviations may indicate fabricated or manipulated data.
-                </p>
+            {/* Stats bar */}
+            {benfordData && (
+              <div className="grid grid-cols-4 gap-4">
+                <div className="rounded-xl border border-border-default bg-bg-surface p-4">
+                  <div className="text-[10px] text-text-tertiary">Amounts Analyzed</div>
+                  <div className="mt-1 text-xl font-semibold text-text-primary financial-figure">{benfordData.totalAmounts.toLocaleString()}</div>
+                </div>
+                <div className="rounded-xl border border-border-default bg-bg-surface p-4">
+                  <div className="text-[10px] text-text-tertiary">Chi-Square Stat</div>
+                  <div className={cn('mt-1 text-xl font-semibold financial-figure', benfordData.overallSuspicious ? 'text-fraud-red' : 'text-verified-green')}>
+                    {benfordData.chiSquareStat.toFixed(2)}
+                  </div>
+                </div>
+                <div className="rounded-xl border border-border-default bg-bg-surface p-4">
+                  <div className="text-[10px] text-text-tertiary">P-Value</div>
+                  <div className={cn('mt-1 text-xl font-semibold financial-figure', benfordData.pValue < 0.05 ? 'text-fraud-red' : 'text-verified-green')}>
+                    {benfordData.pValue < 0.001 ? '<0.001' : benfordData.pValue.toFixed(3)}
+                  </div>
+                </div>
+                <div className="rounded-xl border border-border-default bg-bg-surface p-4">
+                  <div className="text-[10px] text-text-tertiary">Verdict</div>
+                  <div className={cn('mt-1 text-sm font-semibold', benfordData.overallSuspicious ? 'text-fraud-red' : 'text-verified-green')}>
+                    {benfordData.overallSuspicious ? 'SUSPICIOUS' : 'NORMAL'}
+                  </div>
+                </div>
               </div>
+            )}
+
+            <div className="rounded-xl border border-border-default bg-bg-surface p-5">
+              <div className="mb-4 flex items-start justify-between">
+                <div>
+                  <h3 className="legal-heading text-sm text-text-primary">First-Digit Frequency Analysis</h3>
+                  <p className="mt-1 text-xs text-text-secondary">
+                    Comparing the distribution of leading digits in billing amounts against the expected distribution.
+                    Significant deviations may indicate fabricated or manipulated data.
+                  </p>
+                  {benfordData && (
+                    <p className="mt-2 text-xs text-text-tertiary italic">{benfordData.interpretation}</p>
+                  )}
+                </div>
+                <button
+                  onClick={loadBenfordData}
+                  disabled={benfordLoading}
+                  className="inline-flex items-center gap-1.5 rounded-lg border border-border-default px-3 py-1.5 text-xs text-text-secondary transition-colors hover:bg-bg-surface-hover disabled:opacity-50"
+                >
+                  <RefreshCw className={cn('h-3 w-3', benfordLoading && 'animate-spin')} />
+                  {benfordLoading ? 'Loading...' : 'Refresh'}
+                </button>
+              </div>
+
+              {benfordError && (
+                <div className="mb-4 rounded-lg border border-fraud-red bg-fraud-red-muted px-3 py-2 text-xs text-fraud-red">
+                  {benfordError} — showing demo data
+                </div>
+              )}
 
               {/* Bar Chart */}
               <div className="mb-6">
                 <div className="flex items-end justify-between gap-2" style={{ height: 200 }}>
-                  {benfordData.map((d) => {
+                  {displayBenford.map((d) => {
                     const maxVal = 35;
                     const expectedHeight = (d.expected / maxVal) * 100;
                     const actualHeight = (d.actual / maxVal) * 100;
@@ -303,25 +373,28 @@ export default function AnalysisPage() {
                     </tr>
                   </thead>
                   <tbody className="divide-y divide-border-muted">
-                    {benfordData.map((d) => (
-                      <tr key={d.digit} className={cn(d.suspicious && 'bg-fraud-red-muted')}>
-                        <td className="px-3 py-2 financial-figure font-medium text-text-primary">{d.digit}</td>
-                        <td className="px-3 py-2 financial-figure text-text-secondary">{d.expected}%</td>
-                        <td className="px-3 py-2 financial-figure text-text-secondary">{d.actual}%</td>
-                        <td className={cn('px-3 py-2 financial-figure font-medium', d.suspicious ? 'text-fraud-red' : 'text-verified-green')}>
-                          {d.actual > d.expected ? '+' : ''}{(d.actual - d.expected).toFixed(1)}%
-                        </td>
-                        <td className="px-3 py-2">
-                          {d.suspicious ? (
-                            <span className="inline-flex items-center gap-1 text-xs font-medium text-fraud-red">
-                              <AlertTriangle className="h-3 w-3" /> Anomalous
-                            </span>
-                          ) : (
-                            <span className="text-xs text-verified-green">Normal</span>
-                          )}
-                        </td>
-                      </tr>
-                    ))}
+                    {displayBenford.map((d) => {
+                      const dev = d.deviation ?? (d.actual - d.expected);
+                      return (
+                        <tr key={d.digit} className={cn(d.suspicious && 'bg-fraud-red-muted')}>
+                          <td className="px-3 py-2 financial-figure font-medium text-text-primary">{d.digit}</td>
+                          <td className="px-3 py-2 financial-figure text-text-secondary">{d.expected.toFixed(1)}%</td>
+                          <td className="px-3 py-2 financial-figure text-text-secondary">{d.actual.toFixed(1)}%</td>
+                          <td className={cn('px-3 py-2 financial-figure font-medium', d.suspicious ? 'text-fraud-red' : 'text-verified-green')}>
+                            {dev > 0 ? '+' : ''}{dev.toFixed(1)}%
+                          </td>
+                          <td className="px-3 py-2">
+                            {d.suspicious ? (
+                              <span className="inline-flex items-center gap-1 text-xs font-medium text-fraud-red">
+                                <AlertTriangle className="h-3 w-3" /> Anomalous
+                              </span>
+                            ) : (
+                              <span className="text-xs text-verified-green">Normal</span>
+                            )}
+                          </td>
+                        </tr>
+                      );
+                    })}
                   </tbody>
                 </table>
               </div>

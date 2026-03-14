@@ -46,11 +46,13 @@ export async function createSymptom(formData: FormData): Promise<ActionResult<Sy
     .eq('id', petId)
     .single();
 
+  const photoUrl = (formData.get('photo_url') as string) || null;
+
   const symptomData = {
     pet_id: petId,
     description,
     severity,
-    photo_url: (formData.get('photo_url') as string) || null,
+    photo_url: photoUrl,
   };
 
   const { data: symptom, error } = await supabase
@@ -72,7 +74,8 @@ export async function createSymptom(formData: FormData): Promise<ActionResult<Sy
       pet.species,
       pet.breed || 'unknown breed',
       age,
-      severity
+      severity,
+      photoUrl ?? undefined
     );
 
     if (analysis.data) {

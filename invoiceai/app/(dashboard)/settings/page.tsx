@@ -13,11 +13,10 @@ export default async function SettingsPage() {
     data: { user },
   } = await supabase.auth.getUser();
 
-  const { data: profile } = await supabase
-    .from('users')
-    .select('*')
-    .eq('id', user!.id)
-    .single();
+  const [{ data: profile }, { data: subscription }] = await Promise.all([
+    supabase.from('users').select('*').eq('id', user!.id).single(),
+    supabase.from('subscriptions').select('*').eq('user_id', user!.id).single(),
+  ]);
 
-  return <SettingsContent profile={profile} />;
+  return <SettingsContent profile={profile} subscription={subscription} />;
 }

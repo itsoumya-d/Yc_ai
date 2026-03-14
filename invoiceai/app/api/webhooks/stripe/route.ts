@@ -98,6 +98,79 @@ export async function POST(request: NextRequest) {
       }
       break;
     }
+
+    case 'customer.subscription.created':
+    case 'customer.subscription.updated': {
+      const subscription = event.data.object as Stripe.Subscription;
+      const customerId = subscription.customer as string;
+      const planName = (subscription.metadata?.plan ?? 'pro') as 'free' | 'pro' | 'business';
+      const userId = subscription.metadata?.supabase_user_id;
+
+      const PLAN_LIMITS: Record<string, number> = {
+        free: 5,
+        starter: 20,
+        pro: 100,
+        business: 999999,
+      };
+
+      const stripeStatus = subscription.status;
+      const mappedStatus = stripeStatus === 'canceled' ? 'cancelled' : stripeStatus as 'active' | 'past_due' | 'cancelled' | 'trialing' | 'incomplete';
+
+      if (userId) {
+        // Access billing period fields via type assertion (moved in Stripe API clover)
+        const subBilling = subscription as unknown as { current_period_start?: number; current_period_end?: number };
+        await supabase
+          .from('subscriptions')
+          .upsert(
+            {
+              user_id: userId,
+              stripe_customer_id: customerId,
+              stripe_subscription_id: subscription.id,
+              plan: planName,
+              status: mappedStatus,
+              current_period_start: subBilling.current_period_start ? new Date(subBilling.current_period_start * 1000).toISOString() : null,
+              current_period_end: subBilling.current_period_end ? new Date(subBilling.current_period_end * 1000).toISOString() : null,
+              cancel_at_period_end: subscription.cancel_at_period_end,
+              cancelled_at: subscription.canceled_at
+                ? new Date(subscription.canceled_at * 1000).toISOString()
+                : null,
+              trial_end: subscription.trial_end
+                ? new Date(subscription.trial_end * 1000).toISOString()
+                : null,
+              invoice_limit: PLAN_LIMITS[planName] ?? 100,
+            },
+            { onConflict: 'user_id' }
+          );
+      }
+      break;
+    }
+
+    case 'customer.subscription.deleted': {
+      const subscription = event.data.object as Stripe.Subscription;
+      await supabase
+        .from('subscriptions')
+        .update({
+          status: 'cancelled',
+          plan: 'free',
+          cancelled_at: new Date().toISOString(),
+          invoice_limit: 5,
+          stripe_subscription_id: null,
+        })
+        .eq('stripe_subscription_id', subscription.id);
+      break;
+    }
+
+    case 'invoice.payment_failed': {
+      const stripeInvoice = event.data.object as Stripe.Invoice;
+      const subscriptionId = (stripeInvoice as unknown as { subscription?: string }).subscription ?? null;
+      if (subscriptionId) {
+        await supabase
+          .from('subscriptions')
+          .update({ status: 'past_due' })
+          .eq('stripe_subscription_id', subscriptionId);
+      }
+      break;
+    }
   }
 
   return NextResponse.json({ received: true });

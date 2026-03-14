@@ -2,8 +2,8 @@
 
 import { useState } from 'react';
 import { Textarea } from '@/components/ui/textarea';
-import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
+import { ImageUpload } from '@/components/ui/image-upload';
 import { useToast } from '@/components/ui/toast';
 import { createSymptom } from '@/lib/actions/symptoms';
 import type { Pet } from '@/types/database';
@@ -23,12 +23,17 @@ const SEVERITY_OPTIONS = [
 export function SymptomForm({ pets, onSuccess }: SymptomFormProps) {
   const { toast } = useToast();
   const [loading, setLoading] = useState(false);
+  const [photoUrl, setPhotoUrl] = useState('');
 
   async function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault();
     setLoading(true);
 
     const formData = new FormData(e.currentTarget);
+    if (photoUrl) {
+      formData.set('photo_url', photoUrl);
+    }
+
     const result = await createSymptom(formData);
 
     if (result.error) {
@@ -39,6 +44,7 @@ export function SymptomForm({ pets, onSuccess }: SymptomFormProps) {
 
     toast({ title: 'Symptom submitted for analysis', variant: 'success' });
     setLoading(false);
+    setPhotoUrl('');
     onSuccess?.();
   }
 
@@ -86,11 +92,12 @@ export function SymptomForm({ pets, onSuccess }: SymptomFormProps) {
         </select>
       </div>
 
-      <Input
-        id="photo_url"
-        name="photo_url"
-        label="Photo URL (optional)"
-        placeholder="https://..."
+      <ImageUpload
+        value={photoUrl}
+        onChange={setPhotoUrl}
+        bucket="symptom-photos"
+        label="Photo (optional — helps AI analysis)"
+        placeholder="Upload Photo"
       />
 
       <Button type="submit" disabled={loading} className="w-full">

@@ -1,6 +1,7 @@
 import { createClient } from '@/lib/supabase/server';
 import { formatCurrency, formatDate } from '@/lib/utils';
 import { Badge } from '@/components/ui/badge';
+import { PaymentSection } from '@/components/invoices/payment-section';
 import type { InvoiceWithDetails } from '@/types/database';
 
 export const dynamic = 'force-dynamic';
@@ -144,17 +145,12 @@ export default async function PaymentPortalPage({
             </p>
           </div>
         ) : (
-          <div className="text-center">
-            <h2 className="font-heading text-lg font-semibold">Pay This Invoice</h2>
-            <p className="mt-1 text-sm text-[var(--muted-foreground)]">
-              Stripe payment integration will be enabled when Stripe keys are configured.
-            </p>
-            <div className="mt-4 rounded-lg border border-dashed border-[var(--border)] p-8">
-              <p className="text-sm text-[var(--muted-foreground)]">
-                Stripe Elements payment form placeholder
-              </p>
-            </div>
-          </div>
+          <PaymentSection
+            invoiceId={inv.id}
+            portalToken={inv.portal_token ?? inv.id}
+            amountDue={inv.amount_due}
+            currency={inv.currency ?? 'USD'}
+          />
         )}
       </div>
 

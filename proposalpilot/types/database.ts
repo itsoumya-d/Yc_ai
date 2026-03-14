@@ -75,6 +75,18 @@ export interface ContentBlock {
   updated_at: string;
 }
 
+export interface Signature {
+  id: string;
+  proposal_id: string;
+  signer_name: string;
+  signer_email: string;
+  signature_url: string;
+  ip_address: string | null;
+  user_agent: string | null;
+  signed_at: string;
+  created_at: string;
+}
+
 export interface AIGeneration {
   id: string;
   user_id: string;

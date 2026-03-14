@@ -63,6 +63,37 @@ export async function updateResolution(id: string, formData: FormData): Promise<
   return { data: data as Resolution };
 }
 
+export async function castVote(id: string, voteType: 'for' | 'against' | 'abstain'): Promise<ActionResult<Resolution>> {
+  const supabase = await createClient();
+  const { data: { user } } = await supabase.auth.getUser();
+  if (!user) return { error: 'Not authenticated' };
+
+  const { data: resolution, error: fetchError } = await supabase
+    .from('resolutions')
+    .select('votes_for, votes_against, votes_abstain, status')
+    .eq('id', id)
+    .eq('user_id', user.id)
+    .single();
+
+  if (fetchError || !resolution) return { error: 'Resolution not found' };
+  if (resolution.status !== 'voting') return { error: 'Resolution is not open for voting' };
+
+  const col = voteType === 'for' ? 'votes_for' : voteType === 'against' ? 'votes_against' : 'votes_abstain';
+  const newCount = (resolution[col as keyof typeof resolution] as number) + 1;
+
+  const { data, error } = await supabase
+    .from('resolutions')
+    .update({ [col]: newCount, updated_at: new Date().toISOString() })
+    .eq('id', id)
+    .eq('user_id', user.id)
+    .select()
+    .single();
+
+  if (error) return { error: error.message };
+  revalidatePath(`/resolutions/${id}`);
+  return { data: data as Resolution };
+}
+
 export async function deleteResolution(id: string): Promise<ActionResult> {
   const supabase = await createClient();
   const { data: { user } } = await supabase.auth.getUser();

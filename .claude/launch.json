@@ -1,0 +1,166 @@
+{
+  "version": "0.0.1",
+  "configurations": [
+    {
+      "name": "invoiceai",
+      "runtimeExecutable": "C:\\Windows\\System32\\cmd.exe",
+      "runtimeArgs": ["/c", "cd /d E:\\Yc_ai\\.claude\\worktrees\\elastic-pasteur\\invoiceai && npm run dev"],
+      "port": 3001,
+      "autoPort": true
+    },
+    {
+      "name": "petos",
+      "runtimeExecutable": "C:\\Windows\\System32\\cmd.exe",
+      "runtimeArgs": ["/c", "cd /d E:\\Yc_ai\\.claude\\worktrees\\elastic-pasteur\\petos && npm run dev"],
+      "port": 3002,
+      "autoPort": true
+    },
+    {
+      "name": "proposalpilot",
+      "runtimeExecutable": "C:\\Windows\\System32\\cmd.exe",
+      "runtimeArgs": ["/c", "cd /d E:\\Yc_ai\\.claude\\worktrees\\elastic-pasteur\\proposalpilot && npm run dev"],
+      "port": 3003,
+      "autoPort": true
+    },
+    {
+      "name": "boardbrief",
+      "runtimeExecutable": "C:\\Windows\\System32\\cmd.exe",
+      "runtimeArgs": ["/c", "cd /d E:\\Yc_ai\\.claude\\worktrees\\elastic-pasteur\\boardbrief && npm run dev"],
+      "port": 3004,
+      "autoPort": true
+    },
+    {
+      "name": "storythread",
+      "runtimeExecutable": "C:\\Windows\\System32\\cmd.exe",
+      "runtimeArgs": ["/c", "cd /d E:\\Yc_ai\\.claude\\worktrees\\elastic-pasteur\\storythread && npm run dev"],
+      "port": 3005,
+      "autoPort": true
+    },
+    {
+      "name": "claimforge",
+      "runtimeExecutable": "C:\\Windows\\System32\\cmd.exe",
+      "runtimeArgs": ["/c", "cd /d E:\\Yc_ai\\.claude\\worktrees\\elastic-pasteur\\claimforge && npm run dev"],
+      "port": 3006,
+      "autoPort": true
+    },
+    {
+      "name": "neighbordao",
+      "runtimeExecutable": "C:\\Windows\\System32\\cmd.exe",
+      "runtimeArgs": ["/c", "cd /d E:\\Yc_ai\\.claude\\worktrees\\elastic-pasteur\\neighbordao && npm run dev"],
+      "port": 3007,
+      "autoPort": true
+    },
+    {
+      "name": "skillbridge",
+      "runtimeExecutable": "C:\\Windows\\System32\\cmd.exe",
+      "runtimeArgs": ["/c", "cd /d E:\\Yc_ai\\.claude\\worktrees\\elastic-pasteur\\skillbridge && npm run dev"],
+      "port": 3008,
+      "autoPort": true
+    },
+    {
+      "name": "complibot",
+      "runtimeExecutable": "C:\\Windows\\System32\\cmd.exe",
+      "runtimeArgs": ["/c", "cd /d E:\\Yc_ai\\.claude\\worktrees\\elastic-pasteur\\complibot && npm run dev"],
+      "port": 3009,
+      "autoPort": true
+    },
+    {
+      "name": "agentforge",
+      "runtimeExecutable": "C:\\Windows\\System32\\cmd.exe",
+      "runtimeArgs": ["/c", "cd /d E:\\Yc_ai\\.claude\\worktrees\\elastic-pasteur\\agentforge && npm run dev"],
+      "port": 5173,
+      "autoPort": true
+    },
+    {
+      "name": "compliancesnap",
+      "runtimeExecutable": "C:\\Windows\\System32\\cmd.exe",
+      "runtimeArgs": ["/c", "cd /d E:\\Yc_ai\\.claude\\worktrees\\elastic-pasteur\\compliancesnap && npm run dev"],
+      "port": 5174,
+      "autoPort": true
+    },
+    {
+      "name": "cortex",
+      "runtimeExecutable": "C:\\Windows\\System32\\cmd.exe",
+      "runtimeArgs": ["/c", "cd /d E:\\Yc_ai\\.claude\\worktrees\\elastic-pasteur\\cortex && npm run dev"],
+      "port": 5175,
+      "autoPort": true
+    },
+    {
+      "name": "deepfocus",
+      "runtimeExecutable": "C:\\Windows\\System32\\cmd.exe",
+      "runtimeArgs": ["/c", "cd /d E:\\Yc_ai\\.claude\\worktrees\\elastic-pasteur\\deepfocus && npm run dev"],
+      "port": 5176,
+      "autoPort": true
+    },
+    {
+      "name": "legalforge",
+      "runtimeExecutable": "C:\\Windows\\System32\\cmd.exe",
+      "runtimeArgs": ["/c", "cd /d E:\\Yc_ai\\.claude\\worktrees\\elastic-pasteur\\legalforge && npm run dev"],
+      "port": 5177,
+      "autoPort": true
+    },
+    {
+      "name": "luminary",
+      "runtimeExecutable": "C:\\Windows\\System32\\cmd.exe",
+      "runtimeArgs": ["/c", "cd /d E:\\Yc_ai\\.claude\\worktrees\\elastic-pasteur\\luminary && npm run dev"],
+      "port": 5178,
+      "autoPort": true
+    },
+    {
+      "name": "modelops",
+      "runtimeExecutable": "C:\\Windows\\System32\\cmd.exe",
+      "runtimeArgs": ["/c", "cd /d E:\\Yc_ai\\.claude\\worktrees\\elastic-pasteur\\modelops && npm run dev"],
+      "port": 5179,
+      "autoPort": true
+    },
+    {
+      "name": "patternforge",
+      "runtimeExecutable": "C:\\Windows\\System32\\cmd.exe",
+      "runtimeArgs": ["/c", "cd /d E:\\Yc_ai\\.claude\\worktrees\\elastic-pasteur\\patternforge && npm run dev"],
+      "port": 5180,
+      "autoPort": true
+    },
+    {
+      "name": "spectracad",
+      "runtimeExecutable": "C:\\Windows\\System32\\cmd.exe",
+      "runtimeArgs": ["/c", "cd /d E:\\Yc_ai\\.claude\\worktrees\\elastic-pasteur\\spectracad && npm run dev"],
+      "port": 5181,
+      "autoPort": true
+    },
+    {
+      "name": "vaultedit",
+      "runtimeExecutable": "C:\\Windows\\System32\\cmd.exe",
+      "runtimeArgs": ["/c", "cd /d E:\\Yc_ai\\.claude\\worktrees\\elastic-pasteur\\vaultedit && npm run dev"],
+      "port": 5182,
+      "autoPort": true
+    },
+    {
+      "name": "govpass",
+      "runtimeExecutable": "C:\\Windows\\System32\\cmd.exe",
+      "runtimeArgs": ["/c", "cd /d E:\\Yc_ai\\.claude\\worktrees\\elastic-pasteur\\govpass && npx expo start --port 8081"],
+      "port": 8081,
+      "autoPort": true
+    },
+    {
+      "name": "mortal",
+      "runtimeExecutable": "C:\\Windows\\System32\\cmd.exe",
+      "runtimeArgs": ["/c", "cd /d E:\\Yc_ai\\.claude\\worktrees\\elastic-pasteur\\mortal && npx expo start --port 8082"],
+      "port": 8082,
+      "autoPort": true
+    },
+    {
+      "name": "claimback",
+      "runtimeExecutable": "C:\\Windows\\System32\\cmd.exe",
+      "runtimeArgs": ["/c", "cd /d E:\\Yc_ai\\.claude\\worktrees\\elastic-pasteur\\claimback && npx expo start --port 8083"],
+      "port": 8083,
+      "autoPort": true
+    },
+    {
+      "name": "dealroom",
+      "runtimeExecutable": "C:\\Windows\\System32\\cmd.exe",
+      "runtimeArgs": ["/c", "cd /d E:\\Yc_ai\\.claude\\worktrees\\elastic-pasteur\\dealroom && npm run dev"],
+      "port": 3010,
+      "autoPort": true
+    }
+  ]
+}

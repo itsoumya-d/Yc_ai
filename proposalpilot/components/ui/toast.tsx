@@ -7,7 +7,7 @@ interface Toast {
   id: string;
   title: string;
   description?: string;
-  variant?: 'default' | 'destructive';
+  variant?: 'default' | 'destructive' | 'success';
 }
 
 interface ToastContextType {
@@ -44,6 +44,8 @@ export function ToastProvider({ children }: { children: React.ReactNode }) {
               'animate-in slide-in-from-bottom-4 rounded-lg border p-4 shadow-lg',
               t.variant === 'destructive'
                 ? 'border-red-200 bg-red-50 text-red-900'
+                : t.variant === 'success'
+                ? 'border-green-200 bg-green-50 text-green-900'
                 : 'border-[var(--border)] bg-[var(--card)] text-[var(--foreground)]'
             )}
           >

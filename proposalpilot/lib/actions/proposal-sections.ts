@@ -68,3 +68,26 @@ export async function deleteProposalSection(id: string, proposalId: string): Pro
   revalidatePath(`/proposals/${proposalId}`);
   return {};
 }
+
+export async function updateProposalSectionOrder(
+  proposalId: string,
+  orderedIds: string[]
+): Promise<ActionResult> {
+  const supabase = await createClient();
+  const { data: { user } } = await supabase.auth.getUser();
+  if (!user) return { error: 'Not authenticated' };
+
+  const updates = orderedIds.map((id, index) =>
+    supabase
+      .from('proposal_sections')
+      .update({ order_index: index, updated_at: new Date().toISOString() })
+      .eq('id', id)
+  );
+
+  const results = await Promise.all(updates);
+  const failed = results.find((r) => r.error);
+  if (failed?.error) return { error: failed.error.message };
+
+  revalidatePath(`/proposals/${proposalId}`);
+  return {};
+}
