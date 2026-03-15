@@ -166,28 +166,24 @@ GET  /api/analytics/trends            — Claims pattern analytics
 
 ## PRIORITY 3: UX IMPROVEMENTS (BMAD Quality Standard)
 
-### TASK-P3-01: In-App Review Prompts — All 10 Mobile Apps
+### TASK-P3-01: In-App Review Prompts — All 10 Mobile Apps ✅ COMPLETED (Session 28)
 **Research:** Study optimal review prompt timing in Airbnb, Duolingo, and Lensa. Research App Store Review guidelines for prompts. Study `expo-store-review` API and best trigger moments
 **Problem:** No in-app review prompts = low app store review count = poor discoverability
-**Frontend:**
-- Install `expo-store-review` in all 10 apps
-- Trigger prompt at high-emotion moments:
-  - After first successful claim (ClaimBack)
-  - After scanning first item (StockPulse)
-  - After completing first inspection (InspectorAI, ComplianceSnap)
-  - After 3rd paywall conversion session (all apps)
-- Maximum 1 prompt per 60 days (Apple's requirement)
-**Implementation per app:**
-```typescript
-// components/ReviewPrompt.tsx — universal component
-import * as StoreReview from 'expo-store-review';
-const triggerReview = async () => {
-  if (await StoreReview.hasAction()) {
-    await StoreReview.requestReview();
-  }
-};
-```
-**Deliverable:** Review prompt at optimal moment in each app
+**Implementation:**
+- `lib/review.ts` created in all 10 apps: `StoreReview.isAvailableAsync()` → 60-day AsyncStorage rate-limit → `StoreReview.requestReview()`
+- Trigger wired at high-emotion success moments per app:
+  - ClaimBack: after dispute resolved (outcome === 'resolved' in Bland.ai polling)
+  - StockPulse: after stock adjustment confirmed (handleAdjust success alert)
+  - InspectorAI: after inspection wizard completes (OK on step 3)
+  - ComplianceSnap: after compliance snap analysis returns result
+  - AuraCheck: after skin scan analysis returns result
+  - Mortal: after successful dead-man's-switch check-in
+  - GovPass: after SNAP application submitted (final wizard step)
+  - SiteSync: after site photo analysis returns result
+  - RouteAI: after stop marked arrived (handleMarkArrived)
+  - FieldLens: after field analysis returns assessment
+- Maximum 1 prompt per 60 days enforced via AsyncStorage timestamp
+**Deliverable:** ✅ Review prompt at optimal moment in each app — all 10 committed & pushed
 **Market Impact:** Even 10 extra reviews per week significantly improves App Store ranking
 
 ---
@@ -521,7 +517,7 @@ const triggerReview = async () => {
 | P2 | API Expansion | PetOS, CompliBot, ClaimForge | High | High |
 | P2 | AI Streaming | All 10 web | Medium | High (UX) |
 | P2 | Evidence Automation | CompliBot | High | Very High |
-| P3 | In-App Reviews | 10 mobile | Low | Medium |
+| P3 | In-App Reviews | 10 mobile | Low | ✅ Done |
 | P3 | Component Library | 5 mobile | Medium | Medium |
 | P3 | Accessibility | 10 web | High | Medium (enterprise) |
 | P3 | Empty States | 20 apps | Medium | High (activation) |
