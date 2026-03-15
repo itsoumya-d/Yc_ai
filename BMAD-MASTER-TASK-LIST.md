@@ -32,6 +32,7 @@
 ---
 
 ### TASK-P1-04: GPS Location & Real-Time Tracking — SiteSync + RouteAI
+**Verified Gap (Session 28):** `expo-location` listed in `app.json` plugins but NOT installed in `package.json`. Zero `Location.getCurrentPositionAsync()` API calls in codebase. Permissions declared but GPS functionality is entirely missing from the app.
 **Research:** Study GPS UX in Procore (construction) and OptimoRoute (route optimization). Study battery optimization patterns for background location. Study react-native-maps vs expo-location performance
 **Problem:** Construction site management and route optimization without GPS is incomplete
 **Frontend (SiteSync):**
@@ -86,6 +87,24 @@
 - Document metadata extraction
 **Deliverable:** Camera-based document intake in both apps
 **Market Impact:** Manual document upload is the #1 friction point in both categories
+
+---
+
+### TASK-P1-07: AI Calling Backend — ClaimBack Mobile
+**Verified Gap (Session 28):** `ai-call.tsx` screen exists with UI but no Twilio/Vapi/Bland.ai backend wired. AI calling is ClaimBack's core differentiator — without it the app is a bill photo viewer.
+**Frontend:** Wire `ai-call.tsx` to backend calling service — show real-time call transcript, dispute status updates, call outcome
+**Backend:** Integrate one of: Twilio Programmable Voice + GPT-4o Realtime API, Vapi.ai (simplest), or Bland.ai. Store call recordings + transcripts in Supabase
+**Deliverable:** End-to-end AI call flow: scan bill → generate dispute script → AI dials → transcript displayed → dispute outcome saved
+**Market Impact:** Without AI calling, ClaimBack is just another bill tracker
+
+---
+
+### TASK-P1-08: HealthKit Integration — AuraCheck Mobile
+**Verified Gap (Session 28):** `NSHealthShareUsageDescription` declared in `app.json` but zero HealthKit SDK code in codebase. Health data integration is mentioned in onboarding (6th slide: "health-data") but never implemented.
+**Frontend:** Use `expo-health` or `react-native-health` to read: weight, sleep, UV exposure, water intake from Apple Health / Google Fit
+**Backend:** Store health context in Supabase, correlate with skin scan results to detect patterns (e.g., poor sleep → skin inflammation)
+**Deliverable:** Health data shown on Health tab, correlated with AuraCheck scan results
+**Market Impact:** Skin health + body health correlation is AuraCheck's key differentiator vs simple dermatology apps
 
 ---
 
@@ -514,6 +533,8 @@ const triggerReview = async () => {
 | P1 | GPS Tracking | SiteSync, RouteAI | High | High (core value) |
 | P1 | Real-time Collab | StoryThread | High | High (differentiator) |
 | P1 | Camera/OCR | GovPass, ComplianceSnap | Medium | High (UX) |
+| P1 | AI Call Backend | ClaimBack | High | Critical (core feature) |
+| P1 | HealthKit Integration | AuraCheck | Medium | High (differentiator) |
 | P2 | API Expansion | PetOS, CompliBot, ClaimForge | High | High |
 | P2 | AI Streaming | All 10 web | Medium | High (UX) |
 | P2 | Evidence Automation | CompliBot | High | Very High |
@@ -553,21 +574,23 @@ const triggerReview = async () => {
 | DealRoom | 88% | ✅ [locale] fixed + deep audit | **97%** | ✅ Ready |
 | BoardBrief | 93% | ✅ deep audit | **96%** | ✅ Ready |
 | ClaimForge | 88% | ✅ deep audit (custom ForceGraph) | **95%** | ✅ Ready |
-| Mortal | 93% | ✅ Apple Sign In + biometric verified | **95%** | ✅ Ready |
-| ClaimBack | 95% | ✅ Apple Sign In + biometric verified | **96%** | ✅ Ready |
-| AuraCheck | 91% | ✅ Apple Sign In + biometric verified | **94%** | ⚠️ Near Ready |
-| GovPass | 89% | ✅ Apple Sign In + biometric verified | **93%** | ⚠️ Near Ready |
-| SiteSync | 90% | ✅ Apple Sign In + biometric verified | **93%** | ⚠️ Near Ready |
+| Mortal | 93% | ✅ deep audit (6-slide onboarding, dead-switch, 10 tabs confirmed) | **95%** | ✅ Ready |
+| ClaimBack | 95% | ⚠️ deep audit — AI call backend (Twilio/Vapi) stubbed | **93%** | ⚠️ Near Ready |
+| AuraCheck | 91% | ⚠️ deep audit — HealthKit declared but no SDK code | **91%** | ⚠️ Near Ready |
+| GovPass | 89% | ⚠️ deep audit — eligibility engine + gov APIs unverified | **90%** | ⚠️ Near Ready |
+| SiteSync | 90% | ✅ deep audit — store-assets ✅, GPS permissions in app.json (pkg missing) | **93%** | ⚠️ Near Ready |
 | RouteAI | 90% | ✅ Apple Sign In + biometric verified | **95%** | ✅ Ready |
 | InspectorAI | 92% | ✅ Apple Sign In + biometric verified | **95%** | ✅ Ready |
 | StockPulse | 88% | ✅ Apple Sign In + biometric + barcode verified | **94%** | ⚠️ Near Ready |
 | ComplianceSnap | 90% | ✅ Apple Sign In + biometric verified | **93%** | ⚠️ Near Ready |
 | FieldLens | 88% | ✅ Apple Sign In + biometric verified | **93%** | ⚠️ Near Ready |
 
-**Overall (Session 28 Final):** 🟢 **95.1% Launch-Ready** (up from 94.2%)
-**Apps fully ready (95%+):** SkillBridge, StoryThread, NeighborDAO, InvoiceAI, PetOS, ProposalPilot, CompliBot, DealRoom, BoardBrief, ClaimForge, Mortal, ClaimBack, RouteAI, InspectorAI **(14/20)**
-**P1 tasks completed in Session 28 verification:** Apple Sign In (all 10 mobile ✅), Biometric Auth (all 10 mobile ✅), Barcode Scanning StockPulse (✅)
-**Web apps fully verified:** All 10 web apps deep-audited — scores revised upward across the board
+**Overall (Session 28 Final):** 🟢 **94.5% Launch-Ready**
+**Apps fully ready (95%+):** SkillBridge, StoryThread, NeighborDAO, InvoiceAI, PetOS, ProposalPilot, CompliBot, DealRoom, BoardBrief, ClaimForge, Mortal, RouteAI, InspectorAI **(13/20)**
+**Near-ready (90–94%):** ClaimBack 93%, SiteSync 93%, StockPulse 94%, AuraCheck 91%, ComplianceSnap 93%, FieldLens 93%, GovPass 90% **(7/20)**
+**P1 tasks confirmed done:** Apple Sign In ✅, Biometric Auth ✅, Barcode Scan (StockPulse) ✅
+**P1 tasks still needed:** GPS live tracking (SiteSync+RouteAI: expo-location in app.json plugins but not in package.json, no Location API calls), CRDT collab (StoryThread), Camera OCR (GovPass+ComplianceSnap)
+**New gaps found (Session 28 deep audit):** ClaimBack AI call backend stubbed, AuraCheck HealthKit zero code, GovPass eligibility engine unverified
 
 ---
 
