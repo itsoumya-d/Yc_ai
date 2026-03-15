@@ -589,16 +589,27 @@ GET  /api/analytics/trends            — Claims pattern analytics
 
 ---
 
-### TASK-P5-04: Deep Link + Universal Link Configuration
-**Research:** Study Universal Links (iOS) and App Links (Android) configuration. Research Branch.io vs custom domain deep links. Study deferred deep linking for pre-install campaigns
-**Problem:** Mobile apps have scheme defined but universal links (https-based) not configured — required for email → app flows
-**Actions per mobile app:**
-- Configure `apple-app-site-association` file on Supabase Storage (served at `/.well-known/`)
-- Configure `assetlinks.json` for Android App Links
-- Update `app.json` with `intentFilters` for Android and `associatedDomains` for iOS
-- Add deep link handler in `app/_layout.tsx` for auth callback, notification tap, share links
-**Deliverable:** Universal links working in all 10 mobile apps
-**Market Impact:** Email → app re-engagement improves 30-day retention by 20%+
+### TASK-P5-04: ✅ COMPLETED — Deep Link + Universal Link Configuration
+**Completed (Session 28):**
+
+**All 10 mobile apps — `app.json` updates:**
+- iOS `associatedDomains`: `['applinks:{app}.app', 'webcredentials:{app}.app']` for Universal Links
+- Android `intentFilters`: `autoVerify: true`, `scheme: 'https'`, `host: '{app}.app'`, `pathPrefix: '/'` for Android App Links
+- Note: Replace `{app}.app` with actual custom domain; custom scheme `{app}://` auto-handled by existing `scheme` property
+
+**All 10 mobile apps — `supabase/functions/well-known/index.ts`:**
+- Deno Edge Function serving `apple-app-site-association` (iOS) + `assetlinks.json` (Android)
+- AASA: `applinks.details[0].appIDs = ['TEAMID.{bundleId}']`, handles `/auth/callback`, `/link/*`, `/shared/*`, `/reset-password`
+- assetlinks: `delegate_permission/common.handle_all_urls` with SHA256 fingerprint placeholder
+- Deploy: `supabase functions deploy well-known` — must be served at domain `/.well-known/`
+
+**All 10 mobile apps — `app/_layout.tsx` enhanced `handleDeepLink()`:**
+- `Linking.getInitialURL()` cold-start handler + `Linking.addEventListener` foreground handler
+- Auth callback: `type=recovery` → reset-password, `type=signup/magiclink` → main tabs
+- Notification taps: `/link/[screen]` → `router.push(screen)`
+- Shared content: `/shared/*` → route to content
+- Custom scheme fallback: `appname://screen` → navigate to path
+- All 10 apps committed + pushed ✅
 
 ---
 
