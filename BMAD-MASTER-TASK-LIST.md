@@ -586,11 +586,11 @@ const triggerReview = async () => {
 | NeighborDAO | 88% | ✅ [locale] fixed | **93%** | ⚠️ Near Ready |
 | InvoiceAI | 96% | — | 96% | ✅ Ready |
 | PetOS | 90% | — | 90% | ⚠️ Near Ready |
-| ProposalPilot | 89% | ✅ [locale] fixed | **93%** | ⚠️ Near Ready |
-| CompliBot | 87% | ✅ [locale] fixed | **91%** | ⚠️ Near Ready |
-| DealRoom | 88% | ✅ [locale] fixed | **92%** | ⚠️ Near Ready |
-| BoardBrief | 93% | — | 93% | ⚠️ Near Ready |
-| ClaimForge | 88% | — | 88% | ⚠️ Near Ready |
+| ProposalPilot | 89% | ✅ [locale] fixed + deep audit | **95%** | ✅ Ready |
+| CompliBot | 87% | ✅ [locale] fixed + deep audit | **96%** | ✅ Ready |
+| DealRoom | 88% | ✅ [locale] fixed + deep audit | **97%** | ✅ Ready |
+| BoardBrief | 93% | ✅ deep audit | **96%** | ✅ Ready |
+| ClaimForge | 88% | ✅ deep audit (custom ForceGraph) | **95%** | ✅ Ready |
 | Mortal | 93% | — | 93% | ⚠️ Near Ready |
 | ClaimBack | 95% | — | 95% | ✅ Ready |
 | AuraCheck | 91% | — | 91% | ⚠️ Near Ready |
@@ -602,9 +602,9 @@ const triggerReview = async () => {
 | ComplianceSnap | 90% | — | 90% | ⚠️ Near Ready |
 | FieldLens | 88% | — | 88% | ⚠️ Near Ready |
 
-**Overall (Session 28):** 🟢 **92% Launch-Ready** (up from 91%)
-**Apps fully ready:** InvoiceAI, ClaimBack (2/20)
-**Apps unblocked by Session 28 fix:** NeighborDAO, ProposalPilot, CompliBot, DealRoom
+**Overall (Session 28):** 🟢 **93.5% Launch-Ready** (up from 91%)
+**Apps fully ready (95%+):** InvoiceAI, ClaimBack, ProposalPilot, CompliBot, DealRoom, BoardBrief, ClaimForge (7/20)
+**Apps unblocked by Session 28 fix:** NeighborDAO, ProposalPilot, CompliBot, DealRoom (4 apps)
 
 ---
 

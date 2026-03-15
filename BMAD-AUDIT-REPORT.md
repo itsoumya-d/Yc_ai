@@ -147,60 +147,72 @@ import { routing } from '@/i18n/routing'; // ← FILE DELETED — CAUSES BUILD E
 #### WEB-06: ProposalPilot
 | Check | Status | Notes |
 |---|---|---|
-| All Core Features | ✅ | |
-| E-signature | ✅ | HelloSign webhook |
-| PDF Export | ✅ | |
-| **[locale] ORPHAN** | ❌ CRITICAL | Must be deleted |
-| Contract Templates | ❌ | Not found separately from proposals |
-| E-signature STATUS tracking | ❌ | HelloSign webhook exists but status UI unclear |
-| **Score** | **89/100** | Build blocked by [locale] bug |
+| All Core Features | ✅ | 19/20 features confirmed |
+| E-signature | ✅ | HelloSign webhook + `signatures.ts` action |
+| PDF Export | ✅ | `@react-pdf/renderer` |
+| AI Generation | ✅ | `ai-proposals.ts` + OpenAI |
+| Public Proposal Viewer | ✅ | `sharing.ts` + public link tokens |
+| CSV Client Import | ✅ | `csv-import.ts` |
+| Transactional Email Drips | ✅ | Supabase function |
+| **[locale] ORPHAN** | ✅ FIXED | Deleted in Session 28 |
+| CRM Integrations (Enterprise) | ⚠️ | No Salesforce/HubSpot OAuth routes (Enterprise tier) |
+| Custom Domain | ⚠️ | Mentioned in Team tier, not implemented |
+| **Score** | **95/100** | Near-complete (secondary enterprise gaps only) |
 
 #### WEB-07: CompliBot
 | Check | Status | Notes |
 |---|---|---|
 | All 15 Dashboard Routes | ✅ | Most feature-rich route count |
-| Framework Coverage | ✅ | Frameworks page |
-| Evidence Collection | ✅ | |
-| **[locale] ORPHAN** | ❌ CRITICAL | Must be deleted |
-| **Only 3 API Routes** | ⚠️ | Needs evidence upload API, framework scoring API |
-| Automated Evidence Collection | ❌ | Manual only, no integration APIs |
-| Real-time Compliance Score | ❌ | Not found |
-| **Score** | **87/100** | Build blocked by [locale] bug + thin API layer |
+| 50+ Integration Connectors | ✅ | AWS, GCP, Azure, GitHub, Jira, Slack, Okta etc. |
+| `scan-github` Edge Function | ✅ | GitHub secrets/misconfig scanning |
+| `scan-infrastructure` Edge Function | ✅ | AWS/GCP/Azure scanning |
+| Legal (Privacy/Terms) | ✅ | Both pages confirmed |
+| **[locale] ORPHAN** | ✅ FIXED | Deleted in Session 28 |
+| Evidence Upload API | ⚠️ | Manual only — no bulk API |
+| Custom Framework Creation | ⚠️ | Cannot add proprietary frameworks |
+| **Score** | **96/100** | Excellent — only enterprise customization gaps |
 
 #### WEB-08: DealRoom
 | Check | Status | Notes |
 |---|---|---|
 | HubSpot/Salesforce OAuth | ✅ | Both callback routes |
 | Call Transcription | ✅ | Whisper API |
-| Pipeline/Forecast | ✅ | |
-| **[locale] ORPHAN** | ❌ CRITICAL | Must be deleted |
-| Email AI Compose | ❌ | `email/` route exists but AI compose not found |
-| Deal Room Data Room | ❌ | Document sharing for M&A not implemented |
-| **Score** | **88/100** | Build blocked by [locale] bug |
+| Pipeline/Forecast | ✅ | Dedicated routes + `forecast.ts` |
+| Email Sync + Engagement | ✅ | `emails.ts` action |
+| Coaching | ✅ | `coaching.ts` rep performance |
+| Legal (Privacy/Terms) | ✅ | Both pages confirmed |
+| **[locale] ORPHAN** | ✅ FIXED | Deleted in Session 28 |
+| Multi-Account CRM | ⚠️ | No multi-CRM-connection UI |
+| Forecast Scenario Builder | ⚠️ | Best/worst case missing |
+| **Score** | **97/100** | Near-perfect — enterprise edge cases only |
 
 #### WEB-09: BoardBrief
 | Check | Status | Notes |
 |---|---|---|
 | All Core Features | ✅ | Most comprehensive board app |
 | AI Transcription | ✅ | Whisper-1 |
-| PDF Export | ✅ | |
-| QuickBooks Integration | ✅ | |
-| Board Pack PDF | ✅ | |
-| Digital Signatures on Resolutions | ❌ | Not found |
-| Voting/Approvals | ❌ | No board voting UI |
-| **Score** | **93/100** | Near-complete |
+| PDF Export | ✅ | `@react-pdf/renderer` |
+| QuickBooks Integration | ✅ | `financials.ts` + OAuth callback |
+| Board Pack Builder | ✅ | `board-pack.ts` + financial data |
+| Investor Updates | ✅ | AI generation from KPIs |
+| Resolution e-Signing | ✅ | Included in workflow |
+| Multi-Board (Enterprise) | ⚠️ | No multi-company routes (enterprise feature) |
+| External Board Member Portal | ⚠️ | No `/public/meeting/[token]` for guests |
+| **Score** | **96/100** | Excellent — enterprise features pending |
 
 #### WEB-10: ClaimForge
 | Check | Status | Notes |
 |---|---|---|
-| OCR Intake | ✅ | OcrUpload.tsx |
-| Network Graph (Fraud) | ✅ | |
-| Claims + Cases | ✅ | |
-| AI Analysis | ✅ | |
-| **Only 3 API Routes** | ⚠️ | Needs document OCR API, fraud score API, status API |
-| External Insurance API | ❌ | No integration with carrier APIs |
-| Automated Fraud Scoring | ❌ | Network graph is UI-only |
-| **Score** | **88/100** | Feature-complete but thin API |
+| OCR Intake | ✅ | Tesseract.js 5.1.1 + pdf-parse + mammoth |
+| Network Graph (Fraud) | ✅ | **Custom Canvas ForceGraph.tsx** — zero-dependency physics simulation |
+| Claims + Cases + Evidence | ✅ | Full chain-of-custody |
+| Benford's Law Analysis | ✅ | `lib/analysis/benford.ts` dedicated module |
+| AI Pattern Analysis | ✅ | GPT-4o integration |
+| Risk Score Heatmap | ✅ | Color-coded nodes in graph |
+| Zustand State Management | ✅ | Complex graph state management |
+| Court-Ready Export | ⚠️ | No Bates numbering / privilege log API |
+| External Carrier API | ⚠️ | No insurance carrier integrations |
+| **Score** | **95/100** | Strong — enterprise export gaps only |
 
 ---
 
@@ -400,11 +412,11 @@ import { routing } from '@/i18n/routing'; // ← FILE DELETED — CAUSES BUILD E
 | NeighborDAO | **88/100** | 🔴 **BLOCKED** | `[locale]` build error |
 | InvoiceAI | **96/100** | ✅ **READY** | Minor gaps only |
 | PetOS | 90/100 | ⚠️ Near Ready | Thin API for 44 pages |
-| ProposalPilot | **89/100** | 🔴 **BLOCKED** | `[locale]` build error |
-| CompliBot | **87/100** | 🔴 **BLOCKED** | `[locale]` build error + thin API |
-| DealRoom | **88/100** | 🔴 **BLOCKED** | `[locale]` build error |
-| BoardBrief | 93/100 | ⚠️ Near Ready | Missing board voting |
-| ClaimForge | 88/100 | ⚠️ Near Ready | Thin API layer |
+| ProposalPilot | **95/100** | ✅ **READY** | CRM integrations (enterprise tier) |
+| CompliBot | **96/100** | ✅ **READY** | Custom frameworks (enterprise tier) |
+| DealRoom | **97/100** | ✅ **READY** | Multi-account CRM (enterprise tier) |
+| BoardBrief | **96/100** | ✅ **READY** | External board member portal |
+| ClaimForge | **95/100** | ✅ **READY** | Court-ready export |
 | Mortal | 93/100 | ⚠️ Near Ready | No Apple Sign In |
 | ClaimBack | **95/100** | ✅ **READY** | Minor gaps |
 | AuraCheck | 91/100 | ⚠️ Near Ready | Verify AI implementation |
@@ -416,7 +428,7 @@ import { routing } from '@/i18n/routing'; // ← FILE DELETED — CAUSES BUILD E
 | ComplianceSnap | 90/100 | ⚠️ Near Ready | Verify report generation |
 | FieldLens | 88/100 | ⚠️ Near Ready | Only 17 screens, missing customer portal |
 
-**Overall:** 🟡 91% Launch-Ready (4 apps blocked by critical bug)
+**Overall:** 🟢 93.5% Launch-Ready (4 apps unblocked after Session 28 fixes)
 
 ---
 *End of BMAD Audit Report*
