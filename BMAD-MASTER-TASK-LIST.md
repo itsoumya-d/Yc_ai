@@ -434,7 +434,7 @@ GET  /api/analytics/trends            — Claims pattern analytics
 
 ---
 
-### TASK-P4-05: AI-Powered Fraud Network Graph — ClaimForge
+### TASK-P4-05: AI-Powered Fraud Network Graph — ClaimForge ✅ COMPLETED (Session 28)
 **Research:** Study graph visualization in Neo4j Bloom, Linkurious, and IBM i2 Analyst's Notebook. Research D3.js force-directed graphs vs vis.js vs react-flow for insurance fraud networks. Study insurance fraud detection patterns
 **Problem:** ClaimForge has a `network-graph/` route but it's UI-only — no actual fraud scoring or graph analysis
 **Frontend:**
@@ -455,9 +455,22 @@ GET  /api/analytics/trends            — Claims pattern analytics
 **Deliverable:** Real AI-powered fraud detection network graph
 **Market Impact:** This is the key differentiator for insurance carriers; can justify enterprise pricing
 
+**Implementation (Session 28):**
+- `app/api/fraud/analyze/route.ts`: fraud scoring API
+  - Queries Supabase `entities` + `entity_relationships` tables
+  - TypeScript fraud score algorithm (0-100): entity type base, connectivity (capped 20), suspicious edges (capped 35), kickback/billing rels (+20), circular loops (+15), large amounts (+8)
+  - Falls back to rich 10-node demo graph when no DB data
+  - Returns `{ nodes: FraudNode[], edges: FraudEdge[], stats: FraudGraphStats }`
+- `network-graph/page.tsx`: rewired to live API
+  - 4 stat cards: high risk count, suspicious edges, avg score, entities analyzed
+  - Suspicious-only toggle to isolate fraud clusters
+  - Node inspector drawer: fraud score meter + riskFactors[], connections with isSuspicious highlighting, entity resolution badge
+  - Risk table with progress bar, entity type, suspicious count
+  - Re-analyze button + loading/error states
+
 ---
 
-### TASK-P4-06: Blockchain Treasury — NeighborDAO
+### TASK-P4-06: Blockchain Treasury — NeighborDAO ✅ COMPLETED (Session 28)
 **Research:** Study on-chain governance in Compound, Snapshot.org, and Boardroom. Research Ethereum/Polygon gas costs for voting and treasury. Study whether a DAO product should use L2 (Base, Optimism) or off-chain signatures (Snapshot)
 **Problem:** NeighborDAO treasury is a regular Supabase table — not actually on-chain; name promises DAO but delivers regular community software
 **Decision point:** Offer users choice between:
@@ -474,6 +487,25 @@ GET  /api/analytics/trends            — Claims pattern analytics
 - Event indexing for proposal and vote history
 **Deliverable:** Optional on-chain treasury mode
 **Market Impact:** Fulfills the "DAO" promise; differentiator in civic tech
+
+**Implementation (Session 28):**
+- `contracts/NeighborDAOTreasury.sol`: Solidity multi-sig treasury (Polygon PoS)
+  - Weighted member voting (1-100 weight), configurable quorum (51%), 3-day voting period
+  - createProposal(), castVote(), executeProposal() with quorum enforcement
+  - receive() for MATIC deposits; all state changes emit events
+- `contracts/deploy.js`: Hardhat deploy script for Polygon/Mumbai
+- `lib/web3.ts`: ethers v6 + MetaMask integration
+  - connectWallet(), switchToPolygon(), getProposals() + hasVoted() per-wallet
+  - createProposal(), castVote(), executeProposal() → returns tx hash
+- `components/treasury/DaoMode.tsx`: full on-chain governance UI
+  - MetaMask detection guard + wallet connect flow
+  - Contract not-deployed: setup guide with CLI commands
+  - On-chain treasury balance + governance stats panel
+  - Proposal cards: VoteBar, StatusBadge, For/Against vote buttons, Execute button
+  - CreateProposalModal: target address, MATIC amount, category, description
+  - Transaction confirmations with PolygonScan link
+- `treasury/page.tsx`: added "DAO Mode" tab (purple, Zap icon) as 3rd tab
+- `package.json`: added `ethers: ^6.16.0`
 
 ---
 
@@ -632,8 +664,8 @@ GET  /api/analytics/trends            — Claims pattern analytics
 | P4 | Mobile Widgets | 10 mobile | Medium | ✅ Done |
 | P4 | Multi-currency | InvoiceAI | Medium | ✅ Done |
 | P4 | Push Customization | 10 mobile | Low | ✅ Done |
-| P4 | Fraud Graph AI | ClaimForge | High | Very High |
-| P4 | Blockchain Treasury | NeighborDAO | Very High | Medium |
+| P4 | Fraud Graph AI | ClaimForge | High | ✅ Done |
+| P4 | Blockchain Treasury | NeighborDAO | Very High | ✅ Done |
 | P5 | Lighthouse Audit | 10 web | Medium | Medium |
 | P5 | Sentry Mobile | 10 mobile | Low | High (stability) |
 | P5 | DB Optimization | 20 apps | Medium | High (scale) |
