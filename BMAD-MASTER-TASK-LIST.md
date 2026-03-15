@@ -156,7 +156,7 @@ GET  /api/analytics/trends            — Claims pattern analytics
 
 ---
 
-### TASK-P2-03: Automated Evidence Collection — CompliBot
+### TASK-P2-03: Automated Evidence Collection — CompliBot ✅ COMPLETED (Session 28)
 **Research:** Study Vanta's evidence automation (GitHub Actions checks, AWS Config, Jira ticket linking). Research how Drata integrates with cloud providers for continuous compliance monitoring
 **Problem:** CompliBot evidence collection is manual — the killer feature of GRC tools is automatic evidence gathering from connected systems
 **Frontend:**
@@ -171,6 +171,13 @@ GET  /api/analytics/trends            — Claims pattern analytics
 - Webhook receivers for real-time compliance events
 **Deliverable:** Automated evidence collection from 3+ integrations
 **Market Impact:** This is the primary feature that justifies $299+/mo pricing vs $29/mo
+
+**✅ Implementation (Session 28):**
+- `app/api/integrations/callback/route.ts`: OAuth code exchange for GitHub/Jira/GCP/Azure/Slack; stores to `integrations` table; redirects to `/integrations?connected={provider}`
+- `app/api/integrations/evidence-collect/route.ts`: POST collects evidence per provider (90-day TTL, upserts to `evidence` table, updates `last_synced_at`/`next_sync_at`); GET returns freshness + items expiring within 14 days; supports `CRON_SECRET` header for automated cron runs
+- `app/api/webhooks/compliance/route.ts`: HMAC-verified GitHub webhook receiver maps events → `scan_findings` (critical: secret_scanning/repo publicized; high: code_scanning/dependabot; low: push/PR); Jira webhook creates evidence records
+- `integrations/page.tsx` updated: 6 providers (added Jira/Azure/Slack), OAuth redirect connect flow, "Collect Evidence" button per provider, evidence freshness timestamps, expiry warning banner (amber), schedule config UI (per-provider frequency dropdown), webhook setup documentation panel
+- Committed & pushed to itsoumya-d GitHub ✅
 
 ---
 
@@ -526,7 +533,7 @@ GET  /api/analytics/trends            — Claims pattern analytics
 | P1 | HealthKit Integration | AuraCheck | ✅ Done | High (differentiator) |
 | P2 | API Expansion | PetOS, CompliBot, ClaimForge | High | ✅ Done |
 | P2 | AI Streaming | All 10 web | Medium | ✅ Done |
-| P2 | Evidence Automation | CompliBot | High | Very High |
+| P2 | Evidence Automation | CompliBot | High | ✅ Done |
 | P3 | In-App Reviews | 10 mobile | Low | ✅ Done |
 | P3 | Component Library | 5 mobile | Medium | Medium |
 | P3 | Accessibility | 10 web | High | Medium (enterprise) |
