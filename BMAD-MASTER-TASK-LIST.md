@@ -561,17 +561,31 @@ GET  /api/analytics/trends            — Claims pattern analytics
 
 ---
 
-### TASK-P5-03: Database Optimization + Connection Pooling
-**Research:** Study Supabase connection pooling with PgBouncer. Research query performance patterns in Next.js Server Actions. Study PostgREST RLS performance at scale
-**Problem:** Server Actions create new Supabase connections per request at high scale
-**Actions:**
-- Enable PgBouncer connection pooling in Supabase dashboard for all projects
-- Add database indexes for common query patterns (created_at, user_id, status)
-- Add `EXPLAIN ANALYZE` comments in critical queries for monitoring
-- Implement cursor-based pagination (not offset) for large lists
-- Add composite indexes for filtered + sorted queries
-**Deliverable:** DB optimization applied to all 20 apps
-**Market Impact:** Prevents performance degradation under load; prevents Supabase connection limits
+### TASK-P5-03: ✅ COMPLETED — Database Optimization + Connection Pooling
+**Completed (Session 28):**
+
+**All 20 apps — `supabase/migrations/002_performance_indexes.sql`:**
+- `pg_stat_statements` extension: enables query performance monitoring in Supabase Dashboard → SQL Editor
+- Composite indexes for common query patterns per app:
+  - `(user_id, created_at DESC)`: all user-scoped list views
+  - `(user_id, status, created_at DESC)`: filtered + sorted lists (invoices, disputes, proposals, etc.)
+  - `(org_id, status, created_at DESC)`: multi-tenant org-scoped lists
+  - `(deal_id/case_id/project_id, created_at DESC)`: nested resource lists
+  - Partial indexes: `WHERE status = 'active'`, `WHERE status = 'open'`, `WHERE is_read = FALSE` — skip inactive rows at index level
+  - Sort-specific: `(score DESC)`, `(due_date ASC)`, `(sequence_number ASC)` for non-date ordering
+- All 20 apps committed + pushed ✅
+
+**Web Apps (all 10) — `lib/db/pagination.ts`:**
+- `cursorPage(supabase, table, filters, {cursor, limit})`: cursor-based pagination using `created_at` as cursor
+- `cursorPageByColumn(supabase, table, filters, orderColumn, ascending, options)`: cursor pagination for non-date ordering
+- Returns `{ data, nextCursor, hasMore }` — eliminates OFFSET full-table scans at scale
+
+**Mobile Apps (all 10) — `lib/pagination.ts`:**
+- `fetchPage(table, filters, cursor?, limit)`: same cursor-based pattern for React Native Supabase queries
+
+**PgBouncer pooler URL — `.env.example` (all 20 apps):**
+- Documented `DATABASE_POOLER_URL` with Transaction mode pooler URL format
+- Note: Supabase's REST API (@supabase/ssr) uses HTTP (no persistent TCP connections), so PgBouncer only needed for direct pg/Prisma connections. Enable via Supabase Dashboard → Settings → Database → Connection pooling.
 
 ---
 
