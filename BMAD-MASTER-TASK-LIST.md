@@ -350,7 +350,7 @@ GET  /api/analytics/trends            — Claims pattern analytics
 
 ---
 
-### TASK-P4-02: Mobile Widgets — All 10 Mobile Apps
+### TASK-P4-02: Mobile Widgets — All 10 Mobile Apps ✅ COMPLETED (Session 28)
 **Research:** Study iOS home screen widget design in apps like Fantastical, Weather, and Notion. Research `expo-widgets` / Widgetkit (iOS) + Glance Widgets (Android). Study which widget metrics drive daily active usage
 **Problem:** No iOS/Android home screen widgets = lower daily engagement
 **Widget designs per app:**
@@ -366,6 +366,20 @@ GET  /api/analytics/trends            — Claims pattern analytics
 - ComplianceSnap: Violations today widget
 **Deliverable:** iOS widget for each of 10 apps
 **Market Impact:** Widgets increase daily active usage by 15–30% for utility apps
+
+**Implementation (Session 28):**
+- `widgets/ios/{Name}Widget.swift`: WidgetKit small + medium widget, StaticConfiguration
+  - Reads from App Group UserDefaults (30-min refresh timeline)
+  - Gradient colored background with emoji + large number metric + subtitle
+- `plugins/withWidget.js`: Expo config plugin using `@expo/config-plugins`
+  - Copies Swift files to ios/{Name}Widget/ during `expo prebuild`
+  - Adds WidgetKit + SwiftUI framework links
+  - Registers App Groups entitlement for shared UserDefaults
+- `lib/widget.ts`: `update{Metric}()` function writes to App Group UserDefaults
+  - Called from data-fetching screens to keep widget in sync
+  - Fails silently in Expo Go (native module not available)
+- `app.json`: `./plugins/withWidget` added to plugins array
+- All 10 apps committed + pushed to GitHub
 
 ---
 
@@ -597,7 +611,7 @@ GET  /api/analytics/trends            — Claims pattern analytics
 | P3 | Empty States | 20 apps | Medium | ✅ Done |
 | P3 | Onboarding Checklists | 10 web | Medium | ✅ Done |
 | P4 | AI Chat (RAG) | CompliBot, BoardBrief, DealRoom | High | ✅ Done |
-| P4 | Mobile Widgets | 10 mobile | Medium | Medium |
+| P4 | Mobile Widgets | 10 mobile | Medium | ✅ Done |
 | P4 | Multi-currency | InvoiceAI | Medium | High |
 | P4 | Push Customization | 10 mobile | Low | Medium |
 | P4 | Fraud Graph AI | ClaimForge | High | Very High |
