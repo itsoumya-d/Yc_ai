@@ -383,7 +383,7 @@ GET  /api/analytics/trends            — Claims pattern analytics
 
 ---
 
-### TASK-P4-03: Multi-Currency + Tax Engine — InvoiceAI
+### TASK-P4-03: Multi-Currency + Tax Engine — InvoiceAI ✅ COMPLETED (Session 28)
 **Research:** Study currency handling in FreshBooks, Wave, and Zoho Invoice. Research tax calculation APIs (Taxjar, Avalara, Paddle). Research EUR, GBP, CAD, AUD, INR currency formatting and VAT/GST rules
 **Problem:** InvoiceAI supports international users via i18n but only USD billing
 **Frontend:**
@@ -396,6 +396,14 @@ GET  /api/analytics/trends            — Claims pattern analytics
 - Currency rate caching (update daily via exchange rate API)
 **Deliverable:** Multi-currency invoicing with tax calculations
 **Market Impact:** Opens EU, UK, India, Canada markets ($3B+ addressable)
+
+**Implementation (Session 28):**
+- `lib/currency.ts`: 15 currencies (USD/EUR/GBP/CAD/AUD/INR/JPY/CNY/CHF/SGD/HKD/NZD/MXN/BRL/AED), TAX_PRESETS (UK VAT 20%, EU VAT 21%/10%, AU GST 10%, NZ GST 15%, IN GST 18%, CA GST 13%, US Sales Tax 8%, custom), formatCurrencyAmount(), convertAmount(), getExchangeRates()
+- `app/api/currency/rates/route.ts`: 24h cached exchange rate API (Open Exchange Rates + hardcoded fallback)
+- `components/invoices/CurrencySelector.tsx`: full currency dropdown (15 currencies)
+- `components/invoices/TaxRateSelector.tsx`: preset tax type selector + custom % input
+- `invoices/new/page.tsx`: currency + TaxRateSelector wired into invoice creation, passed to createInvoiceAction
+- Committed + pushed to invoiceai repo
 
 ---
 
@@ -612,7 +620,7 @@ GET  /api/analytics/trends            — Claims pattern analytics
 | P3 | Onboarding Checklists | 10 web | Medium | ✅ Done |
 | P4 | AI Chat (RAG) | CompliBot, BoardBrief, DealRoom | High | ✅ Done |
 | P4 | Mobile Widgets | 10 mobile | Medium | ✅ Done |
-| P4 | Multi-currency | InvoiceAI | Medium | High |
+| P4 | Multi-currency | InvoiceAI | Medium | ✅ Done |
 | P4 | Push Customization | 10 mobile | Low | Medium |
 | P4 | Fraud Graph AI | ClaimForge | High | Very High |
 | P4 | Blockchain Treasury | NeighborDAO | Very High | Medium |
