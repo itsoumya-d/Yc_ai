@@ -1,6 +1,8 @@
 # BMAD Master Task List — All 20 Apps to 100% Launch Ready
 > Generated: 2026-03-15 | BMAD Method v1 | Session 28
 > **Mandatory research precedes every implementation task**
+> **Market Research:** See `E:\Yc_ai\COMPETITIVE-MARKET-RESEARCH-2026.md` (1,343-line report, all 20 apps)
+> **Key insight:** SMB pricing gap is the primary opportunity — incumbents charge $10K–$100K/year; deliver 70% value at 10% of cost
 
 ---
 
