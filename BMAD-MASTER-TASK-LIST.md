@@ -542,18 +542,22 @@ GET  /api/analytics/trends            — Claims pattern analytics
 
 ---
 
-### TASK-P5-02: Error Monitoring (Sentry) — All Apps
-**Research:** Study Sentry configuration best practices for Next.js and Expo. Research source maps, release tracking, and alert thresholds
-**Web Apps:** SkillBridge has Sentry config; verify all 10 web apps have it configured
-**Mobile Apps:** None have Sentry for React Native
-**Actions:**
-- Verify Sentry SDK configured in all 10 web apps
-- Add `@sentry/react-native` to all 10 mobile apps
-- Configure release tracking (link to git commits via EAS)
-- Set alert thresholds: >1% error rate = immediate alert
-- Configure performance monitoring (transactions, LCP)
-**Deliverable:** Sentry monitoring active in all 20 apps
-**Market Impact:** Without error monitoring, production bugs go undetected until users complain
+### TASK-P5-02: ✅ COMPLETED — Error Monitoring (Sentry) — All Apps
+**Completed (Session 28):**
+
+**Web Apps (all 10) — Enhanced sentry configs:**
+- `sentry.client.config.ts`: release tracking via `NEXT_PUBLIC_SENTRY_RELEASE ?? VERCEL_GIT_COMMIT_SHA`, environment, `tracesSampleRate` (0.1 prod / 1.0 dev), `profilesSampleRate: 0.1`, session replay (`replaysOnErrorSampleRate: 1.0`, `replaysSessionSampleRate: 0.05`), `beforeSend` filtering (NetworkError, Failed to fetch, cancelled, AbortError, 401, 403), `denyUrls` for browser extensions
+- `sentry.server.config.ts`: release tracking, `beforeSend` filtering for 4xx HTTP errors
+- All 10 web apps committed + pushed ✅
+
+**Mobile Apps (all 10) — New `lib/sentry.ts` + `_layout.tsx` wiring:**
+- `initSentry()`: `@sentry/react-native` init with DSN, `release = name@expoConfig.version`, `dist = buildNumber`, `tracesSampleRate` (1.0 dev / 0.1 prod), `profilesSampleRate: 0.05`, `beforeSend` filtering (Network request failed, AbortError, cancelled), `enableAutoPerformanceTracing: true`, `enableAutoSessionTracking: true`
+- `identifySentryUser(userId, email?)` / `clearSentryUser()`: user context on login/logout
+- `captureError(error, context?)`: `Sentry.withScope` + extra context + `captureException`
+- `addBreadcrumb(message, category, data?)`: navigation/action breadcrumbs
+- `SentryNavigationWrapper = Sentry.wrap`: Expo Router navigation tracking
+- `app/_layout.tsx`: `initSentry()` called at app startup in all 10 apps
+- All 10 mobile apps committed + pushed ✅
 
 ---
 
