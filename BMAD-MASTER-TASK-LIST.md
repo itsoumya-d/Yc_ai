@@ -320,7 +320,7 @@ GET  /api/analytics/trends            — Claims pattern analytics
 
 ## PRIORITY 4: ADVANCED FEATURES (Market Differentiation)
 
-### TASK-P4-01: AI Chat Interface — CompliBot + BoardBrief + DealRoom
+### TASK-P4-01: AI Chat Interface — CompliBot + BoardBrief + DealRoom ✅ COMPLETED (Session 28)
 **Research:** Study conversational AI interfaces in Vanta's AI assistant, Salesforce Einstein Copilot, and Glean. Research how retrieval-augmented generation (RAG) enables context-aware Q&A over company documents. Study Vercel AI SDK `useChat` hook
 **Problem:** These 3 apps have AI generation but no conversational interface — users can't ask questions about their own data
 **Frontend:**
@@ -334,6 +334,19 @@ GET  /api/analytics/trends            — Claims pattern analytics
 - Chat history persisted in Supabase
 **Deliverable:** Context-aware AI assistant in each of 3 apps
 **Market Impact:** Differentiator vs competitors (Vanta, Salesforce); directly justifies premium pricing
+
+**Implementation (Session 28):**
+- Approach: RAG-lite (Supabase table injection instead of pgvector — works with zero infra setup)
+- `app/api/ai/chat/route.ts`: streaming GPT-4o-mini, injects user's actual Supabase data as context
+  - CompliBot: frameworks, evidence, policies tables
+  - BoardBrief: meetings, documents, resolutions tables
+  - DealRoom: deals, contacts, activities tables
+- `components/AIChatDrawer.tsx`: floating ✨ button + slide-in drawer (Framer Motion spring)
+  - Multi-turn message history, streaming token-by-token display
+  - Suggested prompts on empty state, keyboard send (Enter), loading spinner
+  - App-specific system prompts and suggested questions
+- Wired into each app's `app/(dashboard)/layout.tsx`
+- Committed + pushed to all 3 app repos
 
 ---
 
@@ -583,7 +596,7 @@ GET  /api/analytics/trends            — Claims pattern analytics
 | P3 | Accessibility | 10 web | High | ✅ Done |
 | P3 | Empty States | 20 apps | Medium | ✅ Done |
 | P3 | Onboarding Checklists | 10 web | Medium | ✅ Done |
-| P4 | AI Chat (RAG) | CompliBot, BoardBrief, DealRoom | High | Very High |
+| P4 | AI Chat (RAG) | CompliBot, BoardBrief, DealRoom | High | ✅ Done |
 | P4 | Mobile Widgets | 10 mobile | Medium | Medium |
 | P4 | Multi-currency | InvoiceAI | Medium | High |
 | P4 | Push Customization | 10 mobile | Low | Medium |
