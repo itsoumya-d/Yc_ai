@@ -93,7 +93,7 @@
 
 ## PRIORITY 2: API EXPANSION (Thin Backend Layer)
 
-### TASK-P2-01: Expand API Routes — PetOS, CompliBot, ClaimForge
+### TASK-P2-01: Expand API Routes — PetOS, CompliBot, ClaimForge ✅ COMPLETED (Session 28)
 **Research:** Study REST API patterns in PetDesk (vet booking), Vanta (compliance), and ServiceNow (claims). Research proper API rate limiting, versioning, and webhook patterns
 **Problem:** PetOS has 44 pages with only 3 API routes; CompliBot has 15 dashboard routes with 3 API routes; ClaimForge manages claims with only 3 API routes
 
@@ -514,7 +514,7 @@ GET  /api/analytics/trends            — Claims pattern analytics
 | P1 | Camera/OCR | GovPass, ComplianceSnap | ✅ Done | High (UX) |
 | P1 | AI Call Backend | ClaimBack | ✅ Done | Critical (core feature) |
 | P1 | HealthKit Integration | AuraCheck | ✅ Done | High (differentiator) |
-| P2 | API Expansion | PetOS, CompliBot, ClaimForge | High | High |
+| P2 | API Expansion | PetOS, CompliBot, ClaimForge | High | ✅ Done |
 | P2 | AI Streaming | All 10 web | Medium | High (UX) |
 | P2 | Evidence Automation | CompliBot | High | Very High |
 | P3 | In-App Reviews | 10 mobile | Low | ✅ Done |
