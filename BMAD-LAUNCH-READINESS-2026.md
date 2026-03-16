@@ -1,18 +1,40 @@
 # BMAD Launch Readiness Report — All 20 Apps
 > **Generated:** 2026-03-16 | **Framework:** BMAD Method v6.2.0 | **Session:** 31
-> **Decision:** 5 WEB APPS READY | 5 WEB APPS NEED SECURITY/FUNCTIONAL FIXES | MOBILE APPS NEED REVENUECAT FIX
+> **Decision:** 1 WEB APP READY | 9 WEB APPS NEED FIXES | MOBILE APPS NEED REVENUECAT FIX
 
 ---
 
-## VERDICT: 🟡 WEB PARTIALLY READY (5/10 go, 5/10 blocked) | 🟡 MOBILE CONDITIONAL (1 blocker)
+## VERDICT: 🔴 WEB MOSTLY NOT READY (1/10 go, 9/10 blocked) | 🟡 MOBILE CONDITIONAL (1 blocker)
 
-**Web apps — READY (5/10):** SkillBridge, StoryThread, NeighborDAO, InvoiceAI, PetOS — Production deployment ready — **NO BLOCKERS**
+**Web apps — READY (1/10):** InvoiceAI (95%) — Production deployment ready (minor: race condition + AI UUID validation, non-blocking)
 
-**Web apps — BLOCKED (5/10):** ProposalPilot, CompliBot, DealRoom, BoardBrief, ClaimForge — Have critical security vulnerabilities or non-functional features. See below.
+**Web apps — CONDITIONAL (3/10):** SkillBridge (92%), ProposalPilot (93%), BoardBrief (91%) — Need security fixes before launch (unauthenticated AI routes, webhook bypass, duplicate meetings)
+
+**Web apps — NOT READY (6/10):** StoryThread (90%), NeighborDAO (88%), PetOS (82%), CompliBot (87%), DealRoom (90%), ClaimForge (89%) — Have critical functional gaps, mock data, runtime crashes, or security vulnerabilities. See below.
 
 **Mobile apps (10/10):** App Store + Play Store submission ready AFTER fixing RevenueCat.
 
-### 🚨 WEB LAUNCH BLOCKERS (5 apps)
+### 🚨 WEB LAUNCH BLOCKERS (9 apps)
+
+#### PetOS (82%) — 🔴 NOT READY (MOST CRITICAL)
+- Marketplace page **CRASHES at runtime** — `booked` variable undefined, `setBooked()` doesn't exist
+- Service detail page **entirely hardcoded** ("Premium Dog Grooming") — `serviceId` not used for data fetch
+- Booking uses `petId: 'pet-placeholder'` — will fail FK constraint
+- Hardcoded time slots with **stale dates** (March 2026)
+
+#### StoryThread (90%) — 🔴 NOT READY
+- Profile page uses **HARDCODED MOCK DATA** — "Jordan Rivera" fake user shown to all users
+- Yjs CRDT has **NO persistence** — collaborative edits lost when all clients disconnect
+
+#### NeighborDAO (88%) — 🔴 NOT READY
+- Map page is a **static placeholder** — no map library integrated, feature is fake
+- Treasury shows **fake budget fallback data** ($18K infrastructure, $8K events) when DB is empty
+- Solidity `transfer()` pattern has gas limit risk post-EIP-1884
+- Mumbai testnet reference deprecated (should be Amoy)
+
+#### SkillBridge (92%) — 🟡 CONDITIONAL
+- AI generate route has **NO authentication** — anyone can consume OpenAI credits
+- Stale `[locale]/layout.tsx` with broken import
 
 #### CompliBot (87%) — 🔴 NOT READY
 - OAuth tokens from all 6 providers are **discarded** (only `provider_hint` saved) — integrations are decorative
@@ -38,7 +60,12 @@
 - Agenda builder creates **duplicate meetings** on page revisit
 - "Export PDF" button is a **no-op** (does nothing)
 
-**Estimated effort for all 5 web fixes:** 8-12 days
+#### InvoiceAI (95%) — ✅ READY (minor issues)
+- Non-atomic payment update in Stripe webhook (low-probability race condition)
+- Unvalidated AI-returned UUIDs in reconciliation (data integrity risk)
+- *These are non-blocking but should be fixed post-launch*
+
+**Estimated effort for all 9 web app fixes:** 15-22 days
 
 ### 🚨 MOBILE LAUNCH BLOCKER: RevenueCat Purchase Flows STUBBED
 
@@ -109,11 +136,11 @@ All other critical systems are complete: auth, i18n, analytics, error monitoring
 
 | # | App | Score | Critical Issues | Enterprise Gaps | Launch Decision |
 |---|---|---|---|---|---|
-| 1 | SkillBridge | **97/100** | Stale [locale]/layout.tsx (delete) | CRM integration (enterprise) | ✅ **LAUNCH** |
-| 2 | StoryThread | **99/100** | None | Story templates only | ✅ **LAUNCH** |
-| 3 | NeighborDAO | **98/100** | None | Voting delegation, /pricing page | ✅ **LAUNCH** |
-| 4 | InvoiceAI | **99/100** | None | QuickBooks/Xero sync | ✅ **LAUNCH** |
-| 5 | PetOS | **98/100** | 1 TODO (vet booking API) | Wearable integration | ✅ **LAUNCH** |
+| 1 | SkillBridge | **92/100** ⬇️ | 🚨 Unauthenticated AI route, stale [locale] file | CRM integration | 🟡 **AFTER SECURITY FIX** |
+| 2 | StoryThread | **90/100** ⬇️ | 🚨 Hardcoded mock profile, Yjs no persistence | Story templates | 🔴 **NOT READY** |
+| 3 | NeighborDAO | **88/100** ⬇️ | 🚨 Placeholder map, fake budget data, Solidity issues | Voting delegation | 🔴 **NOT READY** |
+| 4 | InvoiceAI | **95/100** ⬇️ | ⚠️ Race condition, unvalidated AI UUIDs (non-blocking) | QuickBooks/Xero sync | ✅ **LAUNCH** |
+| 5 | PetOS | **82/100** ⬇️ | 🚨 Runtime crash, hardcoded marketplace, placeholder IDs | Wearable integration | 🔴 **NOT READY** |
 | 6 | ProposalPilot | **93/100** ⬇️ | 🚨 Unauthenticated AI route, webhook bypass | CRM integration | 🟡 **AFTER SECURITY FIX** |
 | 7 | CompliBot | **87/100** ⬇️ | 🚨 OAuth tokens discarded, evidence 100% stubbed, CSRF | SSO, custom frameworks, audit log | 🔴 **NOT READY** |
 | 8 | DealRoom | **90/100** ⬇️ | 🚨 Plaintext OAuth tokens, CSRF, hardcoded forecasting | Multi-CRM sync | 🔴 **NOT READY** |
@@ -171,34 +198,32 @@ Before deploying each app to production, verify:
 
 ## RECOMMENDED LAUNCH ORDER
 
-### Wave 1 (Week 1): Highest-Ready, Highest Revenue
-1. **InvoiceAI** — $0-$49/mo + transaction fees, broad SMB market — **99/100 ✅**
-2. **PetOS** — $9-$99/mo + 10% marketplace commission — **98/100 ✅**
-3. **SkillBridge** — $19-$149/mo + job posting revenue — **97/100 ✅**
-4. **StoryThread** — $9-$49/mo, creative writing — **99/100 ✅**
-5. **NeighborDAO** — $29-$199/mo, civic tech — **98/100 ✅**
+### Wave 1 (Week 1): Only Fully Ready Web App
+1. **InvoiceAI** — $0-$49/mo + transaction fees, broad SMB market — **95/100 ✅ READY**
 
-### Wave 2 (Week 2): After Security Fixes (P0-07, P0-12)
-6. **ProposalPilot** — $19-$149/mo, clear ROI for freelancers — **93/100 → fix AI auth + webhook**
-7. **BoardBrief** — $199-$1,499/mo, high LTV governance — **91/100 → fix AI auth + dupes + PDF**
+### Wave 2 (Week 2): After Quick Security Fixes (P0-07, P0-12)
+2. **SkillBridge** — $19-$149/mo + job posting revenue — **92/100 → fix AI auth + delete stale file**
+3. **ProposalPilot** — $19-$149/mo, clear ROI for freelancers — **93/100 → fix AI auth + webhook**
+4. **BoardBrief** — $199-$1,499/mo, high LTV governance — **91/100 → fix AI auth + dupes + PDF**
 
-### Wave 3 (Week 3-4): After Major Rework (P0-08, P0-09, P0-11)
-8. **CompliBot** — $99-$999/mo, enterprise demand — **87/100 → wire OAuth + real evidence**
-9. **DealRoom** — $49-$299/seat, per-seat scaling — **90/100 → encrypt tokens + CSRF + forecasting**
-10. **ClaimForge** — $149-$999/seat, insurance enterprise — **89/100 → wire real analytics + fix params**
+### Wave 3 (Week 3-4): After Data Wiring + Feature Fixes
+5. **StoryThread** — $9-$49/mo, creative writing — **90/100 → wire real profile + Yjs persistence**
+6. **NeighborDAO** — $29-$199/mo, civic tech — **88/100 → wire real map + fix budget fallbacks**
+7. **PetOS** — $9-$99/mo + marketplace — **82/100 → fix runtime crash + wire marketplace data**
+8. **DealRoom** — $49-$299/seat, per-seat scaling — **90/100 → encrypt tokens + CSRF + forecasting**
+9. **ClaimForge** — $149-$999/seat, insurance enterprise — **89/100 → wire real analytics + fix params**
+10. **CompliBot** — $99-$999/mo, enterprise demand — **87/100 → wire OAuth + real evidence**
 
-### Wave 3 (Week 3): Consumer/Field Apps
-9. **ClaimBack** (mobile) — 15% success fee, viral potential
-10. **RouteAI** (mobile) — $29/driver/mo, delivery market
-11. **SiteSync** (mobile) — $39/user/mo, construction
-12. **StockPulse** (mobile) — $19/location/mo, retail/F&B
-13. **InspectorAI** (mobile) — $49/inspector/mo, property
-14. **FieldLens** (mobile) — $29/tech/mo, field service
-15. **ComplianceSnap** (mobile) — $29/user/mo, compliance
+### Wave 4 (Week 4-5): Consumer/Field Mobile Apps (After RevenueCat Fix)
+11. **ClaimBack** (mobile) — 15% success fee, viral potential
+12. **RouteAI** (mobile) — $29/driver/mo, delivery market
+13. **SiteSync** (mobile) — $39/user/mo, construction
+14. **StockPulse** (mobile) — $19/location/mo, retail/F&B
+15. **InspectorAI** (mobile) — $49/inspector/mo, property
+16. **FieldLens** (mobile) — $29/tech/mo, field service
+17. **ComplianceSnap** (mobile) — $29/user/mo, compliance
 
-### Wave 4 (Week 4): Community/Consumer
-16. **StoryThread** — $9-$49/mo, creative writing
-17. **NeighborDAO** — $29-$199/mo, civic tech
+### Wave 5 (Week 5-6): Consumer Mobile
 18. **Mortal** (mobile) — $59.99/yr, legacy planning
 19. **AuraCheck** (mobile) — $59.99/yr, wellness
 20. **GovPass** (mobile) — $49.99/yr, digital identity
@@ -206,4 +231,4 @@ Before deploying each app to production, verify:
 ---
 
 *End of Launch Readiness Report — BMAD Method v6.2.0*
-*Decision: 5 WEB APPS GO | 2 WEB CONDITIONAL | 3 WEB NOT READY | 10 MOBILE CONDITIONAL (RevenueCat)*
+*Decision: 1 WEB READY | 3 WEB CONDITIONAL | 6 WEB NOT READY | 10 MOBILE CONDITIONAL (RevenueCat)*

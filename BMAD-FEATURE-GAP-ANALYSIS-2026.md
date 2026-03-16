@@ -8,7 +8,7 @@
 
 | Category | Total Features | Implemented | Missing (High) | Missing (Med) | Missing (Low) | Coverage |
 |---|---|---|---|---|---|---|
-| Core Product Features | 200+ | 195+ | 5 | 0 | 0 | **97.5%** |
+| Core Product Features | 200+ | 187+ | 10 | 3 | 0 | **93.5%** |
 | Authentication | 20 checks | 20 | 0 | 0 | 0 | **100%** |
 | Billing/Monetization | 20 checks | 20 | 0 | 0 | 0 | **100%** |
 | i18n/Localization | 20 checks | 20 | 0 | 0 | 0 | **100%** |
@@ -17,13 +17,13 @@
 | Enterprise Features | 30 checks | 18 | 6 | 4 | 2 | **60%** |
 | 3rd-Party Integrations | 25 checks | 16 | 4 | 3 | 2 | **64%** |
 | Advanced AI | 15 checks | 12 | 1 | 1 | 1 | **80%** |
-| **TOTAL** | **390+** | **364+** | **13** | **7** | **5** | **93.3%** |
+| **TOTAL** | **390+** | **356+** | **18** | **10** | **5** | **91.3%** |
 
 ---
 
 ## WEB APP FEATURE ALIGNMENT
 
-### WEB-01: SkillBridge (97%)
+### WEB-01: SkillBridge (92%) ⬇️
 
 | Feature | Should Exist | Status | Gap |
 |---|---|---|---|
@@ -32,20 +32,21 @@
 | Job Board | ✅ | ✅ Implemented + monetized ($199-$499) | — |
 | Learning Modules | ✅ | ✅ Implemented | — |
 | Resume Builder | ✅ | ✅ Implemented | — |
-| AI Skill Coach | ✅ | ✅ Streaming via useAiStream | — |
+| AI Skill Coach | ✅ | ⚠️ Works but **UNAUTHENTICATED** | 🚨 **CRITICAL** — credit theft |
 | Verified Skills Badge | ✅ | ✅ Score bar + percentile | — |
 | Employer Dashboard | ✅ | ✅ Stats + listing management | — |
 | CRM Integration (HubSpot/SF) | Enterprise tier | ❌ Missing | **MED** — needed for enterprise sales |
 | SCORM/xAPI Import | Nice-to-have | ❌ Missing | **LOW** — LMS interoperability |
 | Manager Team Dashboard | Enterprise tier | ❌ Missing | **MED** — team skill coverage view |
 
-### WEB-02: StoryThread (99%) — UPGRADED
+### WEB-02: StoryThread (90%) ⬇️
 
 | Feature | Should Exist | Status | Gap |
 |---|---|---|---|
 | Story CRUD | ✅ | ✅ Full management | — |
 | Rich Text Editor (Tiptap) | ✅ | ✅ 9 @tiptap packages | — |
-| Real-time Collaboration (Yjs) | ✅ | ✅ SupabaseBroadcastProvider + CRDT | — |
+| Real-time Collaboration (Yjs) | ✅ | ⚠️ Works live but **NO PERSISTENCE** — edits lost between sessions | 🚨 **HIGH** — data loss |
+| User Profile | ✅ | 🚨 **HARDCODED MOCK DATA** — "Jordan Rivera" shown to all users | 🚨 **CRITICAL** — fake data |
 | Character Database | ✅ | ✅ Implemented | — |
 | World Building | ✅ | ✅ Implemented | — |
 | AI Writing (streaming) | ✅ | ✅ api/ai/write + api/ai/generate | — |
@@ -54,42 +55,46 @@
 | EPUB/PDF Export | ✅ | ✅ @react-pdf/renderer + epub-gen-memory + archiver | — |
 | Story Structure Templates | Nice-to-have | ❌ Missing | **LOW** — Hero's Journey, 3-Act, etc. |
 
-### WEB-03: NeighborDAO (96%)
+### WEB-03: NeighborDAO (88%) ⬇️
 
 | Feature | Should Exist | Status | Gap |
 |---|---|---|---|
 | Community Feed | ✅ | ✅ Implemented | — |
 | Voting System | ✅ | ✅ Implemented | — |
-| Blockchain Treasury | ✅ | ✅ Solidity + ethers v6 + MetaMask | — |
-| Map View | ✅ | ✅ Implemented | — |
+| Blockchain Treasury | ✅ | ⚠️ Solidity `transfer()` gas limit risk + deprecated Mumbai testnet | **MED** — smart contract fix |
+| Map View | ✅ | 🚨 **STATIC PLACEHOLDER** — no map library integrated | 🚨 **CRITICAL** — feature is fake |
+| Budget Categories | ✅ | 🚨 Shows **FAKE FALLBACK DATA** when DB empty | 🚨 **HIGH** — users see fictional numbers |
 | Member Directory | ✅ | ✅ Implemented | — |
 | Messaging | ✅ | ✅ Implemented | — |
 | Voting Delegation | ✅ | ❌ Missing | **MED** — governance depth |
 | Real-time Feed | Nice-to-have | ❌ Missing | **LOW** — WebSocket feed updates |
 | Legal Document Generation | Nice-to-have | ❌ Missing | **LOW** — PDF minutes from votes |
 
-### WEB-04: InvoiceAI (96%)
+### WEB-04: InvoiceAI (95%) ⬇️
 
 | Feature | Should Exist | Status | Gap |
 |---|---|---|---|
 | Invoice CRUD + Recurring | ✅ | ✅ Full suite | — |
 | Stripe Connect (dual revenue) | ✅ | ✅ Subscriptions + transaction fees | — |
+| Stripe Webhook (payments) | ✅ | ⚠️ **Non-atomic** amount_paid update (race condition) | **MED** — data integrity |
+| Payment Reconciliation | ✅ | ⚠️ Trusts **unvalidated AI UUIDs** from GPT-4o | **MED** — data integrity |
 | Multi-Currency (15) | ✅ | ✅ lib/currency.ts + CurrencySelector | — |
 | Tax Engine (VAT/GST) | ✅ | ✅ TaxRateSelector + TAX_PRESETS | — |
-| Payment Reconciliation | ✅ | ✅ ReconciliationPanel.tsx | — |
 | PDF Export | ✅ | ✅ api/invoices/[id]/pdf | — |
 | Cron Reminders | ✅ | ✅ api/cron/send-reminders | — |
 | QuickBooks/Xero Sync | ✅ | ❌ Missing | **HIGH** — #1 requested integration |
 | Partial Payments | ✅ | ❌ Missing | **MED** — cash flow flexibility |
 | Approval Workflows | Enterprise tier | ❌ Missing | **MED** — manager sign-off |
 
-### WEB-05: PetOS (98%) — UPGRADED
+### WEB-05: PetOS (82%) ⬇️
 
 | Feature | Should Exist | Status | Gap |
 |---|---|---|---|
 | Pet Profiles + Health Records | ✅ | ✅ Full suite | — |
 | AI Image Analysis | ✅ | ✅ Vision model integration | — |
-| Marketplace (Stripe Connect) | ✅ | ✅ 10% commission, provider onboarding | — |
+| Marketplace Service Detail | ✅ | 🚨 **RUNTIME CRASH** — `booked` undefined + **HARDCODED** data | 🚨 **CRITICAL** |
+| Marketplace Booking | ✅ | 🚨 Uses `petId: 'pet-placeholder'` — FK failure | 🚨 **CRITICAL** |
+| Marketplace Time Slots | ✅ | 🚨 **HARDCODED stale dates** (March 2026) | 🚨 **HIGH** |
 | Booking + Appointments | ✅ | ✅ Implemented | — |
 | Emergency Services | ✅ | ✅ Implemented | — |
 | Community Forum | ✅ | ✅ Implemented | — |
@@ -237,12 +242,16 @@
 ## SUMMARY: PATH TO 100%
 
 ### 🚨 CRITICAL Blockers — Security & Functional (Must fix BEFORE web launch of affected apps)
-1. **ProposalPilot + BoardBrief:** AI generate routes have NO authentication (credit theft risk) — 30 min
-2. **CompliBot:** OAuth tokens discarded + evidence collection 100% stubbed + CSRF — 3-5 days
-3. **DealRoom:** Plaintext OAuth tokens + CSRF + hardcoded forecasting — 2 days
-4. **ClaimForge:** Mocked analytics page + static Benford's + params type crash — 2-3 days
-5. **BoardBrief:** Duplicate meetings on revisit + no-op PDF export — 1 day
-6. **ProposalPilot:** HelloSign webhook skips verification when key missing — 30 min
+1. **PetOS:** Marketplace page **RUNTIME CRASH** (booked undefined) + hardcoded service detail + placeholder pet_id — 2 days
+2. **StoryThread:** Profile page **HARDCODED MOCK DATA** ("Jordan Rivera") + Yjs no persistence — 2-3 days
+3. **NeighborDAO:** Map page is **STATIC PLACEHOLDER** + fake budget fallbacks + Solidity transfer() — 2-3 days
+4. **SkillBridge + ProposalPilot + BoardBrief:** AI generate routes have NO authentication (credit theft risk) — 45 min
+5. **CompliBot:** OAuth tokens discarded + evidence collection 100% stubbed + CSRF — 3-5 days
+6. **DealRoom:** Plaintext OAuth tokens + CSRF + hardcoded forecasting — 2 days
+7. **ClaimForge:** Mocked analytics page + static Benford's + params type crash — 2-3 days
+8. **BoardBrief:** Duplicate meetings on revisit + no-op PDF export — 1 day
+9. **ProposalPilot:** HelloSign webhook skips verification when key missing — 30 min
+10. **InvoiceAI:** Non-atomic payment webhook + unvalidated AI UUIDs — 2 hours (non-blocking)
 
 ### 🚨 CRITICAL Blockers — Mobile (Must fix BEFORE mobile launch)
 7. **ALL 10 Mobile Apps:** RevenueCat purchase flows STUBBED (1 day)
@@ -269,9 +278,9 @@
 - ~~StoryThread: EPUB/PDF Export~~ → `@react-pdf/renderer` + `epub-gen-memory` + archiver exist
 - ~~PetOS: Telehealth video~~ → `/telehealth` + `/telehealth/call` pages exist
 
-### Estimated effort to close ALL gaps: **52-62 developer-days** (increased from 38-45 due to security/functional fixes)
+### Estimated effort to close ALL gaps: **60-72 developer-days** (increased from 38-45 due to deep audit findings across all 10 web apps)
 ### Estimated effort for HIGH gaps only: **22-27 developer-days**
-### Estimated effort for CRITICAL blockers (web security): **8-12 developer-days**
+### Estimated effort for CRITICAL blockers (all 10 web apps): **15-22 developer-days**
 ### Estimated effort for CRITICAL blockers (mobile): **1-2 developer-days**
 
 ---

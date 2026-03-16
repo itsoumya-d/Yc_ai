@@ -824,11 +824,11 @@ GET  /api/analytics/trends            — Claims pattern analytics
 
 ---
 
-#### TASK-P0-07: Add Authentication to AI Generate Routes — ProposalPilot + BoardBrief
-**Problem:** `api/ai/generate/route.ts` in both apps has NO authentication check. Anyone can POST to the endpoint and consume OpenAI API credits without logging in. This is a direct financial liability.
+#### TASK-P0-07: Add Authentication to AI Generate Routes — SkillBridge + ProposalPilot + BoardBrief
+**Problem:** `api/ai/generate/route.ts` in all 3 apps has NO authentication check. Anyone can POST to the endpoint and consume OpenAI API credits without logging in. This is a direct financial liability.
 **Fix:** Add `createClient()` + `supabase.auth.getUser()` check at the top of the route handler. Return 401 if no session. Pattern already exists in `api/ai/chat/route.ts` in the same apps.
-**Apps:** ProposalPilot, BoardBrief
-**Effort:** 30 minutes | **Priority:** 🚨 CRITICAL (security — credit theft)
+**Apps:** SkillBridge, ProposalPilot, BoardBrief
+**Effort:** 45 minutes | **Priority:** 🚨 CRITICAL (security — credit theft)
 **Status:** ⬜ NOT STARTED
 
 ---
@@ -885,6 +885,70 @@ GET  /api/analytics/trends            — Claims pattern analytics
 **Fix:** If `HELLOSIGN_API_KEY` is not set, reject the webhook with 500 (configuration error) rather than silently accepting. Never skip verification in production.
 **Apps:** ProposalPilot
 **Effort:** 30 minutes | **Priority:** HIGH (security — webhook forgery)
+**Status:** ⬜ NOT STARTED
+
+---
+
+#### TASK-P0-13: Fix PetOS Marketplace Runtime Crash + Hardcoded Data — PetOS
+**Problem:** (a) `marketplace/[serviceId]/page.tsx` uses `{booked ? (` but `booked` is never declared — runtime crash. Also calls `setBooked(false)` which doesn't exist. (b) Entire service detail page is hardcoded ("Premium Dog Grooming", "Lauren M.") — `params.serviceId` not used to fetch real data. (c) `TIME_SLOTS` and `BOOKED_SLOTS` use hardcoded stale dates. (d) `petId: 'pet-placeholder'` in booking will fail FK constraint.
+**Fix:**
+- (a) Add `const [booked, setBooked] = useState(false)` state declaration.
+- (b) Replace hardcoded `const service = {...}` with Supabase query: `getServiceById(params.serviceId)`.
+- (c) Replace hardcoded time slots with dynamic availability query.
+- (d) Add pet selector component, pass real `pet.id` to checkout.
+**Apps:** PetOS
+**Effort:** 2 days | **Priority:** 🚨 CRITICAL (runtime crash + hardcoded marketplace)
+**Status:** ⬜ NOT STARTED
+
+---
+
+#### TASK-P0-14: Replace Hardcoded Mock Profile Page — StoryThread
+**Problem:** `profile/page.tsx` uses `MOCK_USER` ("Jordan Rivera", "jordan@email.com"), `READING_LIST`, and `RECENT_READS` — all hardcoded constants. No Supabase queries. Every user sees fake profile data. Missed in Session 30 cleanup.
+**Fix:** Replace `MOCK_USER` with `supabase.auth.getUser()` + profile query. Replace `READING_LIST` with real reading history from DB. Replace `RECENT_READS` with recent story interactions.
+**Apps:** StoryThread
+**Effort:** 1 day | **Priority:** 🚨 CRITICAL (users see fake profile)
+**Status:** ⬜ NOT STARTED
+
+---
+
+#### TASK-P0-15: Add Yjs Document Persistence — StoryThread
+**Problem:** `lib/yjs-supabase.ts` SupabaseBroadcastProvider has NO server-side persistence. If all clients disconnect and reconnect, the Y.Doc starts empty — all collaborative edits are lost. The `content` prop provides initial HTML but Yjs overwrites it.
+**Fix:** On Yjs update, debounce-save Y.Doc state to Supabase Storage or a `document_states` table (binary Uint8Array via `Y.encodeStateAsUpdate()`). On provider connect, load persisted state via `Y.applyUpdate()` before syncing with peers.
+**Apps:** StoryThread
+**Effort:** 1-2 days | **Priority:** HIGH (data loss — collaborative edits lost between sessions)
+**Status:** ⬜ NOT STARTED
+
+---
+
+#### TASK-P0-16: Wire Real Map + Remove Fake Budget Fallbacks — NeighborDAO
+**Problem:** (a) `map/page.tsx` shows "Interactive map placeholder" with hardcoded markers — no map library integrated. Feature is listed as implemented but is not. (b) `treasury/page.tsx` shows `FALLBACK_CATEGORIES` ($18K infrastructure, $8K events) when DB has no budget_categories — users see fictional budget numbers.
+**Fix:**
+- (a) Install `@vis.gl/react-google-maps` or `react-map-gl` (Mapbox). Replace placeholder with real interactive map using community location data.
+- (b) Remove `FALLBACK_CATEGORIES` fallback. Show empty state when no budget categories exist, with "Add Budget Category" CTA.
+**Apps:** NeighborDAO
+**Effort:** 2 days | **Priority:** HIGH (placeholder feature + fake data)
+**Status:** ⬜ NOT STARTED
+
+---
+
+#### TASK-P0-17: Fix Solidity transfer() + Deprecated Testnet — NeighborDAO
+**Problem:** (a) `NeighborDAOTreasury.sol` line 197 uses `p.target.transfer(p.amount)` which has 2300 gas stipend limit. Post-EIP-1884, fails if target is a contract. (b) `lib/web3.ts` references Mumbai testnet (chainId 80001) deprecated April 2024.
+**Fix:**
+- (a) Replace `p.target.transfer(p.amount)` with `(bool success, ) = p.target.call{value: p.amount}(""); require(success, "Transfer failed");`
+- (b) Update Mumbai references to Amoy testnet (chainId 80002).
+**Apps:** NeighborDAO
+**Effort:** 1 hour | **Priority:** MEDIUM (smart contract best practice + deprecated testnet)
+**Status:** ⬜ NOT STARTED
+
+---
+
+#### TASK-P0-18: Make Stripe Payment Webhook Atomic + Validate AI UUIDs — InvoiceAI
+**Problem:** (a) Stripe webhook `payment_intent.succeeded` handler reads `amount_paid`, adds payment, writes back — non-atomic. Two simultaneous webhooks could lose a partial payment. (b) Reconciliation trusts GPT-4o's returned `invoiceId` without validating it exists in DB.
+**Fix:**
+- (a) Use Supabase RPC: `UPDATE invoices SET amount_paid = amount_paid + $1 WHERE id = $2` for atomic increment.
+- (b) Before updating invoice status, verify `invoiceId` exists: `SELECT id FROM invoices WHERE id = match.invoiceId AND org_id = user.org_id`.
+**Apps:** InvoiceAI
+**Effort:** 2 hours | **Priority:** MEDIUM (race condition + data integrity)
 **Status:** ⬜ NOT STARTED
 
 ---
@@ -1023,11 +1087,11 @@ GET  /api/analytics/trends            — Claims pattern analytics
 
 | App | Session 30 | Session 31 (Deep Audit) | Status |
 |---|---|---|---|
-| SkillBridge | 100% code-complete | **97%** launch-ready | ✅ LAUNCH (delete stale file) |
-| StoryThread | 100% code-complete | **99%** launch-ready | ✅ LAUNCH |
-| NeighborDAO | 100% code-complete | **98%** launch-ready | ✅ LAUNCH |
-| InvoiceAI | 100% code-complete | **99%** launch-ready | ✅ LAUNCH |
-| PetOS | 100% code-complete | **98%** launch-ready | ✅ LAUNCH |
+| SkillBridge | 100% code-complete | **92%** launch-ready ⬇️ | 🟡 AFTER SECURITY FIX (unauthenticated AI route) |
+| StoryThread | 100% code-complete | **90%** launch-ready ⬇️ | 🔴 NOT READY (hardcoded mock profile, Yjs no persist) |
+| NeighborDAO | 100% code-complete | **88%** launch-ready ⬇️ | 🔴 NOT READY (placeholder map, fake budget data) |
+| InvoiceAI | 100% code-complete | **95%** launch-ready ⬇️ | ✅ LAUNCH (minor: race condition + AI UUID validation) |
+| PetOS | 100% code-complete | **82%** launch-ready ⬇️ | 🔴 NOT READY (runtime crash, hardcoded marketplace) |
 | ProposalPilot | 100% code-complete | **93%** launch-ready ⬇️ | 🟡 AFTER SECURITY FIX (unauthenticated AI route) |
 | CompliBot | 100% code-complete | **87%** launch-ready ⬇️ | 🔴 NOT READY (OAuth tokens discarded, evidence stubbed) |
 | DealRoom | 100% code-complete | **90%** launch-ready ⬇️ | 🔴 NOT READY (plaintext OAuth tokens, CSRF) |
@@ -1044,8 +1108,8 @@ GET  /api/analytics/trends            — Claims pattern analytics
 | ComplianceSnap | 100% code-complete | **94%** launch-ready | 🟡 AFTER RC FIX |
 | FieldLens | 100% code-complete | **97%** launch-ready | 🟡 AFTER RC FIX |
 
-**Overall: 🟡 95.9% Average Launch-Ready** ⬇️ (was 97.6%)
-**Web: 94.1% — 5 READY, 2 CONDITIONAL (ProposalPilot, BoardBrief), 3 NOT READY (CompliBot, DealRoom, ClaimForge)**
+**Overall: 🟡 93.7% Average Launch-Ready** ⬇️ (was 97.6%)
+**Web: 89.7% — 1 READY (InvoiceAI), 3 CONDITIONAL (SkillBridge, ProposalPilot, BoardBrief), 6 NOT READY (StoryThread, NeighborDAO, PetOS, CompliBot, DealRoom, ClaimForge)**
 **Mobile: 🟡 ALL 10 CONDITIONAL — Fix RevenueCat stubbed purchases first (1 day)**
 **Note:** "100% code-complete" (Session 30) means all mock data replaced, all TODO stubs implemented. "Launch-ready %" factors in deep audit findings including security vulnerabilities, stubbed features, and runtime errors.
 
@@ -1053,14 +1117,14 @@ GET  /api/analytics/trends            — Claims pattern analytics
 
 ## TO REACH 100% ON ALL 20 APPS
 
-**Phase A (IMMEDIATE — 1 week):** P0-07 through P0-12 (security + functional blockers for 5 web apps) → web avg ~97%
+**Phase A (IMMEDIATE — 2 weeks):** P0-07 through P0-18 (security + functional blockers for ALL 10 web apps) → web avg ~97%
 **Phase B (1 day):** P0-01 (RevenueCat) → mobile apps unlocked
 **Phase C (1 day):** P0-02 through P0-06 (missing deps, permissions, pricing, stale files) → ~98% avg
 **Phase D (1–2 weeks):** P7-HIGH tasks (SSO, Map, PDF, Time Tracking, QBO Sync) → ~99% average
 **Phase E (2–3 weeks):** P7-MED tasks (Custom frameworks, Court export, Multi-board, Sharing, Carrier) → ~99.5%
 **Phase F (1 week):** P7-LOW tasks (Health Connect, Blueprint, Annotation) → 100%
 
-**Total estimated effort:** 52-62 developer-days to close all remaining gaps (increased from 42-50 due to security/functional fixes).
+**Total estimated effort:** 60-72 developer-days to close all remaining gaps (increased from 42-50 due to deep audit security/functional fixes across all 10 web apps).
 
 ---
 *End of BMAD Master Task List — Updated Session 31 (2026-03-16)*

@@ -42,7 +42,7 @@
 | **Store Files** | — | 16 stores | **16** |
 | **Console.log (client)** | **0** | **0** | **0** ✅ |
 | **TODO/FIXME (client)** | **0** | **0** | **0** ✅ |
-| **Critical Bugs** | **5** (security + functional) | **1** (StockPulse filter) | **6** ⚠️ |
+| **Critical Bugs** | **12** (security + functional) | **1** (StockPulse filter) | **13** ⚠️ |
 
 ### Key Findings
 
@@ -59,9 +59,13 @@
 11. 🚨 **CRITICAL: DealRoom stores OAuth tokens in PLAINTEXT** — HubSpot/Salesforce access_tokens saved unencrypted to DB. No CSRF state parameter in OAuth flows.
 12. 🚨 **CRITICAL: ClaimForge analytics page uses HARDCODED MOCK DATA** — all charts and Benford's Law analysis are static. Next.js 16 params type error causes runtime crash on claim detail pages.
 13. 🚨 **CRITICAL: BoardBrief agenda builder creates DUPLICATE meetings on revisit** + Export PDF button is a no-op.
+14. 🚨 **CRITICAL: PetOS marketplace page CRASHES at runtime** — `booked` variable undefined + `setBooked()` doesn't exist. Service detail page is entirely hardcoded ("Premium Dog Grooming"). Placeholder `pet_id` in booking checkout.
+15. 🚨 **CRITICAL: StoryThread profile page uses HARDCODED MOCK DATA** — "Jordan Rivera" fake user + fake reading lists. Missed in Session 30 cleanup. Yjs CRDT has no persistence (document lost between sessions).
+16. 🚨 **CRITICAL: NeighborDAO map page is a STATIC PLACEHOLDER** — no map library integrated. Treasury shows fake budget fallback data ($18K infrastructure, $8K events) when DB is empty.
+17. ⚠️ **SkillBridge AI generate route has NO authentication** — same issue as ProposalPilot/BoardBrief. InvoiceAI has non-atomic payment webhook + unvalidated AI UUIDs in reconciliation.
 
-### Overall Launch Readiness: 🟡 95.9% Average | Web: 94.1% (5 apps have security/functional blockers) | Mobile: 97.6% (RevenueCat blocker)
-### ⚠️ Web Security Blockers: 5 web apps (ProposalPilot, CompliBot, DealRoom, BoardBrief, ClaimForge) have critical security or functional issues
+### Overall Launch Readiness: 🟡 93.7% Average | Web: 89.7% (ALL 10 apps have issues) | Mobile: 97.6% (RevenueCat blocker)
+### ⚠️ Web Blockers: ALL 10 web apps have security, functional, or data issues discovered in deep code audit
 ### ⚠️ Mobile Revenue Blocker: RevenueCat stubbed in all 10 mobile apps — must fix before any mobile launch
 
 ---
@@ -102,17 +106,17 @@ The BMAD Method (Build, Measure, Analyze, Document) framework drives this audit 
 
 | # | App | Pages | Loading | API Routes | Components | E2E | Unit | Migrations | Score |
 |---|---|---|---|---|---|---|---|---|---|
-| 1 | SkillBridge | 40 | 21 | 3 | 17 | 8 | 5 | 11 | 97% |
-| 2 | StoryThread | 36 | 22 | 4 | 58 | 9 | 2 | 10 | 99% |
-| 3 | NeighborDAO | 33 | 20 | 3 | 28 | 8 | 5 | 10 | 98% |
-| 4 | InvoiceAI | 37 | 23 | 10 | 68 | 8 | 3 | 20 | 99% |
-| 5 | PetOS | 45 | 32 | 8 | 58 | 8 | 2 | 21 | 98% |
+| 1 | SkillBridge | 40 | 21 | 3 | 17 | 8 | 5 | 11 | 92% ⬇️ |
+| 2 | StoryThread | 36 | 22 | 4 | 58 | 9 | 2 | 10 | 90% ⬇️ |
+| 3 | NeighborDAO | 33 | 20 | 3 | 28 | 8 | 5 | 10 | 88% ⬇️ |
+| 4 | InvoiceAI | 37 | 23 | 10 | 68 | 8 | 3 | 20 | 95% ⬇️ |
+| 5 | PetOS | 45 | 32 | 8 | 58 | 8 | 2 | 21 | 82% ⬇️ |
 | 6 | ProposalPilot | 33 | 20 | 6 | 60 | 8 | 3 | 13 | 93% ⬇️ |
 | 7 | CompliBot | 31 | 18 | 11 | 36 | 8 | 5 | 14 | 87% ⬇️ |
 | 8 | DealRoom | 32 | 19 | 8 | 41 | 8 | 6 | 11 | 90% ⬇️ |
 | 9 | BoardBrief | 37 | 24 | 7 | 58 | 8 | 4 | 12 | 91% ⬇️ |
 | 10 | ClaimForge | 32 | 18 | 9 | 33 | 8 | 2 | 12 | 89% ⬇️ |
-| | **TOTALS** | **356** | **217** | **68** | **456** | **81** | **36** | **124** | **94.1%** ⬇️ |
+| | **TOTALS** | **356** | **217** | **68** | **456** | **81** | **36** | **124** | **89.7%** ⬇️ |
 
 ### Mobile Applications — Quantitative Summary
 
@@ -234,16 +238,23 @@ Common Infrastructure:
 - Unique: `src/app/` structure (only web app using this pattern)
 - 🐛 **STALE FILE: `src/app/[locale]/layout.tsx`** imports from `@/i18n/routing` which does NOT exist — will cause build error if route is hit (was supposed to be deleted in Session 27)
 
-#### Code Quality: ⚠️ 1 ISSUE
+#### 🚨 Deep Audit Findings (Session 31 — Code-Level)
+- 🚨 **SECURITY: AI generate route (`api/ai/generate/route.ts`) has NO authentication** — anyone can POST and consume OpenAI credits. Only IP-based middleware rate limiting exists, no `getUser()` session check.
+- 🐛 **STALE FILE: `src/app/[locale]/layout.tsx`** imports from `@/i18n/routing` which does NOT exist — build error if route is hit
+- ⚠️ Assessment page (`dashboard/assessment/page.tsx`): `catch (_)` silently swallows errors when assessment save fails
+
+#### Code Quality: ⚠️ SECURITY + STALE FILE
 - Console.logs: 0 (client) | TODO/FIXME: 0 | Dead code: 1 stale file
+- **Unauthenticated AI route** — credit theft risk
 - `[locale]/layout.tsx` is an orphaned file from old URL-prefix i18n routing — **must delete**
 
-#### Gaps (3% to 100%)
+#### Gaps (8% to 100%)
+- 🚨 AI route unauthenticated (security — credit theft risk)
 - 🐛 Stale `[locale]/layout.tsx` with broken import (build error risk)
 - ⚠️ Only 4 error.tsx files (fewest among web apps — peers have 20+)
 - ⚠️ Only 3 API routes (server actions handle most logic)
 - ⚠️ No CRM integrations (enterprise tier: HubSpot/Salesforce)
-- **Score: 97/100**
+- **Score: 92/100** ⬇️ (downgraded from 97 — unauthenticated AI route)
 
 ---
 
@@ -299,12 +310,20 @@ Common Infrastructure:
 - 23 error.tsx files — most comprehensive error handling
 - `babel-plugin-react-compiler` enabled (React Compiler)
 
-#### Code Quality: ✅ CLEAN
-- Console.logs: 0 | TODO/FIXME: 0 | Dead code: None
+#### 🚨 Deep Audit Findings (Session 31 — Code-Level)
+- 🚨 **FUNCTIONAL: Profile page (`profile/page.tsx`) uses ENTIRELY HARDCODED MOCK DATA** — `MOCK_USER` ("Jordan Rivera", "jordan@email.com"), `READING_LIST`, and `RECENT_READS` are all static constants. No Supabase queries. Every user sees fake profile data. Missed in Session 30 mock data cleanup.
+- ⚠️ **Yjs CRDT has NO persistence** — if all clients disconnect, the Y.Doc starts empty on reconnect. No server-side state sync or initial document loading from Supabase. Collaboration works live but document state is lost between sessions.
+- ⚠️ **Yjs payload inefficiency** — `Array.from(update)` converts Uint8Array to number[] for JSON (doubles payload size vs base64)
 
-#### Gaps (1% to 100%)
+#### Code Quality: ⚠️ MOCK DATA ISSUE
+- Console.logs: 0 | TODO/FIXME: 0 | Dead code: None
+- **Profile page fully mocked** — users see hardcoded fake data
+
+#### Gaps (10% to 100%)
+- 🚨 Profile page hardcoded with mock user data ("Jordan Rivera")
+- ⚠️ Yjs collaboration has no persistence (state lost between sessions)
 - ⚠️ Unit test coverage thin (2 action tests + 1 API test)
-- **Score: 99/100** (upgraded — public sharing + export both exist)
+- **Score: 90/100** ⬇️ (downgraded from 99 — mocked profile page + Yjs persistence gap)
 
 ---
 
@@ -357,14 +376,27 @@ Common Infrastructure:
 - Group Purchasing feature: `/purchasing`, `/purchasing/[orderId]` — community bulk buying
 - IRV (Instant Runoff Voting) migration — advanced voting methodology
 
-#### Code Quality: ✅ CLEAN
-- Console.logs: 0 | TODO/FIXME: 0 | Dead code: None
+#### 🚨 Deep Audit Findings (Session 31 — Code-Level)
+- 🚨 **FUNCTIONAL: Map page is a STATIC PLACEHOLDER** — `map/page.tsx` shows "Interactive map placeholder / Mapbox / Google Maps integration ready" with hardcoded markers. No actual map library integrated. Feature listed as implemented but is not.
+- 🚨 **FUNCTIONAL: Fallback budget categories show FAKE data** — `treasury/page.tsx` shows `FALLBACK_CATEGORIES` ($18K infrastructure, $8K events, etc.) when DB has no budget_categories rows. Users see fictional budget numbers in production.
+- ⚠️ **Solidity: `transfer()` instead of `call()`** — `NeighborDAOTreasury.sol` line 197 uses `p.target.transfer(p.amount)` which has 2300 gas stipend limit. Post-EIP-1884, fails if target is a contract. Should use `(bool success, ) = p.target.call{value: p.amount}("")`.
+- ⚠️ **Mumbai testnet deprecated** — `lib/web3.ts` references Mumbai (chainId 80001), deprecated April 2024, replaced by Amoy testnet.
+- ⚠️ **No ERC-20 token support** — contract documentation claims "ETH/ERC-20 support" but only handles native MATIC.
 
-#### Gaps (2% to 100%)
-- ⚠️ No standalone /pricing page (billing only accessible via settings)
+#### Code Quality: ⚠️ FUNCTIONAL ISSUES
+- Console.logs: 0 | TODO/FIXME: 0 | Dead code: None
+- **Map page is placeholder** — feature listed as implemented but is not
+- **Fake budget fallbacks** — users see fictional numbers
+
+#### Gaps (12% to 100%)
+- 🚨 Map page is static placeholder (not a real feature)
+- 🚨 Fallback budget categories show fake data in production
+- ⚠️ Solidity `transfer()` pattern (gas limit issue)
+- ⚠️ Mumbai testnet deprecated (should be Amoy)
+- ⚠️ No standalone /pricing page
 - ⚠️ No real-time WebSocket for feed updates
 - ⚠️ No delegation (voting power transfer)
-- **Score: 98/100** (upgraded — richer than initial assessment)
+- **Score: 88/100** ⬇️ (downgraded from 98 — placeholder map + fake budget data + Solidity pattern)
 
 ---
 
@@ -427,13 +459,21 @@ Common Infrastructure:
 - Dashboard: Server component with revenue chart, AR aging, MRR, payment methods, top clients
 - Pricing: Lower than peers at $0/$12.99/$24.99 (vs typical $0/$19/$49)
 
-#### Code Quality: ✅ CLEAN
-- Console.logs: 0 | TODO/FIXME: 0 | Dead code: None
+#### 🚨 Deep Audit Findings (Session 31 — Code-Level)
+- ⚠️ **Race condition in Stripe webhook** — payment_intent.succeeded handler reads `invoices.amount_paid`, adds new payment amount, then writes back. Two simultaneous webhooks for partial payments on the same invoice could lose an update. Should use `UPDATE SET amount_paid = amount_paid + $1` (atomic) or Supabase RPC.
+- ⚠️ **Unvalidated AI UUIDs in reconciliation** — `lib/actions/reconciliation.ts` trusts GPT-4o's returned `invoiceId` as a real UUID and directly updates invoice status to 'paid'. A hallucinated UUID fails silently. Should validate against DB before status update.
 
-#### Gaps (1% to 100%)
+#### Code Quality: ⚠️ MINOR ISSUES
+- Console.logs: 0 | TODO/FIXME: 0 | Dead code: None
+- **Non-atomic payment update** — race condition risk (low probability)
+- **Unvalidated AI-returned IDs** — reconciliation trust issue
+
+#### Gaps (5% to 100%)
+- ⚠️ Non-atomic payment update in Stripe webhook (race condition)
+- ⚠️ Unvalidated AI-returned UUIDs in reconciliation
 - ⚠️ No accounting system sync (QuickBooks, Xero import/export)
 - ⚠️ No partial payment / installment plan support
-- **Score: 99/100** (upgraded — most feature-dense web app)
+- **Score: 95/100** ⬇️ (downgraded from 99 — race condition + unvalidated AI UUIDs)
 
 ---
 
@@ -492,11 +532,26 @@ Common Infrastructure:
 - API routes: ai/generate, appointments/book, health, medications/remind, nutrition/recommend, pets/[id]/analyze-image, providers/nearby, webhooks/stripe
 - 1 TODO: `api/appointments/book/route.ts` — "TODO: Integrate with real vet booking APIs (VetHero, Vetspire, etc.)"
 
-#### Code Quality: ⚠️ 1 TODO
-- Console.logs: 0 | TODO: 1 (vet booking API stub) | Dead code: None
+#### 🚨 Deep Audit Findings (Session 31 — Code-Level)
+- 🚨 **BUG: `booked` variable UNDEFINED — runtime CRASH** — `marketplace/[serviceId]/page.tsx` line 176 uses `{booked ? (` but `booked` is never declared as state. Also calls `setBooked(false)` which doesn't exist. **This page will crash at runtime.**
+- 🚨 **FUNCTIONAL: Marketplace service detail page is ENTIRELY HARDCODED** — `marketplace/[serviceId]/page.tsx` has `const service = {...}` with "Premium Dog Grooming", "Lauren M.", fake reviews, and tiers. The `params.serviceId` is only used for checkout, not for fetching actual service data. Every service detail page shows the same grooming service.
+- 🚨 **FUNCTIONAL: Hardcoded time slots with stale dates** — `TIME_SLOTS` and `BOOKED_SLOTS` use fixed dates ('2026-03-09', '2026-03-11') that become stale immediately.
+- 🚨 **BUG: Placeholder `pet_id` in booking** — Line 155: `petId: 'pet-placeholder'` is passed to `createServiceBookingCheckout`. Will either fail FK constraint or create orphaned bookings.
+- ⚠️ 1 TODO: `api/appointments/book/route.ts` — "TODO: Integrate with real vet booking APIs"
 
-#### Gaps (2% to 100%)
-- ⚠️ 1 TODO stub in vet booking API (external API integration pending)
+#### Code Quality: 🚨 CRITICAL ISSUES
+- Console.logs: 0 | TODO: 1 | Dead code: None
+- **Runtime crash** — undefined `booked` variable in marketplace page
+- **Hardcoded service detail** — every service shows same grooming data
+- **Placeholder pet_id** — booking will fail or create orphaned records
+
+#### Gaps (18% to 100%)
+- 🚨 Marketplace page crashes (undefined `booked` variable)
+- 🚨 Service detail page entirely hardcoded (same data for all services)
+- 🚨 Hardcoded time slots with stale dates
+- 🚨 Placeholder `pet_id: 'pet-placeholder'` in booking
+- ⚠️ 1 TODO stub in vet booking API
+- **Score: 82/100** ⬇️ (downgraded from 98 — runtime crash + hardcoded marketplace + placeholder IDs)
 - ⚠️ Unit test coverage thin (2 tests) relative to 19 action files
 - **Score: 98/100** (upgraded — telehealth + symptom checker exist)
 
@@ -1537,11 +1592,11 @@ The portfolio's #1 competitive advantage is **AI-native functionality at 50-80% 
 
 | # | App | Score | Status | Blocking Issues | Ready For |
 |---|---|---|---|---|---|
-| 1 | SkillBridge | **97%** | ✅ READY | Stale [locale] file (delete) | Web production |
-| 2 | StoryThread | **99%** | ✅ READY | None | Web production |
-| 3 | NeighborDAO | **98%** | ✅ READY | None | Web production |
-| 4 | InvoiceAI | **99%** | ✅ READY | None | Web production |
-| 5 | PetOS | **98%** | ✅ READY | 1 TODO (vet booking) | Web production |
+| 1 | SkillBridge | **92%** ⬇️ | 🟡 CONDITIONAL | 🚨 Unauthenticated AI route, stale [locale] file | After security fix |
+| 2 | StoryThread | **90%** ⬇️ | 🔴 NOT READY | 🚨 Hardcoded mock profile, Yjs no persistence | After data wiring |
+| 3 | NeighborDAO | **88%** ⬇️ | 🔴 NOT READY | 🚨 Placeholder map, fake budget fallbacks, Solidity issues | After feature wiring |
+| 4 | InvoiceAI | **95%** ⬇️ | ✅ READY | ⚠️ Race condition (low risk), unvalidated AI UUIDs | Web production |
+| 5 | PetOS | **82%** ⬇️ | 🔴 NOT READY | 🚨 Runtime crash (booked undefined), hardcoded marketplace | After critical fix |
 | 6 | ProposalPilot | **93%** ⬇️ | 🟡 CONDITIONAL | 🚨 Unauthenticated AI route, webhook bypass | After security fix |
 | 7 | CompliBot | **87%** ⬇️ | 🔴 NOT READY | 🚨 OAuth tokens discarded, evidence 100% stubbed, CSRF | After major rework |
 | 8 | DealRoom | **90%** ⬇️ | 🔴 NOT READY | 🚨 Plaintext OAuth tokens, CSRF, hardcoded forecasting | After security fix |
@@ -1558,11 +1613,11 @@ The portfolio's #1 competitive advantage is **AI-native functionality at 50-80% 
 | 19 | ComplianceSnap | **94%** | 🟡 CONDITIONAL | 🚨 RevenueCat STUBBED, expo-location | After RC fix |
 | 20 | FieldLens | **97%** | 🟡 CONDITIONAL | 🚨 RevenueCat STUBBED | After RC fix |
 
-### Overall: 🟡 **95.9% Average** | Web: 94.1% (5 READY, 2 CONDITIONAL, 3 NOT READY) | Mobile: 97.6% (ALL 10 CONDITIONAL — RevenueCat)
+### Overall: 🟡 **93.7% Average** | Web: 89.7% (1 READY, 3 CONDITIONAL, 6 NOT READY) | Mobile: 97.6% (ALL 10 CONDITIONAL — RevenueCat)
 
 ### What "Launch Ready" Means
-- 🚨 5 critical security/functional bugs (web) | ⚠️ 1 bug (StockPulse filter — mobile)
-- ⚠️ 1 stale file (SkillBridge), 2 missing deps (mobile), 1 params type error (ClaimForge)
+- 🚨 12 critical security/functional bugs (web) | ⚠️ 1 bug (StockPulse filter — mobile)
+- 🚨 1 runtime crash (PetOS marketplace), 1 params type error (ClaimForge), 1 stale file (SkillBridge), 2 missing deps (mobile)
 - ✅ Complete auth (Google/Apple/standard/biometric)
 - ✅ Functional billing — Stripe (web) | 🚨 RevenueCat STUBBED (mobile)
 - ✅ i18n (10 languages) — some web apps have weak wiring (CompliBot 7, ClaimForge 5 files)
@@ -1577,18 +1632,22 @@ The portfolio's #1 competitive advantage is **AI-native functionality at 50-80% 
 - ✅ Push notification lifecycle (⚠️ 3 apps missing Android POST_NOTIFICATIONS)
 
 ### What Keeps Apps Below 100%
-The remaining 1-13% per app consists of:
-1. 🚨 **Security: Unauthenticated AI routes** (ProposalPilot + BoardBrief) — anyone can consume OpenAI credits
-2. 🚨 **Security: OAuth tokens not stored or stored in plaintext** (CompliBot discards tokens, DealRoom stores plaintext)
-3. 🚨 **Functional: CompliBot evidence collection 100% stubbed** — flagship feature entirely fake
-4. 🚨 **Functional: ClaimForge analytics page hardcoded** — all charts/Benford's analysis use static data
-5. 🚨 **Functional: BoardBrief duplicate meetings + no-op PDF export**
-6. 🚨 **RevenueCat stubbed** (all 10 mobile) — #1 mobile blocker, 1 day fix
-7. **Billing pricing mismatches** (5 web apps) — UI shows $19/$49, docs say $299/$999
-8. **Enterprise features** (SSO, multi-tenant, white-label) — needed for enterprise tier only
-9. **Third-party integrations** (CRM sync, external APIs) — nice-to-have for launch
-10. **i18n wiring gaps** (CompliBot, DealRoom, ClaimForge) — hardcoded English in dashboard pages
-11. **Missing dependencies** (expo-location in 2 mobile apps) — build failure risk
+The remaining 3-18% per app consists of:
+1. 🚨 **Runtime crash: PetOS marketplace page** — undefined `booked` variable + hardcoded service detail + placeholder pet_id
+2. 🚨 **Security: Unauthenticated AI routes** (SkillBridge + ProposalPilot + BoardBrief) — anyone can consume OpenAI credits
+3. 🚨 **Security: OAuth tokens not stored or stored in plaintext** (CompliBot discards tokens, DealRoom stores plaintext)
+4. 🚨 **Functional: Multiple pages with hardcoded mock data** — StoryThread profile, NeighborDAO map/budget, CompliBot evidence, ClaimForge analytics, PetOS marketplace
+5. 🚨 **Functional: CompliBot evidence collection 100% stubbed** — flagship feature entirely fake
+6. 🚨 **Functional: ClaimForge analytics page hardcoded** — all charts/Benford's analysis use static data
+7. 🚨 **Functional: BoardBrief duplicate meetings + no-op PDF export**
+8. 🚨 **RevenueCat stubbed** (all 10 mobile) — #1 mobile blocker, 1 day fix
+9. ⚠️ **Yjs collaboration has no persistence** (StoryThread) — document state lost between sessions
+10. ⚠️ **Solidity `transfer()` pattern** (NeighborDAO) — gas limit issue post-EIP-1884
+11. ⚠️ **Non-atomic payment webhook** (InvoiceAI) — race condition on concurrent partial payments
+12. **Billing pricing mismatches** (5 web apps) — UI shows $19/$49, docs say $299/$999
+13. **Enterprise features** (SSO, multi-tenant, white-label) — needed for enterprise tier only
+14. **i18n wiring gaps** (CompliBot, DealRoom, ClaimForge) — hardcoded English in dashboard pages
+15. **Missing dependencies** (expo-location in 2 mobile apps) — build failure risk
 
 ---
 
