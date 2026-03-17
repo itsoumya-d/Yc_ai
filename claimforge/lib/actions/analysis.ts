@@ -4,6 +4,7 @@ import { createClient } from '@/lib/supabase/server';
 import { revalidatePath } from 'next/cache';
 import type { Entity, FraudPattern, FraudPatternType, ConfidenceLevel } from '@/types/database';
 import OpenAI from 'openai';
+import { analyzeBenford, extractAmounts } from '@/lib/analysis/benford';
 
 interface ActionResult<T = null> {
   data?: T;
@@ -218,6 +219,273 @@ If no fraud patterns are detected, return { "patterns": [] }.`,
     data: {
       entities: extractedEntities.length,
       patterns: detectedPatterns.length,
+    },
+  };
+}
+
+// ─── Benford's Law Analysis ────────────────────────────────────────────────
+
+export async function runBenfordAnalysis(caseId: string): Promise<ActionResult<ReturnType<typeof analyzeBenford>>> {
+  const supabase = await createClient();
+  const { data: { user } } = await supabase.auth.getUser();
+  if (!user) return { error: 'Not authenticated' };
+
+  // Collect all text from documents in this case
+  const { data: docs } = await supabase
+    .from('documents')
+    .select('ocr_text, file_path')
+    .eq('case_id', caseId)
+    .not('ocr_text', 'is', null);
+
+  if (!docs || docs.length === 0) return { error: 'No processed documents found' };
+
+  const allText = docs.map((d: { ocr_text: string }) => d.ocr_text).join('\n');
+  const amounts = extractAmounts(allText);
+  const result = analyzeBenford(amounts);
+
+  // Save result to case
+  await supabase
+    .from('cases')
+    .update({ benford_result: result, updated_at: new Date().toISOString() })
+    .eq('id', caseId);
+
+  revalidatePath(`/cases/${caseId}`);
+  return { data: result };
+}
+
+// ─── OpenAI Vision OCR for Image PDFs ─────────────────────────────────────
+
+export async function ocrDocumentWithVision(documentId: string): Promise<ActionResult<string>> {
+  const supabase = await createClient();
+  const { data: { user } } = await supabase.auth.getUser();
+  if (!user) return { error: 'Not authenticated' };
+
+  const { data: doc } = await supabase
+    .from('documents')
+    .select('file_path, file_type, file_name')
+    .eq('id', documentId)
+    .single();
+
+  if (!doc?.file_path) return { error: 'Document not found' };
+
+  // Download from Supabase storage
+  const { data: fileData } = await supabase.storage.from('documents').download(doc.file_path);
+  if (!fileData) return { error: 'Could not download file' };
+
+  // Convert to base64
+  const buffer = await fileData.arrayBuffer();
+  const base64 = Buffer.from(buffer).toString('base64');
+  const mimeType = doc.file_type || 'application/pdf';
+
+  const openai = getOpenAI();
+
+  const response = await openai.chat.completions.create({
+    model: 'gpt-4o',
+    messages: [
+      {
+        role: 'user',
+        content: [
+          {
+            type: 'image_url',
+            image_url: { url: `data:${mimeType};base64,${base64}`, detail: 'high' },
+          },
+          {
+            type: 'text',
+            text: 'Extract ALL text from this document image verbatim. Include all numbers, amounts, dates, names, and addresses. Preserve the structure as much as possible.',
+          },
+        ],
+      },
+    ],
+    max_tokens: 4096,
+  });
+
+  const extractedText = response.choices[0]?.message?.content ?? '';
+
+  // Save OCR text to document
+  await supabase
+    .from('documents')
+    .update({ ocr_text: extractedText, processed: false })
+    .eq('id', documentId);
+
+  return { data: extractedText };
+}
+
+// ─── USASpending.gov API Integration ──────────────────────────────────────
+
+export async function searchUSASpending(query: string): Promise<ActionResult<{
+  results: Array<{
+    recipient_name: string;
+    award_amount: number;
+    awarding_agency_name: string;
+    award_type: string;
+    period_of_performance_start_date: string;
+  }>;
+  total: number;
+}>> {
+  try {
+    const resp = await fetch('https://api.usaspending.gov/api/v2/search/spending_by_award/', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        filters: {
+          keywords: [query],
+          time_period: [{ start_date: '2020-01-01', end_date: new Date().toISOString().slice(0, 10) }],
+          award_type_codes: ['A', 'B', 'C', 'D'],
+        },
+        fields: ['recipient_name', 'Award Amount', 'awarding_agency_name', 'award_type', 'period_of_performance_start_date'],
+        sort: 'Award Amount',
+        order: 'desc',
+        limit: 25,
+        page: 1,
+      }),
+    });
+
+    if (!resp.ok) return { error: `USASpending API error: ${resp.status}` };
+
+    const json = await resp.json();
+    const results = (json.results ?? []).map((r: Record<string, unknown>) => ({
+      recipient_name: r.recipient_name as string,
+      award_amount: Number(r['Award Amount']),
+      awarding_agency_name: r.awarding_agency_name as string,
+      award_type: r.award_type as string,
+      period_of_performance_start_date: r.period_of_performance_start_date as string,
+    }));
+
+    return { data: { results, total: json.page_metadata?.total ?? results.length } };
+  } catch (err) {
+    return { error: String(err) };
+  }
+}
+
+// ─── Cross-Case Analysis Data ──────────────────────────────────────────────
+
+export interface CrossAnalysisFraudSummary {
+  type: string;
+  count: number;
+  total_amount: number;
+  avg_confidence: number;
+}
+
+export interface CrossAnalysisEntity {
+  id: string;
+  label: string;
+  type: string;
+  connections: number;
+  flagged: boolean;
+}
+
+export interface CrossAnalysisData {
+  fraudSummary: CrossAnalysisFraudSummary[];
+  benford: {
+    digit: number;
+    expected: number;
+    actual: number;
+    suspicious: boolean;
+  }[];
+  entities: CrossAnalysisEntity[];
+  totalFraud: number;
+  totalPatterns: number;
+  sampleSize: number;
+}
+
+export async function getCrossAnalysisData(): Promise<ActionResult<CrossAnalysisData>> {
+  const supabase = await createClient();
+  const { data: { user } } = await supabase.auth.getUser();
+  if (!user) return { error: 'Not authenticated' };
+
+  // Fetch all fraud patterns across user's cases
+  const { data: patterns, error: pErr } = await supabase
+    .from('fraud_patterns')
+    .select('pattern_type, confidence, affected_amount, verified, false_positive, case_id')
+    .eq('false_positive', false);
+
+  if (pErr) return { error: pErr.message };
+
+  // Fetch all entities for network graph
+  const { data: entities } = await supabase
+    .from('entities')
+    .select('id, name, entity_type, mention_count, flagged')
+    .order('mention_count', { ascending: false })
+    .limit(12);
+
+  // Fetch claim amounts for Benford's Law analysis
+  const { data: claims } = await supabase
+    .from('claims')
+    .select('estimated_amount, description')
+    .eq('claimant_id', user.id);
+
+  // ── Fraud pattern summary ────────────────────────────────────────────────
+  const typeMap: Record<string, { count: number; totalAmount: number; confidenceSum: number }> = {};
+  for (const p of patterns ?? []) {
+    const t = p.pattern_type ?? 'unknown';
+    if (!typeMap[t]) typeMap[t] = { count: 0, totalAmount: 0, confidenceSum: 0 };
+    typeMap[t].count++;
+    typeMap[t].totalAmount += Number(p.affected_amount ?? 0);
+    typeMap[t].confidenceSum += Number(p.confidence ?? 0);
+  }
+  const fraudSummary: CrossAnalysisFraudSummary[] = Object.entries(typeMap).map(([type, v]) => ({
+    type,
+    count: v.count,
+    total_amount: Math.round(v.totalAmount),
+    avg_confidence: v.count > 0 ? parseFloat((v.confidenceSum / v.count).toFixed(2)) : 0,
+  })).sort((a, b) => b.total_amount - a.total_amount);
+
+  // ── Benford's Law ────────────────────────────────────────────────────────
+  const amounts: number[] = [];
+  for (const c of claims ?? []) {
+    if (c.estimated_amount) amounts.push(Number(c.estimated_amount));
+    if (c.description) amounts.push(...extractAmounts(c.description));
+  }
+
+  const BENFORDS_EXPECTED: Record<string, number> = {
+    '1': 30.1, '2': 17.6, '3': 12.5, '4': 9.7,
+    '5': 7.9, '6': 6.7, '7': 5.8, '8': 5.1, '9': 4.6,
+  };
+
+  let benfordRows;
+  if (amounts.length >= 30) {
+    const benfordResult = analyzeBenford(amounts);
+    benfordRows = [1, 2, 3, 4, 5, 6, 7, 8, 9].map(d => {
+      const key = String(d);
+      const actual = benfordResult.observed[key] ?? 0;
+      const expected = BENFORDS_EXPECTED[key];
+      return {
+        digit: d,
+        expected,
+        actual,
+        suspicious: Math.abs(actual - expected) > 4,
+      };
+    });
+  } else {
+    // Not enough data: show Benford expected values with zeroed actuals
+    benfordRows = [1, 2, 3, 4, 5, 6, 7, 8, 9].map(d => ({
+      digit: d,
+      expected: BENFORDS_EXPECTED[String(d)],
+      actual: 0,
+      suspicious: false,
+    }));
+  }
+
+  // ── Entity network ───────────────────────────────────────────────────────
+  const entityRows: CrossAnalysisEntity[] = (entities ?? []).map(e => ({
+    id: e.id,
+    label: e.name ?? 'Unknown',
+    type: e.entity_type ?? 'organization',
+    connections: e.mention_count ?? 0,
+    flagged: e.flagged ?? false,
+  }));
+
+  const totalFraud = fraudSummary.reduce((s, f) => s + f.total_amount, 0);
+  const totalPatterns = fraudSummary.reduce((s, f) => s + f.count, 0);
+
+  return {
+    data: {
+      fraudSummary,
+      benford: benfordRows,
+      entities: entityRows,
+      totalFraud,
+      totalPatterns,
+      sampleSize: amounts.length,
     },
   };
 }
