@@ -13,6 +13,8 @@ export type FraudPatternType =
   | 'round_number'
   | 'time_anomaly';
 export type ConfidenceLevel = 'high' | 'medium' | 'low' | 'critical';
+export type ClaimStatus = 'draft' | 'submitted' | 'under_review' | 'approved' | 'denied' | 'appealed';
+export type ClaimType = 'auto' | 'property' | 'health' | 'liability';
 export type UserRole = 'admin' | 'investigator' | 'analyst' | 'reviewer' | 'viewer';
 export type TeamMemberStatus = 'active' | 'invited' | 'inactive';
 
@@ -53,6 +55,25 @@ export interface Case {
   document_count: number;
   entity_count: number;
   pattern_count: number;
+  created_at: string;
+  updated_at: string;
+}
+
+export interface Claim {
+  id: string;
+  user_id: string;
+  claim_number: string;
+  claim_type: ClaimType;
+  incident_date: string;
+  incident_location: string | null;
+  description: string;
+  estimated_amount: number;
+  approved_amount: number | null;
+  status: ClaimStatus;
+  policy_number: string | null;
+  claimant: string;
+  adjuster: string | null;
+  witnesses: string | null;
   created_at: string;
   updated_at: string;
 }
@@ -208,4 +229,41 @@ export interface ReportSection {
   content: string;
   included: boolean;
   order: number;
+}
+
+/* ── Carrier Integration Models ── */
+
+export type CarrierSubmissionType = 'initial' | 'supplement' | 'appeal' | 'status_inquiry';
+export type CarrierSubmissionStatus = 'pending' | 'submitted' | 'acknowledged' | 'under_review' | 'approved' | 'denied' | 'appealed';
+
+export interface CarrierConnection {
+  id: string;
+  user_id: string;
+  carrier_name: string;
+  carrier_code: string;
+  encrypted_api_key: string | null;
+  encrypted_api_secret: string | null;
+  webhook_secret: string | null;
+  base_url: string | null;
+  is_active: boolean;
+  last_synced_at: string | null;
+  claims_synced: number;
+  sync_errors: number;
+  created_at: string;
+  updated_at: string;
+}
+
+export interface CarrierSubmission {
+  id: string;
+  claim_id: string;
+  carrier_connection_id: string;
+  acord_xml: string | null;
+  submission_type: CarrierSubmissionType;
+  status: CarrierSubmissionStatus;
+  carrier_claim_number: string | null;
+  carrier_response: string | null;
+  response_details: Record<string, unknown>;
+  submitted_at: string | null;
+  responded_at: string | null;
+  created_at: string;
 }

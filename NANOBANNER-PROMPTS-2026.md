@@ -1,4 +1,4 @@
-# NanoBanner AI Image Generation — Prompt Library (All 21 Apps)
+# NanoBanner AI Image Generation - Prompt Library (20 Canonical Apps + Separate Shannon Track)
 > **Version:** 2026 V2 | **API Key env var:** `NANOBANNER_API_KEY`
 > **Usage:** Generate 3 variants per prompt. Select strongest. Export WebP + PNG.
 
@@ -31,7 +31,7 @@ Standard size table:
 
 ---
 
-## APP #0: SHANNON — AI Pentester SaaS
+## SHANNON TRACK: Separate Infrastructure / Design Reference
 
 ### Hero (Landing page background)
 ```
@@ -514,3 +514,4 @@ Each app needs a 96×96 PNG notification icon:
 
 *End of NanoBanner Prompt Library — 21 Apps — 2026 V2*
 *Generate hero → onboarding → features → empty states → app store assets (in that order)*
+

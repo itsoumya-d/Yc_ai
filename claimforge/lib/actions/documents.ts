@@ -3,6 +3,7 @@
 import { createClient } from '@/lib/supabase/server';
 import { revalidatePath } from 'next/cache';
 import type { Document, DocumentType } from '@/types/database';
+import { documentSchema } from '@/lib/validations';
 
 interface ActionResult<T = null> {
   data?: T;
@@ -67,9 +68,17 @@ export async function uploadDocument(
 
   const file = formData.get('file') as File;
   const documentType = (formData.get('document_type') as DocumentType) || 'other';
-  const title = (formData.get('title') as string) || file.name;
+  const title = (formData.get('title') as string) || file?.name;
 
   if (!file) return { error: 'No file provided' };
+
+  const parsed = documentSchema.safeParse({
+    caseId,
+    title,
+    type: documentType,
+    notes: formData.get('notes') || undefined,
+  });
+  if (!parsed.success) return { error: parsed.error.errors[0]?.message ?? 'Invalid input' };
 
   // Upload to Supabase Storage
   const filepath = `${caseId}/${Date.now()}_${file.name}`;
@@ -83,8 +92,8 @@ export async function uploadDocument(
   const { data, error } = await supabase
     .from('documents')
     .insert({
-      case_id: caseId,
-      title,
+      case_id: parsed.data.caseId,
+      title: parsed.data.title,
       file_name: file.name,
       file_type: file.type,
       file_size: file.size,

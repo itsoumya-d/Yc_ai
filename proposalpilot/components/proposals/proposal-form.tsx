@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useRef } from 'react';
 import { useRouter } from 'next/navigation';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -10,6 +10,8 @@ import { Card } from '@/components/ui/card';
 import { useToast } from '@/components/ui/toast';
 import { createProposal, updateProposal } from '@/lib/actions/proposals';
 import type { Proposal, Client, ProposalStatus, PricingModel } from '@/types/database';
+import { useAutoSave } from '@/lib/hooks/useAutoSave';
+import { AutoSaveIndicator } from '@/components/ui/auto-save-indicator';
 
 interface ProposalFormProps {
   proposal?: Proposal;
@@ -36,25 +38,58 @@ export function ProposalForm({ proposal, clients }: ProposalFormProps) {
   const router = useRouter();
   const { toast } = useToast();
   const [loading, setLoading] = useState(false);
+  const [submitError, setSubmitError] = useState<string | null>(null);
+  const shakeRef = useRef<HTMLDivElement>(null);
   const isEditing = !!proposal;
+  const [notes, setNotes] = useState(proposal?.notes ?? '');
+
+  const { status: autoSaveStatus, statusText: autoSaveText } = useAutoSave({
+    value: notes,
+    onSave: async (val) => {
+      if (!proposal?.id) return;
+      const fd = new FormData();
+      fd.set('notes', val);
+      return await updateProposal(proposal.id, fd);
+    },
+    delay: 1500,
+    skipIf: (val) => val === (proposal?.notes ?? ''),
+  });
+
+  const triggerShake = () => {
+    const el = shakeRef.current;
+    if (!el) return;
+    el.style.animation = 'none';
+    void el.offsetHeight;
+    el.style.animation = 'shake 0.5s ease';
+  };
 
   async function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault();
     setLoading(true);
-    const formData = new FormData(e.currentTarget);
-    const result = isEditing
-      ? await updateProposal(proposal.id, formData)
-      : await createProposal(formData);
-    setLoading(false);
-    if (result.error) {
-      toast({ title: result.error, variant: 'destructive' });
-      return;
-    }
-    toast({ title: isEditing ? 'Proposal updated' : 'Proposal created' });
-    if (!isEditing && result.data) {
-      router.push(`/proposals/${result.data.id}`);
-    } else {
-      router.push('/proposals');
+    setSubmitError(null);
+    try {
+      const formData = new FormData(e.currentTarget);
+      const result = isEditing
+        ? await updateProposal(proposal.id, formData)
+        : await createProposal(formData);
+      setLoading(false);
+      if (result.error) {
+        setSubmitError(result.error);
+        triggerShake();
+        toast({ title: result.error, variant: 'destructive' });
+        return;
+      }
+      toast({ title: isEditing ? 'Proposal updated' : 'Proposal created' });
+      if (!isEditing && result.data) {
+        router.push(`/proposals/${result.data.id}`);
+      } else {
+        router.push('/proposals');
+      }
+    } catch (err) {
+      const msg = err instanceof Error ? err.message : 'Something went wrong';
+      setSubmitError(msg);
+      triggerShake();
+      setLoading(false);
     }
   }
 
@@ -113,11 +148,33 @@ export function ProposalForm({ proposal, clients }: ProposalFormProps) {
           <Input name="valid_until" type="date" defaultValue={proposal?.valid_until ?? ''} />
         </div>
         <div>
-          <label className="block text-sm font-medium text-[var(--foreground)] mb-1">Notes</label>
-          <Textarea name="notes" rows={3} defaultValue={proposal?.notes ?? ''} placeholder="Internal notes about this proposal..." />
+          <div className="flex items-center justify-between mb-1">
+            <label className="block text-sm font-medium text-[var(--foreground)]">Notes</label>
+            <AutoSaveIndicator status={autoSaveStatus} text={autoSaveText} />
+          </div>
+          <Textarea name="notes" rows={3} value={notes} onChange={(e) => setNotes(e.target.value)} placeholder="Internal notes about this proposal..." />
         </div>
+        {submitError && (
+          <div
+            ref={shakeRef}
+            className="rounded-lg bg-destructive/10 border border-destructive/20 px-4 py-3 text-sm text-destructive"
+            style={{ animationDuration: '0.5s' }}
+          >
+            {submitError}
+          </div>
+        )}
         <div className="flex gap-3 pt-2">
-          <Button type="submit" disabled={loading}>{loading ? (isEditing ? 'Saving...' : 'Creating...') : (isEditing ? 'Save Changes' : 'Create Proposal')}</Button>
+          <Button type="submit" disabled={loading}>
+            {loading ? (
+              <>
+                <svg className="h-4 w-4 animate-spin" viewBox="0 0 24 24" fill="none">
+                  <circle cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" className="opacity-25" />
+                  <path fill="currentColor" className="opacity-75" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z" />
+                </svg>
+                Saving...
+              </>
+            ) : (isEditing ? 'Save Changes' : 'Create Proposal')}
+          </Button>
           <Button type="button" variant="outline" onClick={() => router.back()}>Cancel</Button>
         </div>
       </form>

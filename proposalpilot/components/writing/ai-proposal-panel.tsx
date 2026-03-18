@@ -6,8 +6,8 @@ import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
 import { Card } from '@/components/ui/card';
 import { useToast } from '@/components/ui/toast';
-import { generateProposalSections } from '@/lib/actions/ai-proposals';
-import { Sparkles, Loader2, Copy } from 'lucide-react';
+import { useAiStream } from '@/lib/hooks/useAiStream';
+import { Sparkles, Loader2, Copy, StopCircle } from 'lucide-react';
 
 interface AIProposalPanelProps {
   clientName?: string;
@@ -18,23 +18,23 @@ export function AIProposalPanel({ clientName, industry }: AIProposalPanelProps) 
   const { toast } = useToast();
   const [brief, setBrief] = useState('');
   const [services, setServices] = useState('');
-  const [result, setResult] = useState('');
-  const [loading, setLoading] = useState(false);
+  const { generate, streaming, text: result, error, cancel, reset } = useAiStream();
 
   async function handleGenerate() {
     if (!brief.trim()) {
       toast({ title: 'Please enter a client brief', variant: 'destructive' });
       return;
     }
-    setLoading(true);
-    setResult('');
-    const res = await generateProposalSections(brief, clientName ?? '', industry ?? '', services);
-    setLoading(false);
-    if (res.error) {
-      toast({ title: res.error, variant: 'destructive' });
-      return;
-    }
-    setResult(res.data ?? '');
+    reset();
+    const context = [
+      clientName && `Client: ${clientName}`,
+      industry && `Industry: ${industry}`,
+      services && `Services: ${services}`,
+    ].filter(Boolean).join('. ');
+    await generate(
+      `Write a professional proposal for the following brief: ${brief}. Include executive summary, scope of work, timeline, and pricing outline.`,
+      context || undefined,
+    );
   }
 
   async function handleCopy() {
@@ -57,16 +57,29 @@ export function AIProposalPanel({ clientName, industry }: AIProposalPanelProps) 
           <label className="block text-sm font-medium text-[var(--foreground)] mb-1">Services Offered</label>
           <Input value={services} onChange={(e) => setServices(e.target.value)} placeholder="e.g. Web Development, UI/UX Design, SEO" />
         </div>
-        <Button onClick={handleGenerate} disabled={loading}>
-          {loading ? <><Loader2 className="w-4 h-4 mr-2 animate-spin" />Generating...</> : <><Sparkles className="w-4 h-4 mr-2" />Generate Proposal</>}
-        </Button>
-        {result && (
+        <div className="flex gap-2">
+          <Button onClick={handleGenerate} disabled={streaming} className="flex-1">
+            {streaming ? <><Loader2 className="w-4 h-4 mr-2 animate-spin" />Generating...</> : <><Sparkles className="w-4 h-4 mr-2" />Generate Proposal</>}
+          </Button>
+          {streaming && (
+            <Button variant="outline" size="icon" onClick={cancel} title="Stop generation">
+              <StopCircle className="w-4 h-4" />
+            </Button>
+          )}
+        </div>
+        {error && <p className="text-sm text-red-500">{error}</p>}
+        {(result || streaming) && (
           <div className="mt-4">
             <div className="flex items-center justify-between mb-2">
               <span className="text-sm font-medium text-[var(--foreground)]">Generated Content</span>
-              <Button variant="ghost" size="sm" onClick={handleCopy}><Copy className="w-4 h-4 mr-1" />Copy</Button>
+              {result && !streaming && (
+                <Button variant="ghost" size="sm" onClick={handleCopy}><Copy className="w-4 h-4 mr-1" />Copy</Button>
+              )}
             </div>
-            <div className="p-4 bg-[var(--muted)] rounded-lg text-sm whitespace-pre-wrap text-[var(--foreground)]">{result}</div>
+            <div className="p-4 bg-[var(--muted)] rounded-lg text-sm whitespace-pre-wrap text-[var(--foreground)] max-h-80 overflow-y-auto">
+              {result}
+              {streaming && <span className="inline-block w-0.5 h-4 bg-blue-500 ml-0.5 animate-pulse align-middle" />}
+            </div>
           </div>
         )}
       </div>

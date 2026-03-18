@@ -1,3 +1,4 @@
+import { getTranslations } from 'next-intl/server';
 import { getDashboardData } from '@/lib/actions/dashboard';
 import { WritingStats } from '@/components/dashboard/writing-stats';
 import { RecentActivity } from '@/components/dashboard/recent-activity';
@@ -5,12 +6,16 @@ import { EmptyState } from '@/components/ui/empty-state';
 import { Button } from '@/components/ui/button';
 import Link from 'next/link';
 import { BookOpen } from 'lucide-react';
+import { GettingStartedChecklist } from '@/components/GettingStartedChecklist';
 
 export const dynamic = 'force-dynamic';
 export const metadata = { title: 'Dashboard' };
 
 export default async function DashboardPage() {
-  const result = await getDashboardData();
+  const [result, t] = await Promise.all([
+    getDashboardData(),
+    getTranslations('dashboard'),
+  ]);
   const data = result.data;
   const hasStories = (data?.storyCount ?? 0) > 0;
 
@@ -18,13 +23,15 @@ export default async function DashboardPage() {
     <div>
       <div className="mb-8 flex items-center justify-between">
         <div>
-          <h1 className="font-heading text-2xl font-bold text-[var(--foreground)]">Dashboard</h1>
-          <p className="mt-1 text-sm text-[var(--muted-foreground)]">Your writing at a glance.</p>
+          <h1 className="font-heading text-2xl font-bold text-[var(--foreground)]">{t('title')}</h1>
+          <p className="mt-1 text-sm text-[var(--muted-foreground)]">{t('description')}</p>
         </div>
         <Link href="/stories/new">
-          <Button>New Story</Button>
+          <Button>{t('newStory')}</Button>
         </Link>
       </div>
+
+      <GettingStartedChecklist />
 
       <WritingStats
         storyCount={data?.storyCount ?? 0}
@@ -40,11 +47,11 @@ export default async function DashboardPage() {
         <div className="mt-12">
           <EmptyState
             icon={<BookOpen className="h-12 w-12" />}
-            title="Welcome to StoryThread!"
-            description="Create your first story to start building characters, worlds, and chapters."
+            title={t('welcomeTitle')}
+            description={t('welcomeDescription')}
             action={
               <Link href="/stories/new">
-                <Button>Create Your First Story</Button>
+                <Button>{t('createFirstStory')}</Button>
               </Link>
             }
           />

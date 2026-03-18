@@ -1,3 +1,4 @@
+import { getTranslations } from 'next-intl/server';
 import { createClient } from '@/lib/supabase/server';
 import { redirect } from 'next/navigation';
 import { PageHeader } from '@/components/layout/page-header';
@@ -8,7 +9,10 @@ export const metadata = { title: 'Settings' };
 
 export default async function SettingsPage() {
   const supabase = await createClient();
-  const { data: { user } } = await supabase.auth.getUser();
+  const [{ data: { user } }, t] = await Promise.all([
+    supabase.auth.getUser(),
+    getTranslations('settings'),
+  ]);
 
   if (!user) {
     redirect('/login');
@@ -16,7 +20,7 @@ export default async function SettingsPage() {
 
   return (
     <div>
-      <PageHeader title="Settings" description="Manage your account." className="mb-8" />
+      <PageHeader title={t('title')} description={t('description')} className="mb-8" />
       <ProfileForm user={user} />
     </div>
   );

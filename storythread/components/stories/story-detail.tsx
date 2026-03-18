@@ -9,6 +9,7 @@ import { Tabs, TabsList, TabsTrigger, TabsContent } from '@/components/ui/tabs';
 import { useToast } from '@/components/ui/toast';
 import { deleteStory } from '@/lib/actions/stories';
 import { publishStory, unpublishStory } from '@/lib/actions/sharing';
+import { PresenceAvatars } from '@/components/PresenceAvatars';
 import { ChapterList } from './chapter-list';
 import { CharacterList } from '@/components/characters/character-list';
 import { WorldElementList } from '@/components/world/world-element-list';
@@ -103,7 +104,12 @@ export function StoryDetail({ story }: StoryDetailProps) {
             </div>
           </div>
         </div>
-        <div className="flex gap-2">
+        <div className="flex items-center gap-3">
+          <PresenceAvatars
+            channelId={`story-${story.id}`}
+            currentUser={{ id: 'current', name: 'You' }}
+          />
+          <div className="flex gap-2">
           {isPublished ? (
             <Button
               variant="outline"
@@ -140,6 +146,7 @@ export function StoryDetail({ story }: StoryDetailProps) {
           <Button variant="destructive" size="sm" onClick={handleDelete} disabled={deleting}>
             <Trash2 className="mr-1.5 h-4 w-4" /> {deleting ? 'Deleting...' : 'Delete'}
           </Button>
+          </div>
         </div>
       </div>
 

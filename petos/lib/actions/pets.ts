@@ -3,6 +3,7 @@
 import { createClient } from '@/lib/supabase/server';
 import { revalidatePath } from 'next/cache';
 import type { Pet } from '@/types/database';
+import { petSchema } from '@/lib/validations';
 
 export interface ActionResult<T = null> {
   data?: T;
@@ -45,20 +46,31 @@ export async function createPet(formData: FormData): Promise<ActionResult<Pet>> 
   const { data: { user } } = await supabase.auth.getUser();
   if (!user) return { error: 'Not authenticated' };
 
+  const parsed = petSchema.safeParse({
+    name: formData.get('name'),
+    species: formData.get('species'),
+    breed: (formData.get('breed') as string) || undefined,
+    birthDate: (formData.get('date_of_birth') as string) || undefined,
+    weight: formData.get('weight') ? Number(formData.get('weight')) : undefined,
+    microchipId: (formData.get('microchip_id') as string) || undefined,
+    notes: (formData.get('notes') as string) || undefined,
+  });
+  if (!parsed.success) return { error: parsed.error.errors[0]?.message ?? 'Invalid input' };
+
   const petData = {
     user_id: user.id,
-    name: formData.get('name') as string,
-    species: formData.get('species') as string,
-    breed: (formData.get('breed') as string) || null,
-    date_of_birth: (formData.get('date_of_birth') as string) || null,
-    weight: formData.get('weight') ? parseFloat(formData.get('weight') as string) : null,
+    name: parsed.data.name,
+    species: parsed.data.species,
+    breed: parsed.data.breed ?? null,
+    date_of_birth: parsed.data.birthDate ?? null,
+    weight: parsed.data.weight ?? null,
     weight_unit: (formData.get('weight_unit') as string) || 'lbs',
     gender: (formData.get('gender') as string) || null,
     color: (formData.get('color') as string) || null,
     photo_url: (formData.get('photo_url') as string) || null,
-    microchip_id: (formData.get('microchip_id') as string) || null,
+    microchip_id: parsed.data.microchipId ?? null,
     is_neutered: formData.get('is_neutered') === 'true',
-    notes: (formData.get('notes') as string) || null,
+    notes: parsed.data.notes ?? null,
   };
 
   const { data, error } = await supabase
@@ -78,19 +90,30 @@ export async function updatePet(id: string, formData: FormData): Promise<ActionR
   const { data: { user } } = await supabase.auth.getUser();
   if (!user) return { error: 'Not authenticated' };
 
+  const parsed = petSchema.safeParse({
+    name: formData.get('name'),
+    species: formData.get('species'),
+    breed: (formData.get('breed') as string) || undefined,
+    birthDate: (formData.get('date_of_birth') as string) || undefined,
+    weight: formData.get('weight') ? Number(formData.get('weight')) : undefined,
+    microchipId: (formData.get('microchip_id') as string) || undefined,
+    notes: (formData.get('notes') as string) || undefined,
+  });
+  if (!parsed.success) return { error: parsed.error.errors[0]?.message ?? 'Invalid input' };
+
   const petData = {
-    name: formData.get('name') as string,
-    species: formData.get('species') as string,
-    breed: (formData.get('breed') as string) || null,
-    date_of_birth: (formData.get('date_of_birth') as string) || null,
-    weight: formData.get('weight') ? parseFloat(formData.get('weight') as string) : null,
+    name: parsed.data.name,
+    species: parsed.data.species,
+    breed: parsed.data.breed ?? null,
+    date_of_birth: parsed.data.birthDate ?? null,
+    weight: parsed.data.weight ?? null,
     weight_unit: (formData.get('weight_unit') as string) || 'lbs',
     gender: (formData.get('gender') as string) || null,
     color: (formData.get('color') as string) || null,
     photo_url: (formData.get('photo_url') as string) || null,
-    microchip_id: (formData.get('microchip_id') as string) || null,
+    microchip_id: parsed.data.microchipId ?? null,
     is_neutered: formData.get('is_neutered') === 'true',
-    notes: (formData.get('notes') as string) || null,
+    notes: parsed.data.notes ?? null,
   };
 
   const { data, error } = await supabase

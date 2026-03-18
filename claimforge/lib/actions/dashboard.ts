@@ -13,33 +13,84 @@ export async function getDashboardStats(): Promise<ActionResult<DashboardStats>>
   const { data: { user } } = await supabase.auth.getUser();
   if (!user) return { error: 'Not authenticated' };
 
-  const [casesRes, patternsRes, docsRes] = await Promise.all([
-    supabase.from('cases').select('status, estimated_fraud_amount, actual_fraud_amount'),
-    supabase.from('fraud_patterns').select('id'),
-    supabase.from('documents').select('id, processed'),
+  const activeStatuses = ['intake', 'investigation', 'analysis', 'review'];
+
+  // All independent aggregation queries run in parallel.
+  // Use count-only requests where we only need a number, and select only
+  // the minimal columns needed for the few value-sum computations.
+  const [
+    totalCasesRes,
+    activeCasesRes,
+    fraudAmountsRes,
+    settledAmountsRes,
+    { count: patternsCount },
+    { count: filedCount },
+    { count: docsProcessed },
+    { count: docsTotal },
+  ] = await Promise.all([
+    // Total case count
+    supabase
+      .from('cases')
+      .select('id', { count: 'exact', head: true }),
+
+    // Active investigations count
+    supabase
+      .from('cases')
+      .select('id', { count: 'exact', head: true })
+      .in('status', activeStatuses),
+
+    // Estimated fraud amounts for all cases (needed for totalFraud sum)
+    supabase
+      .from('cases')
+      .select('estimated_fraud_amount'),
+
+    // Actual fraud amounts for settled cases (needed for recoveredAmount sum)
+    supabase
+      .from('cases')
+      .select('actual_fraud_amount')
+      .eq('status', 'settled'),
+
+    // Patterns count only
+    supabase
+      .from('fraud_patterns')
+      .select('id', { count: 'exact', head: true }),
+
+    // Filed cases count only
+    supabase
+      .from('cases')
+      .select('id', { count: 'exact', head: true })
+      .eq('status', 'filed'),
+
+    // Processed documents count (partial index candidate)
+    supabase
+      .from('documents')
+      .select('id', { count: 'exact', head: true })
+      .eq('processed', true),
+
+    // Total documents count
+    supabase
+      .from('documents')
+      .select('id', { count: 'exact', head: true }),
   ]);
 
-  const cases = casesRes.data ?? [];
-  const patterns = patternsRes.data ?? [];
-  const docs = docsRes.data ?? [];
-
-  const activeStatuses = ['intake', 'investigation', 'analysis', 'review'];
-  const activeCases = cases.filter((c) => activeStatuses.includes(c.status));
-  const filedCases = cases.filter((c) => c.status === 'filed');
-  const settledCases = cases.filter((c) => c.status === 'settled');
-
-  const totalFraud = cases.reduce((sum, c) => sum + (c.estimated_fraud_amount || 0), 0);
-  const recoveredAmount = settledCases.reduce((sum, c) => sum + (c.actual_fraud_amount || 0), 0);
+  const totalFraud = (fraudAmountsRes.data ?? []).reduce(
+    (sum, c) => sum + (c.estimated_fraud_amount || 0),
+    0
+  );
+  const recoveredAmount = (settledAmountsRes.data ?? []).reduce(
+    (sum, c) => sum + (c.actual_fraud_amount || 0),
+    0
+  );
   const recoveryRate = totalFraud > 0 ? Math.round((recoveredAmount / totalFraud) * 100) : 0;
 
   return {
     data: {
-      total_cases: cases.length,
-      active_investigations: activeCases.length,
+      total_cases: totalCasesRes.count ?? 0,
+      active_investigations: activeCasesRes.count ?? 0,
       total_fraud_detected: totalFraud,
-      documents_processed: docs.filter((d) => d.processed).length,
-      patterns_identified: patterns.length,
-      cases_filed: filedCases.length,
+      documents_processed: docsProcessed ?? 0,
+      patterns_identified: patternsCount ?? 0,
+      cases_filed: filedCount ?? 0,
       recovery_rate: recoveryRate,
     },
   };
@@ -52,7 +103,7 @@ export async function getRecentCases(): Promise<ActionResult<Case[]>> {
 
   const { data, error } = await supabase
     .from('cases')
-    .select('*')
+    .select('id, title, case_number, status, defendant_name, estimated_fraud_amount, document_count, pattern_count, created_at, updated_at')
     .in('status', ['intake', 'investigation', 'analysis', 'review'])
     .order('updated_at', { ascending: false })
     .limit(5);
@@ -68,7 +119,7 @@ export async function getRecentPatterns(): Promise<ActionResult<(FraudPattern & 
 
   const { data, error } = await supabase
     .from('fraud_patterns')
-    .select('*, case:cases(title)')
+    .select('id, case_id, pattern_type, confidence, confidence_level, description, affected_amount, verified, false_positive, created_at, case:cases(title)')
     .order('created_at', { ascending: false })
     .limit(5);
 

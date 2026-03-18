@@ -1,6 +1,8 @@
 'use client';
 
 import { useState } from 'react';
+import { useRouter } from 'next/navigation';
+import { useTranslations } from 'next-intl';
 import { PageHeader } from '@/components/layout/page-header';
 import { cn } from '@/lib/utils';
 import {
@@ -13,6 +15,7 @@ import {
   Database,
   FileText,
   Palette,
+  Wifi,
 } from 'lucide-react';
 
 const settingsNav = [
@@ -21,17 +24,20 @@ const settingsNav = [
   { id: 'security', icon: Shield, label: 'Security' },
   { id: 'notifications', icon: Bell, label: 'Notifications' },
   { id: 'api', icon: Key, label: 'API Keys' },
+  { id: 'carriers', icon: Wifi, label: 'Carriers', href: '/settings/carriers' },
   { id: 'data', icon: Database, label: 'Data & Storage' },
   { id: 'compliance', icon: FileText, label: 'Compliance' },
   { id: 'appearance', icon: Palette, label: 'Appearance' },
 ];
 
 export default function SettingsPage() {
+  const t = useTranslations('settings');
+  const router = useRouter();
   const [activeSection, setActiveSection] = useState('profile');
 
   return (
     <div className="flex h-full flex-col">
-      <PageHeader title="Settings" subtitle="Manage your account and organization" />
+      <PageHeader title={t('title')} subtitle={t('description')} />
 
       <div className="flex flex-1 overflow-hidden">
         {/* Settings Nav */}
@@ -40,7 +46,13 @@ export default function SettingsPage() {
             {settingsNav.map((item) => (
               <button
                 key={item.id}
-                onClick={() => setActiveSection(item.id)}
+                onClick={() => {
+                  if ('href' in item && item.href) {
+                    router.push(item.href);
+                  } else {
+                    setActiveSection(item.id);
+                  }
+                }}
                 className={cn(
                   'flex w-full items-center gap-2 rounded-lg px-3 py-2 text-sm transition-colors',
                   activeSection === item.id

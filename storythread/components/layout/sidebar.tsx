@@ -15,15 +15,25 @@ import {
   Menu,
   PanelLeftClose,
   LogOut,
+  Compass,
+  User as UserIcon,
+  Gift,
 } from 'lucide-react';
+import { useTranslations } from 'next-intl';
+import { ThemeToggle } from '@/components/ThemeToggle';
+import { NotificationCenter } from '@/components/NotificationCenter';
+import { LanguageSwitcher } from '@/components/LanguageSwitcher';
 
 const navigation = [
-  { name: 'Dashboard', href: '/dashboard', icon: LayoutDashboard },
-  { name: 'My Stories', href: '/stories', icon: BookOpen },
+  { nameKey: 'dashboard', href: '/dashboard', icon: LayoutDashboard },
+  { nameKey: 'stories', href: '/stories', icon: BookOpen },
+  { nameKey: 'discover', href: '/discover', icon: Compass },
+  { nameKey: 'myProfile', href: '/profile', icon: UserIcon },
 ];
 
 const bottomNavigation = [
-  { name: 'Settings', href: '/settings', icon: Settings },
+  { nameKey: 'settings', href: '/settings', icon: Settings },
+  { nameKey: 'referral', href: '/settings/referral', icon: Gift },
 ];
 
 interface SidebarProps {
@@ -34,6 +44,7 @@ export function Sidebar({ user }: SidebarProps) {
   const pathname = usePathname();
   const router = useRouter();
   const [collapsed, setCollapsed] = useState(false);
+  const t = useTranslations('nav');
   const supabase = createClient();
 
   async function handleSignOut() {
@@ -63,13 +74,16 @@ export function Sidebar({ user }: SidebarProps) {
             StoryThread
           </Link>
         )}
-        <button
-          onClick={() => setCollapsed(!collapsed)}
-          className="rounded-lg p-1.5 text-[var(--muted-foreground)] hover:bg-[var(--accent)] hover:text-[var(--foreground)]"
-          aria-label={collapsed ? 'Expand sidebar' : 'Collapse sidebar'}
-        >
-          {collapsed ? <Menu className="h-5 w-5" /> : <PanelLeftClose className="h-5 w-5" />}
-        </button>
+        <div className="flex items-center gap-1">
+          {!collapsed && <NotificationCenter />}
+          <button
+            onClick={() => setCollapsed(!collapsed)}
+            className="rounded-lg p-1.5 text-[var(--muted-foreground)] hover:bg-[var(--accent)] hover:text-[var(--foreground)]"
+            aria-label={collapsed ? 'Expand sidebar' : 'Collapse sidebar'}
+          >
+            {collapsed ? <Menu className="h-5 w-5" /> : <PanelLeftClose className="h-5 w-5" />}
+          </button>
+        </div>
       </div>
 
       <div className="px-3 pt-4">
@@ -81,17 +95,17 @@ export function Sidebar({ user }: SidebarProps) {
           )}
         >
           <Plus className="h-4 w-4" />
-          {!collapsed && 'New Story'}
+          {!collapsed && t('newStory')}
         </Link>
       </div>
 
-      <nav className="flex-1 space-y-1 px-3 py-4">
+      <nav className="flex-1 space-y-1 px-3 py-4" aria-label="Main navigation">
         {navigation.map((item) => {
           const isActive = pathname === item.href || pathname.startsWith(item.href + '/');
           const Icon = item.icon;
           return (
             <Link
-              key={item.name}
+              key={item.nameKey}
               href={item.href}
               className={cn(
                 'flex items-center gap-3 rounded-lg px-3 py-2 text-sm font-medium transition-colors',
@@ -102,7 +116,7 @@ export function Sidebar({ user }: SidebarProps) {
               )}
             >
               <Icon className="h-5 w-5" />
-              {!collapsed && item.name}
+              {!collapsed && t(item.nameKey)}
             </Link>
           );
         })}
@@ -114,7 +128,7 @@ export function Sidebar({ user }: SidebarProps) {
           const Icon = item.icon;
           return (
             <Link
-              key={item.name}
+              key={item.nameKey}
               href={item.href}
               className={cn(
                 'flex items-center gap-3 rounded-lg px-3 py-2 text-sm font-medium transition-colors',
@@ -125,7 +139,7 @@ export function Sidebar({ user }: SidebarProps) {
               )}
             >
               <Icon className="h-5 w-5" />
-              {!collapsed && item.name}
+              {!collapsed && t(item.nameKey)}
             </Link>
           );
         })}
@@ -143,15 +157,19 @@ export function Sidebar({ user }: SidebarProps) {
             </div>
           )}
           {!collapsed && (
-            <button
-              onClick={handleSignOut}
-              className="rounded-lg p-1.5 text-[var(--muted-foreground)] hover:bg-[var(--accent)] hover:text-[var(--foreground)]"
-              aria-label="Sign out"
-            >
-              <LogOut className="h-4 w-4" />
-            </button>
+            <div className="flex items-center gap-1">
+              <ThemeToggle />
+              <button
+                onClick={handleSignOut}
+                className="rounded-lg p-1.5 text-[var(--muted-foreground)] hover:bg-[var(--accent)] hover:text-[var(--foreground)]"
+                aria-label="Sign out"
+              >
+                <LogOut className="h-4 w-4" />
+              </button>
+            </div>
           )}
         </div>
+        {!collapsed && <LanguageSwitcher />}
       </div>
     </aside>
   );

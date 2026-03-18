@@ -626,7 +626,7 @@ export default function LandingPage() {
               <Link href="/privacy" className="hover:text-brand-600 transition-colors">Privacy</Link>
               <Link href="/terms" className="hover:text-brand-600 transition-colors">Terms</Link>
             </div>
-            <p className="text-sm text-[var(--muted-foreground)]">&copy; {new Date().getFullYear()} InvoiceAI. All rights reserved.</p>
+            <p className="text-sm text-[var(--muted-foreground)]">&copy; 2026 InvoiceAI. All rights reserved.</p>
           </div>
         </div>
       </footer>

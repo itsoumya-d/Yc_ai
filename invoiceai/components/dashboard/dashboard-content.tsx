@@ -8,6 +8,7 @@ import { CashFlowForecast } from '@/components/dashboard/cash-flow-forecast';
 import { PaymentMethodsChart } from '@/components/dashboard/payment-methods-chart';
 import { InvoiceStatusChart } from '@/components/dashboard/invoice-status-chart';
 import { PaymentAgingChart } from '@/components/dashboard/payment-aging-chart';
+import { ARAgingBar } from '@/components/dashboard/ar-aging-bar';
 import { MRRWidget } from '@/components/dashboard/mrr-widget';
 import { formatCurrency } from '@/lib/utils';
 import type { AnalyticsData } from '@/lib/actions/analytics';
@@ -128,6 +129,11 @@ export function DashboardContent({ analytics, report }: DashboardContentProps) {
       >
         <TopClientsTable clients={analytics.top_clients} />
       </motion.div>
+
+      {/* AR Aging Bar */}
+      {analytics.payment_aging && analytics.payment_aging.length > 0 && (
+        <ARAgingBar data={analytics.payment_aging} withCard />
+      )}
     </div>
   );
 }

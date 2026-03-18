@@ -3,6 +3,7 @@
 import { createClient } from '@/lib/supabase/server';
 import { revalidatePath } from 'next/cache';
 import type { Client } from '@/types/database';
+import { clientSchema } from '@/lib/validations';
 
 export interface ActionResult<T = null> { data?: T; error?: string; }
 
@@ -28,12 +29,22 @@ export async function createClient_(formData: FormData): Promise<ActionResult<Cl
   const supabase = await createClient();
   const { data: { user } } = await supabase.auth.getUser();
   if (!user) return { error: 'Not authenticated' };
+
+  const parsed = clientSchema.safeParse({
+    name: formData.get('name'),
+    email: formData.get('email'),
+    company: formData.get('company'),
+    phone: (formData.get('phone') as string) || undefined,
+    website: (formData.get('website') as string) || undefined,
+  });
+  if (!parsed.success) return { error: parsed.error.errors[0]?.message ?? 'Invalid input' };
+
   const { data, error } = await supabase.from('clients').insert({
     user_id: user.id,
-    name: formData.get('name') as string,
-    company: formData.get('company') as string || null,
-    email: formData.get('email') as string || null,
-    phone: formData.get('phone') as string || null,
+    name: parsed.data.name,
+    company: parsed.data.company,
+    email: parsed.data.email,
+    phone: parsed.data.phone ?? null,
     industry: formData.get('industry') as string || null,
     notes: formData.get('notes') as string || null,
   }).select().single();
@@ -47,11 +58,21 @@ export async function updateClient_(id: string, formData: FormData): Promise<Act
   const supabase = await createClient();
   const { data: { user } } = await supabase.auth.getUser();
   if (!user) return { error: 'Not authenticated' };
+
+  const parsed = clientSchema.safeParse({
+    name: formData.get('name'),
+    email: formData.get('email'),
+    company: formData.get('company'),
+    phone: (formData.get('phone') as string) || undefined,
+    website: (formData.get('website') as string) || undefined,
+  });
+  if (!parsed.success) return { error: parsed.error.errors[0]?.message ?? 'Invalid input' };
+
   const { data, error } = await supabase.from('clients').update({
-    name: formData.get('name') as string,
-    company: formData.get('company') as string || null,
-    email: formData.get('email') as string || null,
-    phone: formData.get('phone') as string || null,
+    name: parsed.data.name,
+    company: parsed.data.company,
+    email: parsed.data.email,
+    phone: parsed.data.phone ?? null,
     industry: formData.get('industry') as string || null,
     notes: formData.get('notes') as string || null,
     updated_at: new Date().toISOString(),

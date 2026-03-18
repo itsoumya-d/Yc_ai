@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useRef } from 'react';
 import { useRouter } from 'next/navigation';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -41,27 +41,47 @@ export function StoryForm({ story }: StoryFormProps) {
   const router = useRouter();
   const { toast } = useToast();
   const [loading, setLoading] = useState(false);
+  const [submitError, setSubmitError] = useState<string | null>(null);
+  const shakeRef = useRef<HTMLDivElement>(null);
+
+  const triggerShake = () => {
+    const el = shakeRef.current;
+    if (!el) return;
+    el.style.animation = 'none';
+    void el.offsetHeight;
+    el.style.animation = 'shake 0.5s ease';
+  };
 
   async function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault();
     setLoading(true);
+    setSubmitError(null);
 
     const formData = new FormData(e.currentTarget);
-    const result = story
-      ? await updateStory(story.id, formData)
-      : await createStory(formData);
+    try {
+      const result = story
+        ? await updateStory(story.id, formData)
+        : await createStory(formData);
 
-    if (result.error) {
-      toast({ title: 'Error', description: result.error, variant: 'destructive' });
+      if (result.error) {
+        setSubmitError(result.error);
+        triggerShake();
+        toast({ title: 'Error', description: result.error, variant: 'destructive' });
+        setLoading(false);
+        return;
+      }
+
+      toast({ title: story ? 'Story updated' : 'Story created' });
+      if (result.data) {
+        router.push(`/stories/${result.data.id}`);
+      } else {
+        router.push('/stories');
+      }
+    } catch (err) {
+      const msg = err instanceof Error ? err.message : 'Something went wrong';
+      setSubmitError(msg);
+      triggerShake();
       setLoading(false);
-      return;
-    }
-
-    toast({ title: story ? 'Story updated' : 'Story created' });
-    if (result.data) {
-      router.push(`/stories/${result.data.id}`);
-    } else {
-      router.push('/stories');
     }
   }
 
@@ -130,9 +150,26 @@ export function StoryForm({ story }: StoryFormProps) {
             placeholder="magic, dragons, adventure (comma-separated)"
             defaultValue={story?.tags?.join(', ') ?? ''}
           />
+          {submitError && (
+            <div
+              ref={shakeRef}
+              className="rounded-lg bg-destructive/10 border border-destructive/20 px-4 py-3 text-sm text-destructive"
+              style={{ animationDuration: '0.5s' }}
+            >
+              {submitError}
+            </div>
+          )}
           <div className="flex gap-3 pt-2">
             <Button type="submit" disabled={loading}>
-              {loading ? 'Saving...' : story ? 'Save Changes' : 'Create Story'}
+              {loading ? (
+                <>
+                  <svg className="h-4 w-4 animate-spin" viewBox="0 0 24 24" fill="none">
+                    <circle cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" className="opacity-25" />
+                    <path fill="currentColor" className="opacity-75" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z" />
+                  </svg>
+                  Saving...
+                </>
+              ) : story ? 'Save Changes' : 'Create Story'}
             </Button>
             <Button type="button" variant="outline" onClick={() => router.back()}>
               Cancel

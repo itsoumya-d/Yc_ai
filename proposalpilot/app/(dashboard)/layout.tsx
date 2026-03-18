@@ -3,7 +3,6 @@ import { redirect } from 'next/navigation';
 import { Sidebar } from '@/components/layout/sidebar';
 import { DashboardContent } from '@/components/ui/DashboardContent';
 
-export const dynamic = 'force-dynamic';
 
 export default async function DashboardLayout({ children }: { children: React.ReactNode }) {
   const supabase = await createClient();

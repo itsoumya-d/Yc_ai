@@ -3,6 +3,7 @@
 import { createClient } from '@/lib/supabase/server';
 import { revalidatePath } from 'next/cache';
 import type { Case, CaseStatus } from '@/types/database';
+import { caseSchema } from '@/lib/validations';
 
 export interface ActionResult<T = null> {
   data?: T;
@@ -67,6 +68,17 @@ export async function createCase(formData: CaseFormData): Promise<ActionResult<C
   const { data: { user } } = await supabase.auth.getUser();
   if (!user) return { error: 'Not authenticated' };
 
+  const parsed = caseSchema.safeParse({
+    title: formData.title,
+    caseType: formData.defendant_type === 'government_contractor' ? 'procurement_fraud' : 'false_claims_act',
+    description: formData.description,
+    estimatedDamages: formData.estimated_fraud_amount || undefined,
+    defendant: formData.defendant_name,
+    jurisdiction: formData.jurisdiction || undefined,
+    filingDeadline: formData.statute_of_limitations || undefined,
+  });
+  if (!parsed.success) return { error: parsed.error.errors[0]?.message ?? 'Invalid input' };
+
   // Get user's org
   const { data: profile } = await supabase
     .from('users')
@@ -88,7 +100,13 @@ export async function createCase(formData: CaseFormData): Promise<ActionResult<C
   const { data, error } = await supabase
     .from('cases')
     .insert({
-      ...formData,
+      title: parsed.data.title,
+      description: parsed.data.description,
+      defendant_name: parsed.data.defendant,
+      defendant_type: formData.defendant_type,
+      estimated_fraud_amount: parsed.data.estimatedDamages ?? formData.estimated_fraud_amount,
+      jurisdiction: parsed.data.jurisdiction || formData.jurisdiction,
+      statute_of_limitations: parsed.data.filingDeadline || formData.statute_of_limitations,
       case_number: caseNumber,
       organization_id: profile.organization_id,
       lead_investigator_id: user.id,
@@ -108,6 +126,16 @@ export async function updateCase(id: string, updates: Partial<CaseFormData> & { 
   const supabase = await createClient();
   const { data: { user } } = await supabase.auth.getUser();
   if (!user) return { error: 'Not authenticated' };
+
+  const parsed = caseSchema.partial().safeParse({
+    title: updates.title || undefined,
+    description: updates.description || undefined,
+    defendant: updates.defendant_name || undefined,
+    estimatedDamages: updates.estimated_fraud_amount !== undefined ? updates.estimated_fraud_amount : undefined,
+    jurisdiction: updates.jurisdiction || undefined,
+    filingDeadline: updates.statute_of_limitations || undefined,
+  });
+  if (!parsed.success) return { error: parsed.error.errors[0]?.message ?? 'Invalid input' };
 
   const { data, error } = await supabase
     .from('cases')

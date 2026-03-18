@@ -344,9 +344,37 @@ export function HealthTrendsDashboard({ pet }: HealthTrendsDashboardProps) {
 
       {/* Export Button */}
       <Card className="p-4">
-        <Button variant="outline" className="w-full">
+        <Button
+          variant="outline"
+          className="w-full"
+          onClick={() => {
+            const reportLines = [
+              `Health Report for ${pet.name}`,
+              `Generated: ${new Date().toLocaleDateString()}`,
+              '',
+              `Health Score: ${trends.health_score}/100`,
+              `Total Expenses: $${trends.total_expenses.toFixed(2)}`,
+              `Average Monthly Expense: $${trends.avg_monthly_expense.toFixed(2)}`,
+              '',
+              'Weight History:',
+              ...trends.weight_history.map(
+                (w) => `  ${w.date}: ${w.weight} ${w.weight_unit}`
+              ),
+              '',
+              'AI Insights:',
+              ...trends.ai_insights.map((insight) => `  - ${insight}`),
+            ];
+            const blob = new Blob([reportLines.join('\n')], { type: 'text/plain' });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = `${pet.name}-health-report-${new Date().toISOString().split('T')[0]}.txt`;
+            a.click();
+            URL.revokeObjectURL(url);
+          }}
+        >
           <Download className="h-4 w-4 mr-2" />
-          Export Health Report (PDF)
+          Export Health Report
         </Button>
       </Card>
     </div>

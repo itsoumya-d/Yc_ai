@@ -10,6 +10,8 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { useToast } from '@/components/ui/toast';
 import { deletePet } from '@/lib/actions/pets';
+import { VaccineTracker } from '@/components/health/vaccine-tracker';
+import { PetImageAnalysis } from '@/components/PetImageAnalysis';
 import type { Pet, HealthRecord, Medication, Appointment } from '@/types/database';
 
 interface PetDetailProps {
@@ -80,8 +82,10 @@ export function PetDetail({ pet, healthRecords, medications, appointments }: Pet
       <Tabs defaultValue="health" className="mt-8">
         <TabsList>
           <TabsTrigger value="health">Health Records ({healthRecords.length})</TabsTrigger>
+          <TabsTrigger value="vaccines">Vaccines</TabsTrigger>
           <TabsTrigger value="medications">Medications ({medications.length})</TabsTrigger>
           <TabsTrigger value="appointments">Appointments ({appointments.length})</TabsTrigger>
+          <TabsTrigger value="ai-check">AI Symptom Check</TabsTrigger>
         </TabsList>
 
         <TabsContent value="health">
@@ -109,6 +113,10 @@ export function PetDetail({ pet, healthRecords, medications, appointments }: Pet
               ))}
             </div>
           )}
+        </TabsContent>
+
+        <TabsContent value="vaccines" className="mt-4">
+          <VaccineTracker pet={pet} records={healthRecords} />
         </TabsContent>
 
         <TabsContent value="medications">
@@ -169,6 +177,23 @@ export function PetDetail({ pet, healthRecords, medications, appointments }: Pet
               ))}
             </div>
           )}
+        </TabsContent>
+
+        <TabsContent value="ai-check" className="mt-4">
+          <Card>
+            <CardContent className="p-6">
+              <PetImageAnalysis
+                petId={pet.id}
+                petSpecies={pet.species}
+                petBreed={pet.breed ?? pet.species}
+                petAge={
+                  pet.date_of_birth
+                    ? Math.max(0, new Date().getFullYear() - new Date(pet.date_of_birth).getFullYear())
+                    : 0
+                }
+              />
+            </CardContent>
+          </Card>
         </TabsContent>
       </Tabs>
     </div>

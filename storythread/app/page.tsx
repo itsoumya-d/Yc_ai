@@ -598,7 +598,7 @@ export default function LandingPage() {
               <Link href="/terms" className="hover:text-brand-600 transition-colors">Terms</Link>
             </div>
             <p className="text-center text-sm text-[var(--muted-foreground)]">
-              © {new Date().getFullYear()} StoryThread — Where stories begin.
+              © 2026 StoryThread — Where stories begin.
             </p>
           </div>
         </div>

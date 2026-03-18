@@ -1,3 +1,4 @@
+import { getTranslations } from 'next-intl/server';
 import { getDashboardData } from '@/lib/actions/dashboard';
 import { getPets } from '@/lib/actions/pets';
 import { getUpcomingAppointments } from '@/lib/actions/appointments';
@@ -9,6 +10,8 @@ import { EmptyState } from '@/components/ui/empty-state';
 import { Button } from '@/components/ui/button';
 import { formatCurrency } from '@/lib/utils';
 import Link from 'next/link';
+import { GettingStartedChecklist } from '@/components/GettingStartedChecklist';
+import { DashboardPresence } from '@/components/DashboardPresence';
 
 export const dynamic = 'force-dynamic';
 
@@ -17,11 +20,12 @@ export const metadata = {
 };
 
 export default async function DashboardPage() {
-  const [dashResult, petsResult, apptsResult, medsResult] = await Promise.all([
+  const [dashResult, petsResult, apptsResult, medsResult, t] = await Promise.all([
     getDashboardData(),
     getPets(),
     getUpcomingAppointments(),
     getActiveMedications(),
+    getTranslations('dashboard'),
   ]);
 
   const dashboard = dashResult.data;
@@ -36,34 +40,39 @@ export default async function DashboardPage() {
       <div className="mb-8 flex items-center justify-between">
         <div>
           <h1 className="font-heading text-2xl font-bold text-[var(--foreground)]">
-            Dashboard
+            {t('title')}
           </h1>
           <p className="mt-1 text-sm text-[var(--muted-foreground)]">
-            Overview of your pets and their care.
+            {t('description')}
           </p>
         </div>
-        <Link href="/pets/new">
-          <Button>
-            <svg className="mr-2 h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
-              <path strokeLinecap="round" strokeLinejoin="round" d="M12 4.5v15m7.5-7.5h-15" />
-            </svg>
-            Add Pet
-          </Button>
-        </Link>
+        <div className="flex items-center gap-3">
+          <DashboardPresence />
+          <Link href="/pets/new">
+            <Button>
+              <svg className="mr-2 h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                <path strokeLinecap="round" strokeLinejoin="round" d="M12 4.5v15m7.5-7.5h-15" />
+              </svg>
+              {t('addPet')}
+            </Button>
+          </Link>
+        </div>
       </div>
+
+      <GettingStartedChecklist />
 
       {/* Stats */}
       <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4">
-        <StatCard title="Total Pets" value={String(dashboard?.petCount ?? 0)} />
-        <StatCard title="Upcoming Appointments" value={String(dashboard?.upcomingAppointments ?? 0)} />
-        <StatCard title="Active Medications" value={String(dashboard?.activeMedications ?? 0)} />
-        <StatCard title="This Month" value={formatCurrency(dashboard?.monthlyExpenses ?? 0)} />
+        <StatCard title={t('totalPets')} value={String(dashboard?.petCount ?? 0)} />
+        <StatCard title={t('upcomingAppointments')} value={String(dashboard?.upcomingAppointments ?? 0)} />
+        <StatCard title={t('activeMedications')} value={String(dashboard?.activeMedications ?? 0)} />
+        <StatCard title={t('thisMonth')} value={formatCurrency(dashboard?.monthlyExpenses ?? 0)} />
       </div>
 
       {/* Pet Overview */}
       {hasPets ? (
         <>
-          <h2 className="mt-8 mb-4 text-lg font-semibold text-[var(--foreground)]">Your Pets</h2>
+          <h2 className="mt-8 mb-4 text-lg font-semibold text-[var(--foreground)]">{t('yourPets')}</h2>
           <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
             {pets.map((pet) => (
               <PetOverviewCard key={pet.id} pet={pet} />
@@ -82,11 +91,11 @@ export default async function DashboardPage() {
                 <path strokeLinecap="round" strokeLinejoin="round" d="M6.633 10.25c.806 0 1.533-.446 2.031-1.08a9.041 9.041 0 0 1 2.861-2.4c.723-.384 1.35-.956 1.653-1.715a4.498 4.498 0 0 0 .322-1.672V3.2" />
               </svg>
             }
-            title="Welcome to PetOS!"
-            description="Add your first pet to start tracking their health, appointments, and expenses."
+            title={t('welcomeTitle')}
+            description={t('welcomeDescription')}
             action={
               <Link href="/pets/new">
-                <Button>Add Your First Pet</Button>
+                <Button>{t('addFirstPet')}</Button>
               </Link>
             }
           />

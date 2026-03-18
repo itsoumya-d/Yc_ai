@@ -20,19 +20,30 @@ export async function getDashboardData(): Promise<ActionResult<DashboardData>> {
   const { data: { user } } = await supabase.auth.getUser();
   if (!user) return { error: 'Not authenticated' };
 
-  const { data: stories, error } = await supabase
-    .from('stories')
-    .select('*')
-    .eq('user_id', user.id)
-    .order('updated_at', { ascending: false });
+  // Fetch aggregates and recent stories in parallel
+  const [countRes, recentRes] = await Promise.all([
+    // Count-only query — no data transfer, uses idx_stories_user_status_created
+    supabase
+      .from('stories')
+      .select('total_word_count, chapter_count', { count: 'exact' })
+      .eq('user_id', user.id),
+    // Recent 5 stories — specific columns only, avoids fetching content/cover_url etc.
+    supabase
+      .from('stories')
+      .select('id, title, description, genre, status, total_word_count, chapter_count, is_public, share_token, created_at, updated_at')
+      .eq('user_id', user.id)
+      .order('updated_at', { ascending: false })
+      .limit(5),
+  ]);
 
-  if (error) return { error: error.message };
+  if (countRes.error) return { error: countRes.error.message };
+  if (recentRes.error) return { error: recentRes.error.message };
 
-  const allStories = (stories ?? []) as Story[];
-  const storyCount = allStories.length;
-  const totalWordCount = allStories.reduce((sum, s) => sum + (s.total_word_count || 0), 0);
-  const totalChapters = allStories.reduce((sum, s) => sum + (s.chapter_count || 0), 0);
-  const recentStories = allStories.slice(0, 5);
+  const allStorySummaries = countRes.data ?? [];
+  const storyCount = countRes.count ?? 0;
+  const totalWordCount = allStorySummaries.reduce((sum, s) => sum + (s.total_word_count || 0), 0);
+  const totalChapters = allStorySummaries.reduce((sum, s) => sum + (s.chapter_count || 0), 0);
+  const recentStories = (recentRes.data ?? []) as Story[];
 
   return {
     data: {

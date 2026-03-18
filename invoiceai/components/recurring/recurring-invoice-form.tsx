@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { useRouter } from 'next/navigation';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -20,7 +20,17 @@ export function RecurringInvoiceForm({ clients, defaultClientId }: RecurringInvo
   const router = useRouter();
   const { toast } = useToast();
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [submitError, setSubmitError] = useState<string | null>(null);
+  const shakeRef = useRef<HTMLDivElement>(null);
   const [previewDates, setPreviewDates] = useState<string[]>([]);
+
+  const triggerShake = () => {
+    const el = shakeRef.current;
+    if (!el) return;
+    el.style.animation = 'none';
+    void el.offsetHeight;
+    el.style.animation = 'shake 0.5s ease';
+  };
 
   const [formData, setFormData] = useState({
     client_id: defaultClientId || '',
@@ -90,14 +100,21 @@ export function RecurringInvoiceForm({ clients, defaultClientId }: RecurringInvo
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    setSubmitError(null);
 
     if (!formData.client_id) {
-      toast({ title: 'Error', description: 'Please select a client', variant: 'destructive' });
+      const msg = 'Please select a client';
+      setSubmitError(msg);
+      triggerShake();
+      toast({ title: 'Error', description: msg, variant: 'destructive' });
       return;
     }
 
     if (formData.items.some(item => !item.description || item.unit_price <= 0)) {
-      toast({ title: 'Error', description: 'Please fill in all line items', variant: 'destructive' });
+      const msg = 'Please fill in all line items';
+      setSubmitError(msg);
+      triggerShake();
+      toast({ title: 'Error', description: msg, variant: 'destructive' });
       return;
     }
 
@@ -133,7 +150,10 @@ export function RecurringInvoiceForm({ clients, defaultClientId }: RecurringInvo
       toast({ title: 'Success', description: 'Recurring invoice created successfully' });
       router.push('/recurring-invoices');
     } catch (error: any) {
-      toast({ title: 'Error', description: error.message, variant: 'destructive' });
+      const msg = error instanceof Error ? error.message : 'Something went wrong';
+      setSubmitError(msg);
+      triggerShake();
+      toast({ title: 'Error', description: msg, variant: 'destructive' });
     } finally {
       setIsSubmitting(false);
     }
@@ -389,6 +409,15 @@ export function RecurringInvoiceForm({ clients, defaultClientId }: RecurringInvo
       </Card>
 
       {/* Submit */}
+      {submitError && (
+        <div
+          ref={shakeRef}
+          className="rounded-lg bg-red-50 border border-red-200 px-4 py-3 text-sm text-red-700"
+          style={{ animationDuration: '0.5s' }}
+        >
+          {submitError}
+        </div>
+      )}
       <div className="flex justify-end gap-3">
         <Button
           type="button"
@@ -403,7 +432,15 @@ export function RecurringInvoiceForm({ clients, defaultClientId }: RecurringInvo
           disabled={isSubmitting}
           className="bg-green-600 hover:bg-green-700 text-white"
         >
-          {isSubmitting ? 'Creating...' : 'Create Recurring Invoice'}
+          {isSubmitting ? (
+            <>
+              <svg className="h-4 w-4 animate-spin" viewBox="0 0 24 24" fill="none">
+                <circle cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" className="opacity-25" />
+                <path fill="currentColor" className="opacity-75" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z" />
+              </svg>
+              Creating...
+            </>
+          ) : 'Create Recurring Invoice'}
         </Button>
       </div>
     </form>

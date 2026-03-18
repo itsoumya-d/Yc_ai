@@ -14,6 +14,8 @@ import {
 } from 'recharts';
 import { StatCard } from '@/components/ui/stat-card';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { ARAgingBar } from '@/components/dashboard/ar-aging-bar';
+import { ReconciliationPanel } from '@/components/ReconciliationPanel';
 import { formatCurrency } from '@/lib/utils';
 import type { ReportData } from '@/lib/actions/reports';
 
@@ -160,6 +162,25 @@ export function ReportsDashboard({ data }: ReportsDashboardProps) {
                 No invoices yet.
               </div>
             )}
+          </CardContent>
+        </Card>
+      </div>
+
+      {/* AR Aging */}
+      {data.arAging && data.arAging.length > 0 && (
+        <div className="mt-6">
+          <ARAgingBar data={data.arAging} withCard />
+        </div>
+      )}
+
+      {/* AI Payment Reconciliation */}
+      <div className="mt-6">
+        <Card>
+          <CardHeader>
+            <CardTitle>Payment Reconciliation</CardTitle>
+          </CardHeader>
+          <CardContent>
+            <ReconciliationPanel />
           </CardContent>
         </Card>
       </div>

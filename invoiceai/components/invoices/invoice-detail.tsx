@@ -11,9 +11,12 @@ import {
   updateInvoiceStatus,
   deleteInvoiceAction,
   duplicateInvoiceAction,
+  toggleAutoRemind,
 } from '@/lib/actions/invoices';
+import { ReminderSchedule } from '@/components/ReminderSchedule';
+import { sendInvoiceAction } from '@/lib/actions/send-invoice';
 import { formatCurrency, formatDate } from '@/lib/utils';
-import type { InvoiceWithDetails, Invoice } from '@/types/database';
+import type { InvoiceWithDetails, Invoice, Payment } from '@/types/database';
 import {
   DropdownMenu,
   DropdownMenuTrigger,
@@ -30,6 +33,7 @@ export function InvoiceDetail({ invoice }: InvoiceDetailProps) {
   const router = useRouter();
   const { toast } = useToast();
   const [actionLoading, setActionLoading] = useState(false);
+  const [sendingInvoice, setSendingInvoice] = useState(false);
 
   const handleStatusChange = async (status: Invoice['status']) => {
     setActionLoading(true);
@@ -44,6 +48,18 @@ export function InvoiceDetail({ invoice }: InvoiceDetailProps) {
       router.refresh();
     } else {
       toast({ title: 'Error', description: result.error, variant: 'destructive' });
+    }
+  };
+
+  const handleSendInvoice = async () => {
+    setSendingInvoice(true);
+    const result = await sendInvoiceAction(invoice.id);
+    setSendingInvoice(false);
+    if (result.success) {
+      toast({ title: 'Invoice sent successfully', variant: 'success' });
+      router.refresh();
+    } else {
+      toast({ title: 'Error sending invoice', description: result.error, variant: 'destructive' });
     }
   };
 
@@ -124,8 +140,8 @@ export function InvoiceDetail({ invoice }: InvoiceDetailProps) {
           </Button>
 
           {invoice.status === 'draft' && (
-            <Button onClick={() => handleStatusChange('sent')} disabled={actionLoading}>
-              Send Invoice
+            <Button onClick={handleSendInvoice} disabled={actionLoading || sendingInvoice}>
+              {sendingInvoice ? 'Sending...' : 'Send Invoice'}
             </Button>
           )}
           {['sent', 'viewed', 'overdue'].includes(invoice.status) && (
@@ -337,6 +353,50 @@ export function InvoiceDetail({ invoice }: InvoiceDetailProps) {
                 <p className="whitespace-pre-wrap text-sm text-[var(--muted-foreground)]">
                   {invoice.notes}
                 </p>
+              </CardContent>
+            </Card>
+          )}
+
+          <ReminderSchedule
+            invoiceId={invoice.id}
+            dueDate={invoice.due_date}
+            status={invoice.status as 'draft' | 'sent' | 'viewed' | 'paid' | 'overdue'}
+            autoRemindEnabled={(invoice as Record<string, unknown>).auto_remind as boolean | undefined ?? false}
+            onToggle={async (id, enabled) => { await toggleAutoRemind(id, enabled); }}
+          />
+
+          {/* Payment History */}
+          {invoice.payments && invoice.payments.length > 0 && (
+            <Card>
+              <CardHeader>
+                <CardTitle>Payment History</CardTitle>
+              </CardHeader>
+              <CardContent>
+                <div className="space-y-2">
+                  {(invoice.payments as Payment[]).map((payment) => (
+                    <div
+                      key={payment.id}
+                      className="flex items-center justify-between rounded-lg bg-[var(--muted)] px-3 py-2"
+                    >
+                      <div>
+                        <p className="text-xs font-medium text-[var(--foreground)]">
+                          {payment.payment_method.toUpperCase()}
+                        </p>
+                        <p className="text-xs text-[var(--muted-foreground)]">
+                          {formatDate(payment.created_at)}
+                        </p>
+                      </div>
+                      <div className="text-right">
+                        <p className="font-amount text-sm font-medium text-green-600">
+                          +{formatCurrency(payment.amount)}
+                        </p>
+                        <p className="text-xs capitalize text-[var(--muted-foreground)]">
+                          {payment.status}
+                        </p>
+                      </div>
+                    </div>
+                  ))}
+                </div>
               </CardContent>
             </Card>
           )}

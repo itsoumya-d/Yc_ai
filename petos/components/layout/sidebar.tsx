@@ -6,10 +6,16 @@ import { useState } from 'react';
 import { createClient } from '@/lib/supabase/client';
 import { cn } from '@/lib/utils';
 import type { User } from '@supabase/supabase-js';
+import { Gift } from 'lucide-react';
+import { useTranslations } from 'next-intl';
+import { ThemeToggle } from '@/components/ThemeToggle';
+import { NotificationCenter } from '@/components/NotificationCenter';
+import { LanguageSwitcher } from '@/components/LanguageSwitcher';
 
 const navigation = [
   {
     name: 'Dashboard',
+    nameKey: 'dashboard',
     href: '/dashboard',
     icon: (
       <svg className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
@@ -19,6 +25,7 @@ const navigation = [
   },
   {
     name: 'My Pets',
+    nameKey: 'pets',
     href: '/pets',
     icon: (
       <svg className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
@@ -29,6 +36,7 @@ const navigation = [
   },
   {
     name: 'Health',
+    nameKey: 'health',
     href: '/health',
     icon: (
       <svg className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
@@ -38,6 +46,7 @@ const navigation = [
   },
   {
     name: 'Appointments',
+    nameKey: 'appointments',
     href: '/appointments',
     icon: (
       <svg className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
@@ -47,6 +56,7 @@ const navigation = [
   },
   {
     name: 'Expenses',
+    nameKey: 'expenses',
     href: '/expenses',
     icon: (
       <svg className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
@@ -55,7 +65,28 @@ const navigation = [
     ),
   },
   {
+    name: 'Vaccines',
+    nameKey: 'vaccines',
+    href: '/vaccines',
+    icon: (
+      <svg className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
+        <path strokeLinecap="round" strokeLinejoin="round" d="M9.75 3.104v5.714a2.25 2.25 0 0 1-.659 1.591L5 14.5M9.75 3.104c-.251.023-.501.05-.75.082m.75-.082a24.301 24.301 0 0 1 4.5 0m0 0v5.714c0 .597.237 1.17.659 1.591L19.8 15.3M14.25 3.104c.251.023.501.05.75.082M19.8 15.3l-1.57.393A9.065 9.065 0 0 1 12 15a9.065 9.065 0 0 0-6.23.693L5 14.5m14.8.8 1.402 1.402c1.232 1.232.65 3.318-1.067 3.611A48.309 48.309 0 0 1 12 21c-2.773 0-5.491-.235-8.135-.687-1.718-.293-2.3-2.379-1.067-3.61L5 14.5" />
+      </svg>
+    ),
+  },
+  {
+    name: 'Medications',
+    nameKey: 'medications',
+    href: '/medications',
+    icon: (
+      <svg className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
+        <path strokeLinecap="round" strokeLinejoin="round" d="m7.875 14.25 1.214 1.942a2.25 2.25 0 0 0 1.908 1.058h2.006c.776 0 1.497-.4 1.908-1.058l1.214-1.942M2.41 9h4.636a2.25 2.25 0 0 1 1.872 1.002l.164.246a2.25 2.25 0 0 0 1.872 1.002h2.092a2.25 2.25 0 0 0 1.872-1.002l.164-.246A2.25 2.25 0 0 1 16.954 9h4.636M2.41 9a2.25 2.25 0 0 0-.16.832V12a2.25 2.25 0 0 0 2.25 2.25h15A2.25 2.25 0 0 0 21.75 12V9.832c0-.287-.055-.57-.16-.832M2.41 9a2.25 2.25 0 0 1 .382-.632l3.285-3.832a2.25 2.25 0 0 1 1.708-.786h8.43c.657 0 1.281.287 1.709.786l3.284 3.832c.163.19.291.404.382.632" />
+      </svg>
+    ),
+  },
+  {
     name: 'Symptom Check',
+    nameKey: 'symptomCheck',
     href: '/symptom-check',
     icon: (
       <svg className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
@@ -65,6 +96,7 @@ const navigation = [
   },
   {
     name: 'Emergency',
+    nameKey: 'emergency',
     href: '/emergency',
     icon: (
       <svg className="h-5 w-5 text-red-500" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
@@ -77,6 +109,7 @@ const navigation = [
 const bottomNavigation = [
   {
     name: 'Settings',
+    nameKey: 'settings',
     href: '/settings',
     icon: (
       <svg className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
@@ -96,6 +129,7 @@ export function Sidebar({ user }: SidebarProps) {
   const router = useRouter();
   const [collapsed, setCollapsed] = useState(false);
   const supabase = createClient();
+  const t = useTranslations('nav');
 
   async function handleSignOut() {
     await supabase.auth.signOut();
@@ -124,19 +158,22 @@ export function Sidebar({ user }: SidebarProps) {
             PetOS
           </Link>
         )}
-        <button
-          onClick={() => setCollapsed(!collapsed)}
-          className="rounded-lg p-1.5 text-[var(--muted-foreground)] hover:bg-[var(--accent)] hover:text-[var(--foreground)]"
-          aria-label={collapsed ? 'Expand sidebar' : 'Collapse sidebar'}
-        >
-          <svg className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
-            {collapsed ? (
-              <path strokeLinecap="round" strokeLinejoin="round" d="M3.75 6.75h16.5M3.75 12h16.5m-16.5 5.25h16.5" />
-            ) : (
-              <path strokeLinecap="round" strokeLinejoin="round" d="M3.75 6.75h16.5M3.75 12h16.5m-16.5 5.25H12" />
-            )}
-          </svg>
-        </button>
+        <div className="flex items-center gap-1">
+          {!collapsed && <NotificationCenter />}
+          <button
+            onClick={() => setCollapsed(!collapsed)}
+            className="rounded-lg p-1.5 text-[var(--muted-foreground)] hover:bg-[var(--accent)] hover:text-[var(--foreground)]"
+            aria-label={collapsed ? 'Expand sidebar' : 'Collapse sidebar'}
+          >
+            <svg className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
+              {collapsed ? (
+                <path strokeLinecap="round" strokeLinejoin="round" d="M3.75 6.75h16.5M3.75 12h16.5m-16.5 5.25h16.5" />
+              ) : (
+                <path strokeLinecap="round" strokeLinejoin="round" d="M3.75 6.75h16.5M3.75 12h16.5m-16.5 5.25H12" />
+              )}
+            </svg>
+          </button>
+        </div>
       </div>
 
       {/* Add Pet Button */}
@@ -151,12 +188,12 @@ export function Sidebar({ user }: SidebarProps) {
           <svg className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
             <path strokeLinecap="round" strokeLinejoin="round" d="M12 4.5v15m7.5-7.5h-15" />
           </svg>
-          {!collapsed && 'Add Pet'}
+          {!collapsed && t('addPet')}
         </Link>
       </div>
 
       {/* Navigation */}
-      <nav className="flex-1 space-y-1 px-3 py-4">
+      <nav className="flex-1 space-y-1 px-3 py-4" aria-label="Main navigation">
         {navigation.map((item) => {
           const isActive = pathname === item.href || pathname.startsWith(item.href + '/');
           return (
@@ -172,7 +209,7 @@ export function Sidebar({ user }: SidebarProps) {
               )}
             >
               {item.icon}
-              {!collapsed && item.name}
+              {!collapsed && t(item.nameKey)}
             </Link>
           );
         })}
@@ -195,41 +232,60 @@ export function Sidebar({ user }: SidebarProps) {
               )}
             >
               {item.icon}
-              {!collapsed && item.name}
+              {!collapsed && t(item.nameKey)}
             </Link>
           );
         })}
+        <Link
+          href="/settings/referral"
+          className={cn(
+            'flex items-center gap-3 rounded-lg px-3 py-2 text-sm font-medium transition-colors',
+            pathname === '/settings/referral'
+              ? 'bg-brand-50 text-brand-700'
+              : 'text-[var(--muted-foreground)] hover:bg-[var(--accent)] hover:text-[var(--foreground)]',
+            collapsed && 'justify-center px-2'
+          )}
+        >
+          <Gift className="h-5 w-5" />
+          {!collapsed && t('referral')}
+        </Link>
 
         {/* User Profile */}
         <div className={cn(
           'flex items-center gap-3 rounded-lg px-3 py-2',
           collapsed && 'justify-center px-2'
         )}>
-          <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-brand-100 text-sm font-semibold text-brand-700">
+          <Link href="/settings/profile" className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-brand-100 text-sm font-semibold text-brand-700 hover:opacity-80 transition-opacity" title="Edit profile" aria-label="Edit profile">
             {userInitials}
-          </div>
+          </Link>
           {!collapsed && (
-            <div className="flex-1 min-w-0">
+            <Link href="/settings/profile" className="flex-1 min-w-0 hover:opacity-80 transition-opacity">
               <p className="truncate text-sm font-medium text-[var(--foreground)]">
                 {user.user_metadata?.full_name || 'User'}
               </p>
               <p className="truncate text-xs text-[var(--muted-foreground)]">
                 {user.email}
               </p>
-            </div>
+            </Link>
           )}
           {!collapsed && (
-            <button
-              onClick={handleSignOut}
-              className="rounded-lg p-1.5 text-[var(--muted-foreground)] hover:bg-[var(--accent)] hover:text-[var(--foreground)]"
-              aria-label="Sign out"
-            >
-              <svg className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
-                <path strokeLinecap="round" strokeLinejoin="round" d="M15.75 9V5.25A2.25 2.25 0 0 0 13.5 3h-6a2.25 2.25 0 0 0-2.25 2.25v13.5A2.25 2.25 0 0 0 7.5 21h6a2.25 2.25 0 0 0 2.25-2.25V15m3 0 3-3m0 0-3-3m3 3H9" />
-              </svg>
-            </button>
+            <div className="flex items-center gap-1">
+              <ThemeToggle />
+              <button
+                onClick={handleSignOut}
+                className="rounded-lg p-1.5 text-[var(--muted-foreground)] hover:bg-[var(--accent)] hover:text-[var(--foreground)]"
+                aria-label="Sign out"
+              >
+                <svg className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
+                  <path strokeLinecap="round" strokeLinejoin="round" d="M15.75 9V5.25A2.25 2.25 0 0 0 13.5 3h-6a2.25 2.25 0 0 0-2.25 2.25v13.5A2.25 2.25 0 0 0 7.5 21h6a2.25 2.25 0 0 0 2.25-2.25V15m3 0 3-3m0 0-3-3m3 3H9" />
+                </svg>
+              </button>
+            </div>
           )}
         </div>
+        {!collapsed && (
+          <LanguageSwitcher />
+        )}
       </div>
     </aside>
   );

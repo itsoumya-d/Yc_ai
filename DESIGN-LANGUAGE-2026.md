@@ -1,6 +1,6 @@
-# Design Language System — All 21 Apps (V2)
-> **Generated:** 2026-03-17 | **Session:** V2 — Three.js + Premium Design + Sketch MCP + NanoBanner
-> **Scope:** Shannon (#21) + Web Apps #1–10 + Mobile Apps #11–20
+# Design Language System - 20 Canonical Apps + Separate Shannon Track
+> **Generated:** 2026-03-17 | **Session:** V2 - Three.js + Premium Design + Sketch MCP + NanoBanner
+> **Scope:** 10 canonical web apps + 10 canonical mobile apps, with Shannon tracked separately as infrastructure and design reference
 
 ---
 
@@ -14,11 +14,11 @@ For each app this document defines:
 5. **NanoBanner Prompts** — AI image generation parameters
 6. **Animation System** — durations, easings, interaction map
 
-> **Critical Rule:** No two apps share a color palette, typographic combination, or Three.js scene type.
+> **Critical Rule:** No two canonical product apps share a color palette, typographic combination, or Three.js scene type.
 
 ---
 
-# APP #0: SHANNON — AI Pentester SaaS
+# SHANNON TRACK: Separate Infrastructure / Design Reference
 **Path:** `E:\Yc_ai\shannon\web\`
 **Category:** Cybersecurity SaaS
 **Tagline:** "Prove vulnerabilities before they reach production."
@@ -1162,3 +1162,4 @@ Rate: Generate hero → onboarding (3 steps) → feature illustrations (n featur
 
 *End of Design Language System 2026 — v2.0*
 *All 21 apps documented. Implement Three.js → tokens → NanoBanner in that order.*
+

@@ -1,8 +1,27 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { createClient } from '@/lib/supabase/server';
 import { generateInvoiceFromDescription } from '@/lib/openai/client';
+import { aiRateLimit, getRateLimitHeaders } from '@/lib/rate-limit';
 
 export async function POST(request: NextRequest) {
+  const ip =
+    request.headers.get('x-forwarded-for') ??
+    request.headers.get('x-real-ip') ??
+    'anonymous';
+  const rateLimitResult = aiRateLimit(ip);
+  if (!rateLimitResult.success) {
+    return NextResponse.json(
+      { error: 'Too many requests. Please try again later.' },
+      {
+        status: 429,
+        headers: {
+          ...getRateLimitHeaders(rateLimitResult, 5),
+          'Retry-After': String(Math.ceil((rateLimitResult.resetAt - Date.now()) / 1000)),
+        },
+      }
+    );
+  }
+
   const supabase = await createClient();
   const {
     data: { user },

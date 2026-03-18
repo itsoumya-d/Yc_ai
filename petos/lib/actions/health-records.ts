@@ -3,6 +3,7 @@
 import { createClient } from '@/lib/supabase/server';
 import { revalidatePath } from 'next/cache';
 import type { HealthRecord } from '@/types/database';
+import { healthRecordSchema } from '@/lib/validations';
 
 interface ActionResult<T = null> {
   data?: T;
@@ -34,13 +35,24 @@ export async function createHealthRecord(formData: FormData): Promise<ActionResu
   const { data: { user } } = await supabase.auth.getUser();
   if (!user) return { error: 'Not authenticated' };
 
+  const parsed = healthRecordSchema.safeParse({
+    petId: formData.get('pet_id'),
+    type: formData.get('type'),
+    date: formData.get('date'),
+    title: formData.get('title'),
+    details: (formData.get('description') as string) || undefined,
+    vetName: (formData.get('vet_name') as string) || undefined,
+    nextDue: (formData.get('next_due') as string) || undefined,
+  });
+  if (!parsed.success) return { error: parsed.error.errors[0]?.message ?? 'Invalid input' };
+
   const recordData = {
-    pet_id: formData.get('pet_id') as string,
-    type: formData.get('type') as string,
-    title: formData.get('title') as string,
-    description: (formData.get('description') as string) || null,
-    date: formData.get('date') as string,
-    vet_name: (formData.get('vet_name') as string) || null,
+    pet_id: parsed.data.petId,
+    type: parsed.data.type,
+    title: parsed.data.title,
+    description: parsed.data.details ?? null,
+    date: parsed.data.date,
+    vet_name: parsed.data.vetName ?? null,
     vet_clinic: (formData.get('vet_clinic') as string) || null,
     cost: formData.get('cost') ? parseFloat(formData.get('cost') as string) : null,
     notes: (formData.get('notes') as string) || null,

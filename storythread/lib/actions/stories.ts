@@ -3,6 +3,7 @@
 import { createClient } from '@/lib/supabase/server';
 import { revalidatePath } from 'next/cache';
 import type { Story, StoryWithDetails } from '@/types/database';
+import { storySchema } from '@/lib/validations';
 
 export interface ActionResult<T = null> {
   data?: T;
@@ -53,9 +54,14 @@ export async function createStory(formData: FormData): Promise<ActionResult<Stor
   const { data: { user } } = await supabase.auth.getUser();
   if (!user) return { error: 'Not authenticated' };
 
-  const title = formData.get('title') as string;
-  const description = formData.get('description') as string || null;
-  const genre = formData.get('genre') as string || 'other';
+  const parsed = storySchema.safeParse({
+    title: formData.get('title'),
+    genre: formData.get('genre') || 'fantasy',
+    premise: formData.get('description') || formData.get('premise'),
+    targetWordCount: formData.get('targetWordCount') ? Number(formData.get('targetWordCount')) : undefined,
+  });
+  if (!parsed.success) return { error: parsed.error.errors[0]?.message ?? 'Invalid input' };
+
   const cover_url = formData.get('cover_url') as string || null;
   const tagsStr = formData.get('tags') as string || '';
   const tags = tagsStr ? tagsStr.split(',').map((t) => t.trim()).filter(Boolean) : [];
@@ -64,9 +70,9 @@ export async function createStory(formData: FormData): Promise<ActionResult<Stor
     .from('stories')
     .insert({
       user_id: user.id,
-      title,
-      description,
-      genre,
+      title: parsed.data.title,
+      description: parsed.data.premise,
+      genre: parsed.data.genre,
       status: 'draft',
       cover_url,
       tags,
@@ -88,9 +94,14 @@ export async function updateStory(id: string, formData: FormData): Promise<Actio
   const { data: { user } } = await supabase.auth.getUser();
   if (!user) return { error: 'Not authenticated' };
 
-  const title = formData.get('title') as string;
-  const description = formData.get('description') as string || null;
-  const genre = formData.get('genre') as string;
+  const parsed = storySchema.partial().safeParse({
+    title: formData.get('title') || undefined,
+    genre: formData.get('genre') || undefined,
+    premise: formData.get('description') || formData.get('premise') || undefined,
+    targetWordCount: formData.get('targetWordCount') ? Number(formData.get('targetWordCount')) : undefined,
+  });
+  if (!parsed.success) return { error: parsed.error.errors[0]?.message ?? 'Invalid input' };
+
   const status = formData.get('status') as string;
   const cover_url = formData.get('cover_url') as string || null;
   const tagsStr = formData.get('tags') as string || '';
@@ -98,7 +109,15 @@ export async function updateStory(id: string, formData: FormData): Promise<Actio
 
   const { data, error } = await supabase
     .from('stories')
-    .update({ title, description, genre, status, cover_url, tags, updated_at: new Date().toISOString() })
+    .update({
+      title: parsed.data.title,
+      description: parsed.data.premise,
+      genre: parsed.data.genre,
+      status,
+      cover_url,
+      tags,
+      updated_at: new Date().toISOString(),
+    })
     .eq('id', id)
     .eq('user_id', user.id)
     .select()

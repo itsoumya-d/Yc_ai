@@ -3,6 +3,7 @@
 import { createClient } from '@/lib/supabase/server';
 import { revalidatePath } from 'next/cache';
 import type { Client } from '@/types/database';
+import { clientSchema } from '@/lib/validations';
 
 export interface ClientFormData {
   name: string;
@@ -118,21 +119,22 @@ export async function createClientAction(formData: ClientFormData): Promise<Acti
     return { success: false, error: 'Not authenticated' };
   }
 
-  if (!formData.name?.trim()) {
-    return { success: false, error: 'Client name is required' };
-  }
-
-  if (!formData.email?.trim()) {
-    return { success: false, error: 'Email is required' };
+  const parsed = clientSchema.safeParse({
+    name: formData.name?.trim(),
+    email: formData.email?.trim(),
+    company: formData.company?.trim() || undefined,
+  });
+  if (!parsed.success) {
+    return { success: false, error: parsed.error.errors[0]?.message ?? 'Invalid input' };
   }
 
   const { data, error } = await supabase
     .from('clients')
     .insert({
       user_id: user.id,
-      name: formData.name.trim(),
-      company: formData.company?.trim() || null,
-      email: formData.email.trim().toLowerCase(),
+      name: parsed.data.name,
+      company: parsed.data.company || null,
+      email: parsed.data.email.toLowerCase(),
       emails_additional: formData.emails_additional ?? [],
       phone: formData.phone?.trim() || null,
       address: formData.address?.trim() || null,
@@ -164,11 +166,20 @@ export async function updateClientAction(
     return { success: false, error: 'Not authenticated' };
   }
 
+  const parsed = clientSchema.partial().safeParse({
+    name: formData.name?.trim() || undefined,
+    email: formData.email?.trim() || undefined,
+    company: formData.company?.trim() || undefined,
+  });
+  if (!parsed.success) {
+    return { success: false, error: parsed.error.errors[0]?.message ?? 'Invalid input' };
+  }
+
   const updateData: Record<string, unknown> = {};
 
-  if (formData.name !== undefined) updateData.name = formData.name.trim();
-  if (formData.company !== undefined) updateData.company = formData.company?.trim() || null;
-  if (formData.email !== undefined) updateData.email = formData.email.trim().toLowerCase();
+  if (parsed.data.name !== undefined) updateData.name = parsed.data.name;
+  if (parsed.data.company !== undefined) updateData.company = parsed.data.company || null;
+  if (parsed.data.email !== undefined) updateData.email = parsed.data.email.toLowerCase();
   if (formData.emails_additional !== undefined)
     updateData.emails_additional = formData.emails_additional;
   if (formData.phone !== undefined) updateData.phone = formData.phone?.trim() || null;
@@ -263,4 +274,38 @@ export async function deleteClientAction(id: string): Promise<{ success: boolean
 
   revalidatePath('/clients');
   return { success: true };
+}
+
+export async function importClientsFromCSV(csvText: string): Promise<{ imported: number; errors: number }> {
+  'use server';
+  const supabase = await createClient();
+  const { data: { user } } = await supabase.auth.getUser();
+  if (!user) return { imported: 0, errors: 0 };
+
+  const lines = csvText.trim().split('\n');
+  if (lines.length < 2) return { imported: 0, errors: 0 };
+
+  const headers = lines[0]!.split(',').map(h => h.trim().toLowerCase().replace(/"/g, ''));
+  let imported = 0, errors = 0;
+
+  const records = lines.slice(1).map(line => {
+    const values = line.split(',').map(v => v.trim().replace(/"/g, ''));
+    const row = Object.fromEntries(headers.map((h, i) => [h, values[i] ?? '']));
+    return {
+      user_id: user.id,
+      name: row.name || row['client name'] || row['full name'] || '',
+      email: row.email || row['email address'] || '',
+      company: row.company || row['company name'] || '',
+      phone: row.phone || row['phone number'] || '',
+    };
+  }).filter(r => r.name && r.email);
+
+  for (const record of records) {
+    const { error } = await supabase.from('clients').insert(record);
+    if (error) errors++;
+    else imported++;
+  }
+
+  revalidatePath('/clients');
+  return { imported, errors };
 }

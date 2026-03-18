@@ -19,65 +19,66 @@ export async function getDashboardData(): Promise<ActionResult<DashboardData>> {
   const { data: { user } } = await supabase.auth.getUser();
   if (!user) return { error: 'Not authenticated' };
 
-  // Get pet count
-  const { count: petCount } = await supabase
+  const today = new Date().toISOString().split('T')[0];
+  const monthStart = new Date(new Date().getFullYear(), new Date().getMonth(), 1)
+    .toISOString()
+    .split('T')[0];
+
+  // First: get pet IDs (lightweight — only id column)
+  const { data: userPets, count: petCount } = await supabase
     .from('pets')
-    .select('*', { count: 'exact', head: true })
+    .select('id', { count: 'exact' })
     .eq('user_id', user.id);
 
-  // Get user's pet IDs
-  const { data: userPets } = await supabase
-    .from('pets')
-    .select('id')
-    .eq('user_id', user.id);
+  const petIds = (userPets ?? []).map((p) => p.id);
 
-  const petIds = userPets?.map((p) => p.id) || [];
+  if (petIds.length === 0) {
+    return {
+      data: {
+        petCount: petCount ?? 0,
+        upcomingAppointments: 0,
+        activeMedications: 0,
+        monthlyExpenses: 0,
+      },
+    };
+  }
 
-  let upcomingAppointments = 0;
-  let activeMedications = 0;
-  let monthlyExpenses = 0;
-
-  if (petIds.length > 0) {
-    const today = new Date().toISOString().split('T')[0];
-
-    // Upcoming appointments
-    const { count: apptCount } = await supabase
+  // All remaining queries run in parallel now that we have pet IDs
+  const [
+    { count: upcomingAppointments },
+    { count: activeMedications },
+    expensesRes,
+  ] = await Promise.all([
+    // Count-only: upcoming scheduled appointments
+    supabase
       .from('appointments')
-      .select('*', { count: 'exact', head: true })
+      .select('id', { count: 'exact', head: true })
       .in('pet_id', petIds)
       .eq('status', 'scheduled')
-      .gte('date', today);
+      .gte('date', today),
 
-    upcomingAppointments = apptCount || 0;
-
-    // Active medications
-    const { count: medCount } = await supabase
+    // Count-only: active medications
+    supabase
       .from('medications')
-      .select('*', { count: 'exact', head: true })
+      .select('id', { count: 'exact', head: true })
       .in('pet_id', petIds)
-      .eq('is_active', true);
+      .eq('is_active', true),
 
-    activeMedications = medCount || 0;
-
-    // Monthly expenses
-    const monthStart = new Date(new Date().getFullYear(), new Date().getMonth(), 1)
-      .toISOString()
-      .split('T')[0];
-
-    const { data: expenses } = await supabase
+    // Monthly expenses: only the amount column needed for summing
+    supabase
       .from('expenses')
       .select('amount')
       .in('pet_id', petIds)
-      .gte('date', monthStart);
+      .gte('date', monthStart),
+  ]);
 
-    monthlyExpenses = expenses?.reduce((sum, e) => sum + e.amount, 0) || 0;
-  }
+  const monthlyExpenses = (expensesRes.data ?? []).reduce((sum, e) => sum + e.amount, 0);
 
   return {
     data: {
-      petCount: petCount || 0,
-      upcomingAppointments,
-      activeMedications,
+      petCount: petCount ?? 0,
+      upcomingAppointments: upcomingAppointments ?? 0,
+      activeMedications: activeMedications ?? 0,
       monthlyExpenses,
     },
   };

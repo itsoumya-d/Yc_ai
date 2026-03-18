@@ -4,6 +4,7 @@ import { createClient } from '@/lib/supabase/server';
 import { revalidatePath } from 'next/cache';
 import type { Chapter } from '@/types/database';
 import { countWords } from '@/lib/utils';
+import { chapterSchema } from '@/lib/validations';
 
 interface ActionResult<T = null> {
   data?: T;
@@ -45,10 +46,6 @@ export async function createChapter(storyId: string, formData: FormData): Promis
   const { data: { user } } = await supabase.auth.getUser();
   if (!user) return { error: 'Not authenticated' };
 
-  const title = formData.get('title') as string;
-  const content = formData.get('content') as string || '';
-  const notes = formData.get('notes') as string || null;
-
   // Get next order_index
   const { data: existing } = await supabase
     .from('chapters')
@@ -58,16 +55,26 @@ export async function createChapter(storyId: string, formData: FormData): Promis
     .limit(1);
 
   const nextIndex = existing && existing.length > 0 ? (existing[0] as { order_index: number }).order_index + 1 : 0;
-  const wordCount = countWords(content);
+
+  const parsed = chapterSchema.safeParse({
+    storyId,
+    title: formData.get('title'),
+    content: formData.get('content') || '',
+    orderIndex: nextIndex,
+  });
+  if (!parsed.success) return { error: parsed.error.errors[0]?.message ?? 'Invalid input' };
+
+  const notes = formData.get('notes') as string || null;
+  const wordCount = countWords(parsed.data.content);
 
   const { data, error } = await supabase
     .from('chapters')
     .insert({
-      story_id: storyId,
-      title,
-      content,
+      story_id: parsed.data.storyId,
+      title: parsed.data.title,
+      content: parsed.data.content,
       status: 'draft',
-      order_index: nextIndex,
+      order_index: parsed.data.orderIndex,
       word_count: wordCount,
       notes,
     })
@@ -88,8 +95,13 @@ export async function updateChapter(id: string, formData: FormData): Promise<Act
   const { data: { user } } = await supabase.auth.getUser();
   if (!user) return { error: 'Not authenticated' };
 
-  const title = formData.get('title') as string;
-  const content = formData.get('content') as string || '';
+  const parsed = chapterSchema.partial().safeParse({
+    title: formData.get('title') || undefined,
+    content: formData.get('content') || undefined,
+  });
+  if (!parsed.success) return { error: parsed.error.errors[0]?.message ?? 'Invalid input' };
+
+  const content = parsed.data.content ?? '';
   const status = formData.get('status') as string || 'draft';
   const notes = formData.get('notes') as string || null;
   const wordCount = countWords(content);
@@ -97,7 +109,7 @@ export async function updateChapter(id: string, formData: FormData): Promise<Act
   const { data, error } = await supabase
     .from('chapters')
     .update({
-      title,
+      title: parsed.data.title,
       content,
       status,
       word_count: wordCount,

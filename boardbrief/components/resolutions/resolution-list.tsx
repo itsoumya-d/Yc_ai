@@ -5,9 +5,10 @@ import type { Resolution } from '@/types/database';
 
 interface ResolutionListProps {
   resolutions: Resolution[];
+  boardMemberCount?: number;
 }
 
-export function ResolutionList({ resolutions }: ResolutionListProps) {
+export function ResolutionList({ resolutions, boardMemberCount = 9 }: ResolutionListProps) {
   if (resolutions.length === 0) {
     return (
       <EmptyState
@@ -22,7 +23,11 @@ export function ResolutionList({ resolutions }: ResolutionListProps) {
   return (
     <div className="space-y-3">
       {resolutions.map((resolution) => (
-        <ResolutionCard key={resolution.id} resolution={resolution} />
+        <ResolutionCard
+          key={resolution.id}
+          resolution={resolution}
+          totalBoardMembers={boardMemberCount}
+        />
       ))}
     </div>
   );

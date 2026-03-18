@@ -6,10 +6,16 @@ import { useState } from 'react';
 import { createClient } from '@/lib/supabase/client';
 import { cn } from '@/lib/utils';
 import type { User } from '@supabase/supabase-js';
+import { Gift, Plug } from 'lucide-react';
+import { useTranslations } from 'next-intl';
+import { ThemeToggle } from '@/components/ThemeToggle';
+import { NotificationCenter } from '@/components/NotificationCenter';
+import { LanguageSwitcher } from '@/components/LanguageSwitcher';
 
 const navigation = [
   {
     name: 'Dashboard',
+    nameKey: 'dashboard',
     href: '/dashboard',
     icon: (
       <svg className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
@@ -19,6 +25,7 @@ const navigation = [
   },
   {
     name: 'Invoices',
+    nameKey: 'invoices',
     href: '/invoices',
     icon: (
       <svg className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
@@ -28,6 +35,7 @@ const navigation = [
   },
   {
     name: 'Clients',
+    nameKey: 'clients',
     href: '/clients',
     icon: (
       <svg className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
@@ -37,6 +45,7 @@ const navigation = [
   },
   {
     name: 'Expenses',
+    nameKey: 'expenses',
     href: '/expenses',
     icon: (
       <svg className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
@@ -45,7 +54,18 @@ const navigation = [
     ),
   },
   {
+    name: 'Recurring',
+    nameKey: 'recurring',
+    href: '/recurring-invoices',
+    icon: (
+      <svg className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
+        <path strokeLinecap="round" strokeLinejoin="round" d="M16.023 9.348h4.992v-.001M2.985 19.644v-4.992m0 0h4.992m-4.993 0 3.181 3.183a8.25 8.25 0 0 0 13.803-3.7M4.031 9.865a8.25 8.25 0 0 1 13.803-3.7l3.181 3.182m0-4.991v4.99" />
+      </svg>
+    ),
+  },
+  {
     name: 'Follow-ups',
+    nameKey: 'followUps',
     href: '/follow-ups',
     icon: (
       <svg className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
@@ -55,6 +75,7 @@ const navigation = [
   },
   {
     name: 'Reports',
+    nameKey: 'reports',
     href: '/reports',
     icon: (
       <svg className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
@@ -67,6 +88,7 @@ const navigation = [
 const bottomNavigation = [
   {
     name: 'Settings',
+    nameKey: 'settings',
     href: '/settings',
     icon: (
       <svg className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
@@ -85,6 +107,7 @@ export function Sidebar({ user }: SidebarProps) {
   const pathname = usePathname();
   const router = useRouter();
   const [collapsed, setCollapsed] = useState(false);
+  const t = useTranslations('nav');
   const supabase = createClient();
 
   async function handleSignOut() {
@@ -114,19 +137,22 @@ export function Sidebar({ user }: SidebarProps) {
             InvoiceAI
           </Link>
         )}
-        <button
-          onClick={() => setCollapsed(!collapsed)}
-          className="rounded-lg p-1.5 text-[var(--muted-foreground)] hover:bg-[var(--accent)] hover:text-[var(--foreground)]"
-          aria-label={collapsed ? 'Expand sidebar' : 'Collapse sidebar'}
-        >
-          <svg className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
-            {collapsed ? (
-              <path strokeLinecap="round" strokeLinejoin="round" d="M3.75 6.75h16.5M3.75 12h16.5m-16.5 5.25h16.5" />
-            ) : (
-              <path strokeLinecap="round" strokeLinejoin="round" d="M3.75 6.75h16.5M3.75 12h16.5m-16.5 5.25H12" />
-            )}
-          </svg>
-        </button>
+        <div className="flex items-center gap-1">
+          {!collapsed && <NotificationCenter />}
+          <button
+            onClick={() => setCollapsed(!collapsed)}
+            className="rounded-lg p-1.5 text-[var(--muted-foreground)] hover:bg-[var(--accent)] hover:text-[var(--foreground)]"
+            aria-label={collapsed ? 'Expand sidebar' : 'Collapse sidebar'}
+          >
+            <svg className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
+              {collapsed ? (
+                <path strokeLinecap="round" strokeLinejoin="round" d="M3.75 6.75h16.5M3.75 12h16.5m-16.5 5.25h16.5" />
+              ) : (
+                <path strokeLinecap="round" strokeLinejoin="round" d="M3.75 6.75h16.5M3.75 12h16.5m-16.5 5.25H12" />
+              )}
+            </svg>
+          </button>
+        </div>
       </div>
 
       {/* New Invoice Button */}
@@ -141,12 +167,12 @@ export function Sidebar({ user }: SidebarProps) {
           <svg className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
             <path strokeLinecap="round" strokeLinejoin="round" d="M12 4.5v15m7.5-7.5h-15" />
           </svg>
-          {!collapsed && 'New Invoice'}
+          {!collapsed && t('newInvoice')}
         </Link>
       </div>
 
       {/* Navigation */}
-      <nav className="flex-1 space-y-1 px-3 py-4">
+      <nav className="flex-1 space-y-1 px-3 py-4" aria-label="Main navigation">
         {navigation.map((item) => {
           const isActive = pathname === item.href || pathname.startsWith(item.href + '/');
           return (
@@ -162,7 +188,7 @@ export function Sidebar({ user }: SidebarProps) {
               )}
             >
               {item.icon}
-              {!collapsed && item.name}
+              {!collapsed && t(item.nameKey)}
             </Link>
           );
         })}
@@ -185,41 +211,73 @@ export function Sidebar({ user }: SidebarProps) {
               )}
             >
               {item.icon}
-              {!collapsed && item.name}
+              {!collapsed && t(item.nameKey)}
             </Link>
           );
         })}
+        <Link
+          href="/settings/integrations"
+          className={cn(
+            'flex items-center gap-3 rounded-lg px-3 py-2 text-sm font-medium transition-colors',
+            pathname === '/settings/integrations'
+              ? 'bg-brand-50 text-brand-700'
+              : 'text-[var(--muted-foreground)] hover:bg-[var(--accent)] hover:text-[var(--foreground)]',
+            collapsed && 'justify-center px-2'
+          )}
+        >
+          <Plug className="h-5 w-5" />
+          {!collapsed && 'Integrations'}
+        </Link>
+        <Link
+          href="/settings/referral"
+          className={cn(
+            'flex items-center gap-3 rounded-lg px-3 py-2 text-sm font-medium transition-colors',
+            pathname === '/settings/referral'
+              ? 'bg-brand-50 text-brand-700'
+              : 'text-[var(--muted-foreground)] hover:bg-[var(--accent)] hover:text-[var(--foreground)]',
+            collapsed && 'justify-center px-2'
+          )}
+        >
+          <Gift className="h-5 w-5" />
+          {!collapsed && t('referral')}
+        </Link>
 
         {/* User Profile */}
         <div className={cn(
           'flex items-center gap-3 rounded-lg px-3 py-2',
           collapsed && 'justify-center px-2'
         )}>
-          <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-brand-100 text-sm font-semibold text-brand-700">
+          <Link href="/settings/profile" className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-brand-100 text-sm font-semibold text-brand-700 hover:opacity-80 transition-opacity" title="Edit profile" aria-label="Edit profile">
             {userInitials}
-          </div>
+          </Link>
           {!collapsed && (
-            <div className="flex-1 min-w-0">
+            <Link href="/settings/profile" className="flex-1 min-w-0 hover:opacity-80 transition-opacity">
               <p className="truncate text-sm font-medium text-[var(--foreground)]">
                 {user.user_metadata?.full_name || 'User'}
               </p>
               <p className="truncate text-xs text-[var(--muted-foreground)]">
                 {user.email}
               </p>
-            </div>
+            </Link>
           )}
           {!collapsed && (
-            <button
-              onClick={handleSignOut}
-              className="rounded-lg p-1.5 text-[var(--muted-foreground)] hover:bg-[var(--accent)] hover:text-[var(--foreground)]"
-              aria-label="Sign out"
-            >
-              <svg className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
-                <path strokeLinecap="round" strokeLinejoin="round" d="M15.75 9V5.25A2.25 2.25 0 0 0 13.5 3h-6a2.25 2.25 0 0 0-2.25 2.25v13.5A2.25 2.25 0 0 0 7.5 21h6a2.25 2.25 0 0 0 2.25-2.25V15m3 0 3-3m0 0-3-3m3 3H9" />
-              </svg>
-            </button>
+            <div className="flex items-center gap-1">
+              <ThemeToggle />
+              <button
+                onClick={handleSignOut}
+                className="rounded-lg p-1.5 text-[var(--muted-foreground)] hover:bg-[var(--accent)] hover:text-[var(--foreground)]"
+                aria-label="Sign out"
+              >
+                <svg className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
+                  <path strokeLinecap="round" strokeLinejoin="round" d="M15.75 9V5.25A2.25 2.25 0 0 0 13.5 3h-6a2.25 2.25 0 0 0-2.25 2.25v13.5A2.25 2.25 0 0 0 7.5 21h6a2.25 2.25 0 0 0 2.25-2.25V15m3 0 3-3m0 0-3-3m3 3H9" />
+                </svg>
+              </button>
+            </div>
           )}
         </div>
+        {!collapsed && (
+          <LanguageSwitcher />
+        )}
       </div>
     </aside>
   );

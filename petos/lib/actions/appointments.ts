@@ -3,6 +3,7 @@
 import { createClient } from '@/lib/supabase/server';
 import { revalidatePath } from 'next/cache';
 import type { Appointment } from '@/types/database';
+import { appointmentSchema } from '@/lib/validations';
 
 interface ActionResult<T = null> {
   data?: T;
@@ -54,15 +55,24 @@ export async function createAppointment(formData: FormData): Promise<ActionResul
   const { data: { user } } = await supabase.auth.getUser();
   if (!user) return { error: 'Not authenticated' };
 
+  const parsed = appointmentSchema.safeParse({
+    petId: formData.get('pet_id'),
+    vetId: (formData.get('vet_id') as string) || undefined,
+    type: formData.get('type'),
+    scheduledAt: formData.get('date'),
+    notes: (formData.get('notes') as string) || undefined,
+  });
+  if (!parsed.success) return { error: parsed.error.errors[0]?.message ?? 'Invalid input' };
+
   const apptData = {
-    pet_id: formData.get('pet_id') as string,
-    date: formData.get('date') as string,
+    pet_id: parsed.data.petId,
+    date: parsed.data.scheduledAt,
     time: (formData.get('time') as string) || null,
-    type: formData.get('type') as string,
+    type: parsed.data.type,
     vet_name: (formData.get('vet_name') as string) || null,
     clinic_name: (formData.get('clinic_name') as string) || null,
     clinic_address: (formData.get('clinic_address') as string) || null,
-    notes: (formData.get('notes') as string) || null,
+    notes: parsed.data.notes ?? null,
     status: 'scheduled',
   };
 
@@ -83,15 +93,22 @@ export async function updateAppointment(id: string, formData: FormData): Promise
   const { data: { user } } = await supabase.auth.getUser();
   if (!user) return { error: 'Not authenticated' };
 
+  const parsed = appointmentSchema.partial().safeParse({
+    petId: (formData.get('pet_id') as string) || undefined,
+    type: (formData.get('type') as string) || undefined,
+    scheduledAt: (formData.get('date') as string) || undefined,
+    notes: formData.get('notes') !== null ? (formData.get('notes') as string) : undefined,
+  });
+  if (!parsed.success) return { error: parsed.error.errors[0]?.message ?? 'Invalid input' };
+
   const updates: Record<string, unknown> = {};
   const status = formData.get('status');
   if (status) updates.status = status;
-  const date = formData.get('date');
-  if (date) updates.date = date;
+  if (parsed.data.scheduledAt) updates.date = parsed.data.scheduledAt;
   const time = formData.get('time');
   if (time) updates.time = time;
-  const notes = formData.get('notes');
-  if (notes !== null) updates.notes = notes;
+  if (parsed.data.notes !== undefined) updates.notes = parsed.data.notes;
+  if (parsed.data.type) updates.type = parsed.data.type;
 
   const { data, error } = await supabase
     .from('appointments')

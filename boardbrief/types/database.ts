@@ -1,3 +1,6 @@
+export type BoardRole = 'admin' | 'secretary' | 'member' | 'observer';
+export type BoardMembershipStatus = 'pending' | 'active' | 'inactive';
+export type MeetingFrequency = 'weekly' | 'biweekly' | 'monthly' | 'quarterly' | 'annual';
 export type MemberType = 'director' | 'observer' | 'advisor';
 export type MeetingType = 'regular' | 'special' | 'committee' | 'annual';
 export type MeetingStatus = 'draft' | 'scheduled' | 'completed' | 'canceled';

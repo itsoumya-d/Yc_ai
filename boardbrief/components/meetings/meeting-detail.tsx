@@ -9,6 +9,8 @@ import { Badge } from '@/components/ui/badge';
 import { useToast } from '@/components/ui/toast';
 import { deleteMeeting } from '@/lib/actions/meetings';
 import { generateMeetingSummary } from '@/lib/actions/ai-meetings';
+import { DownloadBoardPack } from '@/components/DownloadBoardPack';
+import { MeetingTranscription } from '@/components/MeetingTranscription';
 import { formatDateTime, getMeetingTypeLabel, getMeetingStatusLabel } from '@/lib/utils';
 import {
   Edit,
@@ -119,6 +121,7 @@ export function MeetingDetail({ meeting }: MeetingDetailProps) {
               Edit
             </Button>
           </Link>
+          <DownloadBoardPack meetingId={meeting.id} />
           <a href={`/api/meetings/${meeting.id}/pdf`} download>
             <Button variant="outline" size="sm">
               <Download className="w-4 h-4 mr-1" />
@@ -182,6 +185,12 @@ export function MeetingDetail({ meeting }: MeetingDetailProps) {
           </p>
         )}
       </Card>
+
+      {/* AI Meeting Transcription */}
+      <section>
+        <h2 className="text-lg font-semibold text-[var(--foreground)] mb-4">AI Transcription</h2>
+        <MeetingTranscription meetingId={meeting.id} />
+      </section>
 
       {meeting.action_items.length > 0 && (
         <Card className="p-4">

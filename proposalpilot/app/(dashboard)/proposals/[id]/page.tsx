@@ -1,5 +1,5 @@
 import { notFound } from 'next/navigation';
-import { getProposal } from '@/lib/actions/proposals';
+import { getProposal, getProposalAnalytics } from '@/lib/actions/proposals';
 import { ProposalDetail } from '@/components/proposals/proposal-detail';
 import type { Metadata } from 'next';
 
@@ -13,8 +13,11 @@ export async function generateMetadata({ params }: { params: Promise<{ id: strin
 
 export default async function ProposalPage({ params }: { params: Promise<{ id: string }> }) {
   const { id } = await params;
-  const { data: proposal, error } = await getProposal(id);
+  const [{ data: proposal, error }, analytics] = await Promise.all([
+    getProposal(id),
+    getProposalAnalytics(id),
+  ]);
   if (error || !proposal) notFound();
 
-  return <ProposalDetail proposal={proposal} />;
+  return <ProposalDetail proposal={proposal} analytics={analytics} />;
 }

@@ -19,19 +19,20 @@ export async function getDashboardData(): Promise<ActionResult<DashboardData>> {
   const { data: { user } } = await supabase.auth.getUser();
   if (!user) return { error: 'Not authenticated' };
 
+  // Run all dashboard queries in parallel with explicit column selection (avoids SELECT *)
   const [meetingsRes, membersRes, actionsRes, resolutionsRes] = await Promise.all([
-    supabase.from('meetings').select('*').eq('user_id', user.id).in('status', ['draft', 'scheduled']).order('scheduled_at', { ascending: true, nullsFirst: false }).limit(5),
-    supabase.from('board_members').select('id').eq('user_id', user.id).eq('is_active', true),
-    supabase.from('action_items').select('*').eq('user_id', user.id).in('status', ['open', 'in_progress']).order('due_date', { ascending: true, nullsFirst: false }).limit(5),
-    supabase.from('resolutions').select('id').eq('user_id', user.id).in('status', ['draft', 'voting']),
+    supabase.from('meetings').select('id, title, status, scheduled_at, location, agenda_id').eq('user_id', user.id).in('status', ['draft', 'scheduled']).order('scheduled_at', { ascending: true, nullsFirst: false }).limit(5),
+    supabase.from('board_members').select('id', { count: 'exact', head: true }).eq('user_id', user.id).eq('is_active', true),
+    supabase.from('action_items').select('id, title, status, due_date, priority, assignee_id').eq('user_id', user.id).in('status', ['open', 'in_progress']).order('due_date', { ascending: true, nullsFirst: false }).limit(5),
+    supabase.from('resolutions').select('id', { count: 'exact', head: true }).eq('user_id', user.id).in('status', ['draft', 'voting']),
   ]);
 
   return {
     data: {
-      meetingCount: (meetingsRes.data ?? []).length,
-      boardMemberCount: (membersRes.data ?? []).length,
-      openActionItems: (actionsRes.data ?? []).length,
-      pendingResolutions: (resolutionsRes.data ?? []).length,
+      meetingCount: meetingsRes.data?.length ?? 0,
+      boardMemberCount: membersRes.count ?? 0,
+      openActionItems: actionsRes.data?.length ?? 0,
+      pendingResolutions: resolutionsRes.count ?? 0,
       upcomingMeetings: (meetingsRes.data ?? []) as Meeting[],
       recentActionItems: (actionsRes.data ?? []) as ActionItem[],
     },

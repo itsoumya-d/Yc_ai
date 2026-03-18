@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
+import { motion, AnimatePresence } from 'framer-motion';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
@@ -9,8 +10,15 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { useToast } from '@/components/ui/toast';
 import { createInvoiceAction, type InvoiceItemInput } from '@/lib/actions/invoices';
 import { getClients } from '@/lib/actions/clients';
+import { InvoiceLivePreview } from '@/components/invoices/invoice-live-preview';
 import { formatCurrency } from '@/lib/utils';
+import { CurrencySelector } from '@/components/invoices/CurrencySelector';
+import { TaxRateSelector } from '@/components/invoices/TaxRateSelector';
+import { PanelRight, PanelRightClose, Sparkles, Loader2, StopCircle } from 'lucide-react';
 import type { Client } from '@/types/database';
+import { useAutoSave } from '@/lib/hooks/useAutoSave';
+import { AutoSaveIndicator } from '@/components/ui/auto-save-indicator';
+import { useAiStream } from '@/lib/hooks/useAiStream';
 
 export default function NewInvoicePage() {
   const router = useRouter();
@@ -19,6 +27,7 @@ export default function NewInvoicePage() {
   const [aiInput, setAiInput] = useState('');
   const [generating, setGenerating] = useState(false);
   const [saving, setSaving] = useState(false);
+  const [showPreview, setShowPreview] = useState(true);
   const [clients, setClients] = useState<Client[]>([]);
   const [selectedClientId, setSelectedClientId] = useState('');
 
@@ -29,6 +38,7 @@ export default function NewInvoicePage() {
   const [dueDate, setDueDate] = useState(defaultDue);
   const [paymentTerms, setPaymentTerms] = useState(30);
   const [taxRate, setTaxRate] = useState(0);
+  const [currency, setCurrency] = useState('USD');
   const [notes, setNotes] = useState('');
   const [items, setItems] = useState<InvoiceItemInput[]>([
     { description: '', quantity: 1, unit_price: 0 },
@@ -39,6 +49,17 @@ export default function NewInvoicePage() {
       setClients(clients);
     });
   }, []);
+
+  const { status: autoSaveStatus, statusText: autoSaveText } = useAutoSave({
+    value: notes,
+    onSave: async () => { /* notes auto-saved in memory; persisted on final save */ },
+    delay: 1500,
+    skipIf: (val) => val.trim() === '',
+  });
+
+  const [aiPrompt, setAiPrompt] = useState('');
+  const [showAiPanel, setShowAiPanel] = useState(false);
+  const { generate, streaming, text: aiText, error: aiError, cancel: cancelAi, reset: resetAi } = useAiStream();
 
   const handlePaymentTermsChange = (terms: number) => {
     setPaymentTerms(terms);
@@ -137,6 +158,7 @@ export default function NewInvoicePage() {
       due_date: dueDate,
       payment_terms: paymentTerms,
       tax_rate: taxRate,
+      currency,
       notes: notes || undefined,
       ai_input_text: aiInput || undefined,
       items: validItems,
@@ -176,9 +198,20 @@ export default function NewInvoicePage() {
             </p>
           </div>
         </div>
-        <Button onClick={handleSave} disabled={saving}>
-          {saving ? 'Saving...' : 'Save as Draft'}
-        </Button>
+        <div className="flex items-center gap-3">
+          <button
+            onClick={() => setShowPreview(!showPreview)}
+            title={showPreview ? 'Hide preview' : 'Show live preview'}
+            className="flex items-center gap-1.5 rounded-lg border border-[var(--border)] bg-[var(--card)] px-3 py-2 text-sm text-[var(--muted-foreground)] shadow-sm transition-colors hover:bg-[var(--accent)] hover:text-[var(--foreground)]"
+            aria-label={showPreview ? 'Hide preview panel' : 'Show preview panel'}
+          >
+            {showPreview ? <PanelRightClose className="h-4 w-4" /> : <PanelRight className="h-4 w-4" />}
+            <span className="hidden sm:inline">{showPreview ? 'Hide Preview' : 'Show Preview'}</span>
+          </button>
+          <Button onClick={handleSave} disabled={saving}>
+            {saving ? 'Saving...' : 'Save as Draft'}
+          </Button>
+        </div>
       </div>
 
       {/* Mode Toggle */}
@@ -205,9 +238,9 @@ export default function NewInvoicePage() {
         </button>
       </div>
 
-      <div className="grid grid-cols-1 gap-8 lg:grid-cols-5">
+      <div className={`grid grid-cols-1 gap-8 transition-all duration-300 ${showPreview ? 'lg:grid-cols-5' : 'lg:grid-cols-1'}`}>
         {/* Left Panel - Input */}
-        <div className="space-y-6 lg:col-span-3">
+        <div className={`space-y-6 ${showPreview ? 'lg:col-span-3' : ''}`}>
           {mode === 'ai' && (
             <Card>
               <CardHeader>
@@ -297,15 +330,14 @@ export default function NewInvoicePage() {
                 </div>
               </div>
 
-              <Input
-                label="Tax Rate (%)"
-                type="number"
-                step="0.01"
-                min="0"
-                max="100"
-                value={taxRate.toString()}
-                onChange={(e) => setTaxRate(parseFloat(e.target.value) || 0)}
-              />
+              <div>
+                <label className="block text-sm font-medium text-foreground mb-1.5">Currency</label>
+                <CurrencySelector value={currency} onChange={setCurrency} className="w-full" />
+              </div>
+              <div>
+                <label className="block text-sm font-medium text-foreground mb-1.5">Tax</label>
+                <TaxRateSelector value={taxRate} onChange={setTaxRate} />
+              </div>
             </CardContent>
           </Card>
 
@@ -392,9 +424,82 @@ export default function NewInvoicePage() {
           {/* Notes */}
           <Card>
             <CardHeader>
-              <CardTitle>Notes</CardTitle>
+              <div className="flex items-center justify-between">
+                <CardTitle>Notes</CardTitle>
+                <div className="flex items-center gap-2">
+                  <AutoSaveIndicator status={autoSaveStatus} text={autoSaveText} />
+                  <button
+                    type="button"
+                    onClick={() => { setShowAiPanel(!showAiPanel); resetAi(); setAiPrompt(''); }}
+                    className="flex items-center gap-1.5 text-xs font-medium text-brand-600 hover:text-brand-700 transition-colors"
+                  >
+                    <Sparkles className="h-3.5 w-3.5" />
+                    AI Generate
+                  </button>
+                </div>
+              </div>
             </CardHeader>
-            <CardContent>
+            <CardContent className="space-y-3">
+              {showAiPanel && (
+                <div className="rounded-lg border border-brand-200 bg-brand-50/50 p-3 space-y-3">
+                  <p className="text-xs font-medium text-brand-700">Describe what you want in the notes or client message</p>
+                  <textarea
+                    value={aiPrompt}
+                    onChange={(e) => setAiPrompt(e.target.value)}
+                    placeholder="e.g. Write a professional thank-you note with Net 30 payment reminder..."
+                    rows={2}
+                    className="w-full resize-none rounded-lg border border-[var(--border)] bg-[var(--background)] px-3 py-2 text-sm text-[var(--foreground)] placeholder:text-[var(--muted-foreground)] focus:outline-none focus:ring-2 focus:ring-brand-500/30"
+                  />
+                  <div className="flex gap-2">
+                    <Button
+                      type="button"
+                      size="sm"
+                      onClick={() => generate(aiPrompt)}
+                      disabled={streaming || !aiPrompt.trim()}
+                    >
+                      {streaming ? (
+                        <>
+                          <Loader2 className="mr-1.5 h-3 w-3 animate-spin" />
+                          Generating...
+                        </>
+                      ) : (
+                        <>
+                          <Sparkles className="mr-1.5 h-3 w-3" />
+                          Generate
+                        </>
+                      )}
+                    </Button>
+                    {streaming && (
+                      <Button type="button" size="sm" variant="outline" onClick={cancelAi}>
+                        <StopCircle className="h-3 w-3" />
+                      </Button>
+                    )}
+                  </div>
+                  {(aiText || streaming) && (
+                    <div className="rounded-lg border border-[var(--border)] bg-[var(--background)] p-3 text-sm text-[var(--foreground)] whitespace-pre-wrap max-h-48 overflow-y-auto">
+                      {aiText}
+                      {streaming && <span className="inline-block w-0.5 h-4 bg-brand-500 ml-0.5 animate-pulse align-middle" />}
+                    </div>
+                  )}
+                  {aiError && <p className="text-xs text-red-500">{aiError}</p>}
+                  {aiText && !streaming && (
+                    <div className="flex gap-2">
+                      <Button
+                        type="button"
+                        size="sm"
+                        variant="outline"
+                        className="text-xs"
+                        onClick={() => { setNotes(aiText); resetAi(); setShowAiPanel(false); setAiPrompt(''); }}
+                      >
+                        Use as Notes
+                      </Button>
+                      <Button type="button" size="sm" variant="ghost" className="text-xs" onClick={resetAi}>
+                        Clear
+                      </Button>
+                    </div>
+                  )}
+                </div>
+              )}
               <Textarea
                 value={notes}
                 onChange={(e) => setNotes(e.target.value)}
@@ -405,67 +510,31 @@ export default function NewInvoicePage() {
           </Card>
         </div>
 
-        {/* Right Panel - Preview */}
-        <div className="lg:col-span-2">
-          <div className="sticky top-6">
-            <Card>
-              <CardHeader>
-                <CardTitle>Invoice Summary</CardTitle>
-              </CardHeader>
-              <CardContent className="space-y-4">
-                <div className="space-y-2">
-                  <div className="flex justify-between text-sm">
-                    <span className="text-[var(--muted-foreground)]">
-                      Items ({items.filter((i) => i.description.trim()).length})
-                    </span>
-                    <span className="font-amount">{formatCurrency(subtotal)}</span>
-                  </div>
-                  {taxRate > 0 && (
-                    <div className="flex justify-between text-sm">
-                      <span className="text-[var(--muted-foreground)]">Tax ({taxRate}%)</span>
-                      <span className="font-amount">{formatCurrency(taxAmount)}</span>
-                    </div>
-                  )}
-                  <div className="border-t border-[var(--border)] pt-2">
-                    <div className="flex justify-between text-lg font-bold">
-                      <span>Total</span>
-                      <span className="font-amount">{formatCurrency(total)}</span>
-                    </div>
-                  </div>
-                </div>
-
-                {selectedClientId && (
-                  <div className="rounded-lg bg-[var(--muted)] p-3">
-                    <p className="text-xs font-medium uppercase text-[var(--muted-foreground)]">
-                      Bill To
-                    </p>
-                    <p className="mt-1 text-sm font-medium">
-                      {clients.find((c) => c.id === selectedClientId)?.name}
-                    </p>
-                    <p className="text-xs text-[var(--muted-foreground)]">
-                      {clients.find((c) => c.id === selectedClientId)?.email}
-                    </p>
-                  </div>
-                )}
-
-                <div className="space-y-1 text-xs text-[var(--muted-foreground)]">
-                  <div className="flex justify-between">
-                    <span>Issue Date</span>
-                    <span>{issueDate}</span>
-                  </div>
-                  <div className="flex justify-between">
-                    <span>Due Date</span>
-                    <span>{dueDate}</span>
-                  </div>
-                  <div className="flex justify-between">
-                    <span>Payment Terms</span>
-                    <span>Net {paymentTerms}</span>
-                  </div>
-                </div>
-              </CardContent>
-            </Card>
-          </div>
-        </div>
+        {/* Right Panel - Live Preview */}
+        <AnimatePresence>
+          {showPreview && (
+            <motion.div
+              initial={{ opacity: 0, width: 0 }}
+              animate={{ opacity: 1, width: 'auto' }}
+              exit={{ opacity: 0, width: 0 }}
+              transition={{ duration: 0.25, ease: 'easeInOut' }}
+              className="lg:col-span-2 overflow-hidden"
+            >
+              <div className="sticky top-6">
+                <InvoiceLivePreview
+                  clientName={clients.find((c) => c.id === selectedClientId)?.name}
+                  clientEmail={clients.find((c) => c.id === selectedClientId)?.email ?? undefined}
+                  issueDate={issueDate}
+                  dueDate={dueDate}
+                  paymentTerms={paymentTerms}
+                  items={items}
+                  taxRate={taxRate}
+                  notes={notes || undefined}
+                />
+              </div>
+            </motion.div>
+          )}
+        </AnimatePresence>
       </div>
     </div>
   );

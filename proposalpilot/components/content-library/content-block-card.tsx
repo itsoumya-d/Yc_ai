@@ -39,8 +39,8 @@ export function ContentBlockCard({ block }: ContentBlockCardProps) {
           <p className="mt-2 text-sm text-[var(--muted-foreground)] line-clamp-3">{block.content}</p>
         </div>
         <div className="flex gap-1 ml-2 flex-shrink-0">
-          <Button variant="ghost" size="sm" onClick={handleCopy}><Copy className="w-4 h-4" /></Button>
-          <Button variant="ghost" size="sm" onClick={handleDelete}><Trash2 className="w-4 h-4 text-[var(--destructive)]" /></Button>
+          <Button variant="ghost" size="sm" onClick={handleCopy} aria-label="Copy content"><Copy className="w-4 h-4" /></Button>
+          <Button variant="ghost" size="sm" onClick={handleDelete} aria-label="Delete block"><Trash2 className="w-4 h-4 text-[var(--destructive)]" /></Button>
         </div>
       </div>
     </Card>

@@ -1,8 +1,11 @@
 'use client';
 
 import Link from 'next/link';
+import { useTranslations } from 'next-intl';
 import { PageHeader } from '@/components/layout/page-header';
 import { cn, formatCurrency, getCaseStatusColor, getCaseStatusLabel, getConfidenceColor, getFraudPatternLabel } from '@/lib/utils';
+import { GettingStartedChecklist } from '@/components/GettingStartedChecklist';
+import { StatCard } from '@/components/ui/stat-card';
 import {
   Shield,
   TrendingUp,
@@ -10,7 +13,6 @@ import {
   AlertTriangle,
   Search,
   Scale,
-  ArrowUpRight,
   FolderOpen,
   Clock,
   Plus,
@@ -24,46 +26,78 @@ interface DashboardViewProps {
 }
 
 export function DashboardView({ stats, recentCases, recentPatterns }: DashboardViewProps) {
-  const statItems = stats ? [
-    { label: 'Active Cases', value: String(stats.active_investigations), icon: FolderOpen },
-    { label: 'Fraud Detected', value: formatCurrency(stats.total_fraud_detected), icon: AlertTriangle },
-    { label: 'Documents Processed', value: String(stats.documents_processed), icon: FileText },
-    { label: 'Patterns Identified', value: String(stats.patterns_identified), icon: Search },
-    { label: 'Cases Filed', value: String(stats.cases_filed), icon: Scale },
-    { label: 'Recovery Rate', value: `${stats.recovery_rate}%`, icon: TrendingUp },
-  ] : [];
+  const t = useTranslations('dashboard');
 
   return (
     <div className="flex h-full flex-col">
-      <PageHeader title="Dashboard" subtitle="False Claims Act Investigation Overview">
+      <PageHeader title={t('title')} subtitle={t('subtitle')}>
         <Link
           href="/cases"
           className="inline-flex items-center gap-2 rounded-lg bg-primary px-4 py-2 text-sm font-medium text-text-on-color transition-colors hover:bg-primary-hover"
         >
           <Plus className="h-4 w-4" />
-          New Case
+          {t('newCase')}
         </Link>
       </PageHeader>
 
       <div className="flex-1 overflow-auto p-6 space-y-6">
+        <GettingStartedChecklist />
+
         {/* Stats Grid */}
-        {statItems.length > 0 ? (
+        {stats ? (
           <div className="grid grid-cols-2 gap-4 lg:grid-cols-3 xl:grid-cols-6">
-            {statItems.map((stat) => (
-              <div
-                key={stat.label}
-                className="rounded-xl border border-border-default bg-bg-surface p-4 transition-all hover:border-border-emphasis"
-              >
-                <div className="mb-3 flex items-center justify-between">
-                  <stat.icon className="h-4 w-4 text-text-tertiary" />
-                  <div className="flex items-center gap-0.5 text-[10px] font-medium text-verified-green">
-                    <ArrowUpRight className="h-3 w-3" />
-                  </div>
-                </div>
-                <div className="financial-figure text-xl font-semibold text-text-primary">{stat.value}</div>
-                <div className="mt-1 text-[11px] text-text-tertiary">{stat.label}</div>
-              </div>
-            ))}
+            <StatCard
+              title={t('activeCases')}
+              value={stats.active_investigations}
+              icon={<FolderOpen className="h-4 w-4" />}
+              description={t('vsLastMonth')}
+              trend={{ value: 10, isPositive: true }}
+              index={0}
+              animateValue={true}
+            />
+            <StatCard
+              title={t('fraudDetected')}
+              value={formatCurrency(stats.total_fraud_detected)}
+              icon={<AlertTriangle className="h-4 w-4" />}
+              description={t('totalIdentified')}
+              trend={{ value: 15, isPositive: true }}
+              index={1}
+            />
+            <StatCard
+              title={t('docsProcessed')}
+              value={stats.documents_processed}
+              icon={<FileText className="h-4 w-4" />}
+              description={t('thisMonth')}
+              trend={{ value: 22, isPositive: true }}
+              index={2}
+              animateValue={true}
+            />
+            <StatCard
+              title={t('patternsFound')}
+              value={stats.patterns_identified}
+              icon={<Search className="h-4 w-4" />}
+              description={t('acrossAllCases')}
+              trend={{ value: 7, isPositive: true }}
+              index={3}
+              animateValue={true}
+            />
+            <StatCard
+              title={t('casesFiled')}
+              value={stats.cases_filed}
+              icon={<Scale className="h-4 w-4" />}
+              description={t('thisQuarter')}
+              trend={{ value: 3, isPositive: true }}
+              index={4}
+              animateValue={true}
+            />
+            <StatCard
+              title={t('recoveryRate')}
+              value={`${stats.recovery_rate}%`}
+              icon={<TrendingUp className="h-4 w-4" />}
+              description={t('vsLastQuarter')}
+              trend={{ value: 5, isPositive: true }}
+              index={5}
+            />
           </div>
         ) : (
           <div className="rounded-xl border border-border-default bg-bg-surface p-12 text-center">

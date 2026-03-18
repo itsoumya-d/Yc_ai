@@ -4,6 +4,7 @@ export interface User {
   full_name: string | null;
   avatar_url: string | null;
   onboarding_completed: boolean;
+  notification_prefs: Record<string, boolean> | null;
   created_at: string;
   updated_at: string;
 }

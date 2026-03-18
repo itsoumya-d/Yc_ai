@@ -33,38 +33,31 @@ export async function POST(request: NextRequest) {
       const invoiceId = paymentIntent.metadata?.invoice_id;
 
       if (invoiceId) {
-        // Create payment record
-        await supabase.from('payments').insert({
-          invoice_id: invoiceId,
-          amount: paymentIntent.amount / 100,
-          currency: paymentIntent.currency.toUpperCase(),
-          payment_method: 'card',
-          stripe_payment_intent_id: paymentIntent.id,
-          status: 'succeeded',
-          client_email: paymentIntent.receipt_email,
-        });
+        // Idempotency: skip if we already processed this payment intent
+        const { data: existing } = await supabase
+          .from('payments')
+          .select('id')
+          .eq('stripe_payment_intent_id', paymentIntent.id)
+          .maybeSingle();
 
-        // Update invoice status
-        const { data: invoice } = await supabase
-          .from('invoices')
-          .select('total, amount_paid')
-          .eq('id', invoiceId)
-          .single();
+        if (!existing) {
+          // Create payment record
+          await supabase.from('payments').insert({
+            invoice_id: invoiceId,
+            amount: paymentIntent.amount / 100,
+            currency: paymentIntent.currency.toUpperCase(),
+            payment_method: 'card',
+            stripe_payment_intent_id: paymentIntent.id,
+            status: 'succeeded',
+            client_email: paymentIntent.receipt_email,
+          });
 
-        if (invoice) {
-          const newAmountPaid = (invoice.amount_paid ?? 0) + paymentIntent.amount / 100;
-          const newAmountDue = invoice.total - newAmountPaid;
-          const newStatus = newAmountDue <= 0 ? 'paid' : 'partial';
-
-          await supabase
-            .from('invoices')
-            .update({
-              amount_paid: newAmountPaid,
-              amount_due: Math.max(0, newAmountDue),
-              status: newStatus,
-              paid_at: newStatus === 'paid' ? new Date().toISOString() : null,
-            })
-            .eq('id', invoiceId);
+          // Atomic update: increment amount_paid in a single UPDATE to avoid race conditions
+          const paymentAmount = paymentIntent.amount / 100;
+          await supabase.rpc('apply_payment', {
+            p_invoice_id: invoiceId,
+            p_amount: paymentAmount,
+          });
         }
       }
       break;
@@ -95,6 +88,61 @@ export async function POST(request: NextRequest) {
           .from('users')
           .update({ stripe_connect_onboarded: true })
           .eq('stripe_connect_account_id', account.id);
+      }
+      break;
+    }
+
+    case 'customer.subscription.created':
+    case 'customer.subscription.updated': {
+      const sub = event.data.object as Stripe.Subscription;
+      const userId = sub.metadata.supabase_user_id;
+      if (userId) {
+        const plan = sub.status === 'active' || sub.status === 'trialing' ? 'pro' : 'free';
+        await supabase.from('profiles').update({
+          plan,
+          plan_expires_at: new Date(sub.current_period_end * 1000).toISOString(),
+          stripe_subscription_id: sub.id,
+        }).eq('id', userId);
+      }
+      break;
+    }
+
+    case 'customer.subscription.deleted': {
+      const sub = event.data.object as Stripe.Subscription;
+      const userId = sub.metadata.supabase_user_id;
+      if (userId) {
+        await supabase.from('profiles').update({
+          plan: 'free',
+          plan_expires_at: null,
+          stripe_subscription_id: null,
+        }).eq('id', userId);
+      }
+      break;
+    }
+
+    case 'invoice.payment_failed': {
+      const stripeInvoice = event.data.object as Stripe.Invoice;
+      console.error('[Stripe] invoice.payment_failed', {
+        customerId: stripeInvoice.customer,
+        invoiceId: stripeInvoice.id,
+        attemptCount: stripeInvoice.attempt_count,
+      });
+      break;
+    }
+
+    case 'invoice.payment_succeeded': {
+      const stripeInvoice = event.data.object as Stripe.Invoice;
+      if (stripeInvoice.subscription) {
+        const sub = await stripe.subscriptions.retrieve(stripeInvoice.subscription as string);
+        const userId = sub.metadata.supabase_user_id;
+        if (userId) {
+          const plan = sub.status === 'active' || sub.status === 'trialing' ? 'pro' : 'free';
+          await supabase.from('profiles').update({
+            plan,
+            plan_expires_at: new Date(sub.current_period_end * 1000).toISOString(),
+            stripe_subscription_id: sub.id,
+          }).eq('id', userId);
+        }
       }
       break;
     }

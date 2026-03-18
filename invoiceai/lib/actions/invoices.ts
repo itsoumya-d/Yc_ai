@@ -3,6 +3,7 @@
 import { createClient } from '@/lib/supabase/server';
 import { revalidatePath } from 'next/cache';
 import type { Invoice, InvoiceItem, InvoiceWithDetails } from '@/types/database';
+import { invoiceSchema } from '@/lib/validations';
 
 export interface InvoiceItemInput {
   description: string;
@@ -130,12 +131,20 @@ export async function createInvoiceAction(formData: InvoiceFormData): Promise<Ac
     return { success: false, error: 'Not authenticated' };
   }
 
-  if (!formData.client_id) {
-    return { success: false, error: 'Client is required' };
-  }
-
-  if (!formData.items || formData.items.length === 0) {
-    return { success: false, error: 'At least one line item is required' };
+  const parsed = invoiceSchema.safeParse({
+    clientId: formData.client_id,
+    lineItems: (formData.items ?? []).map(item => ({
+      description: item.description,
+      quantity: item.quantity,
+      unitPrice: item.unit_price,
+    })),
+    dueDate: formData.due_date,
+    currency: formData.currency || 'USD',
+    taxRate: formData.tax_rate !== undefined ? formData.tax_rate / 100 : undefined,
+    notes: formData.notes || undefined,
+  });
+  if (!parsed.success) {
+    return { success: false, error: parsed.error.errors[0]?.message ?? 'Invalid input' };
   }
 
   // Get user profile for invoice number
@@ -240,6 +249,22 @@ export async function updateInvoiceAction(
 
   if (!user) {
     return { success: false, error: 'Not authenticated' };
+  }
+
+  const parsed = invoiceSchema.partial().safeParse({
+    clientId: formData.client_id || undefined,
+    lineItems: formData.items ? formData.items.map(item => ({
+      description: item.description,
+      quantity: item.quantity,
+      unitPrice: item.unit_price,
+    })) : undefined,
+    dueDate: formData.due_date || undefined,
+    currency: formData.currency || undefined,
+    taxRate: formData.tax_rate !== undefined ? formData.tax_rate / 100 : undefined,
+    notes: formData.notes || undefined,
+  });
+  if (!parsed.success) {
+    return { success: false, error: parsed.error.errors[0]?.message ?? 'Invalid input' };
   }
 
   const updateData: Record<string, unknown> = {};
@@ -369,6 +394,95 @@ export async function deleteInvoiceAction(id: string): Promise<{ success: boolea
   revalidatePath('/invoices');
   revalidatePath('/dashboard');
   return { success: true };
+}
+
+export async function bulkDeleteInvoicesAction(
+  ids: string[]
+): Promise<{ success: boolean; error?: string; deletedCount: number }> {
+  const supabase = await createClient();
+  const {
+    data: { user },
+  } = await supabase.auth.getUser();
+
+  if (!user) {
+    return { success: false, error: 'Not authenticated', deletedCount: 0 };
+  }
+
+  if (!ids || ids.length === 0) {
+    return { success: false, error: 'No invoices selected', deletedCount: 0 };
+  }
+
+  // Delete line items first
+  await supabase.from('invoice_items').delete().in('invoice_id', ids);
+
+  // Cancel any scheduled reminders
+  await supabase
+    .from('payment_reminders')
+    .update({ status: 'cancelled' })
+    .in('invoice_id', ids)
+    .eq('status', 'scheduled');
+
+  const { error, count } = await supabase
+    .from('invoices')
+    .delete({ count: 'exact' })
+    .in('id', ids)
+    .eq('user_id', user.id);
+
+  if (error) {
+    return { success: false, error: error.message, deletedCount: 0 };
+  }
+
+  revalidatePath('/invoices');
+  revalidatePath('/dashboard');
+  return { success: true, deletedCount: count ?? ids.length };
+}
+
+export async function bulkUpdateStatusAction(
+  ids: string[],
+  status: Invoice['status']
+): Promise<{ success: boolean; error?: string; updatedCount: number }> {
+  const supabase = await createClient();
+  const {
+    data: { user },
+  } = await supabase.auth.getUser();
+
+  if (!user) {
+    return { success: false, error: 'Not authenticated', updatedCount: 0 };
+  }
+
+  if (!ids || ids.length === 0) {
+    return { success: false, error: 'No invoices selected', updatedCount: 0 };
+  }
+
+  const now = new Date().toISOString();
+  const updateData: Record<string, unknown> = { status };
+  if (status === 'sent') updateData.sent_at = now;
+  if (status === 'paid') updateData.paid_at = now;
+  if (status === 'cancelled') updateData.cancelled_at = now;
+
+  const { error, count } = await supabase
+    .from('invoices')
+    .update(updateData, { count: 'exact' })
+    .in('id', ids)
+    .eq('user_id', user.id);
+
+  if (error) {
+    return { success: false, error: error.message, updatedCount: 0 };
+  }
+
+  revalidatePath('/invoices');
+  revalidatePath('/dashboard');
+  return { success: true, updatedCount: count ?? ids.length };
+}
+
+export async function toggleAutoRemind(invoiceId: string, enabled: boolean) {
+  'use server';
+  const supabase = await createClient();
+  const { error } = await supabase
+    .from('invoices')
+    .update({ auto_remind: enabled, updated_at: new Date().toISOString() })
+    .eq('id', invoiceId);
+  return { error: error?.message };
 }
 
 export async function duplicateInvoiceAction(id: string): Promise<ActionResult> {

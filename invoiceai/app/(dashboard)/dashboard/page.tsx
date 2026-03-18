@@ -1,3 +1,4 @@
+import { getTranslations } from 'next-intl/server';
 import { createClient } from '@/lib/supabase/server';
 import { redirect } from 'next/navigation';
 import { getReportData } from '@/lib/actions/reports';
@@ -7,6 +8,7 @@ import { Button } from '@/components/ui/button';
 import { formatCurrency } from '@/lib/utils';
 import Link from 'next/link';
 import { DashboardContent } from '@/components/dashboard/dashboard-content';
+import { GettingStartedChecklist } from '@/components/GettingStartedChecklist';
 
 export const dynamic = 'force-dynamic';
 
@@ -38,9 +40,10 @@ export default async function DashboardPage() {
   const greeting =
     hour < 12 ? 'Good morning' : hour < 18 ? 'Good afternoon' : 'Good evening';
 
-  const [{ data: report }, { data: analytics }] = await Promise.all([
+  const [{ data: report }, { data: analytics }, t] = await Promise.all([
     getReportData(),
     getAnalyticsData(),
+    getTranslations('dashboard'),
   ]);
 
   const hasData =
@@ -54,7 +57,7 @@ export default async function DashboardPage() {
             {greeting}, {firstName}
           </h1>
           <p className="mt-1 text-sm text-[var(--muted-foreground)]">
-            Here&apos;s how your business is doing today.
+            {t('description')}
           </p>
         </div>
         <Link href="/invoices/new">
@@ -72,10 +75,12 @@ export default async function DashboardPage() {
                 d="M12 4.5v15m7.5-7.5h-15"
               />
             </svg>
-            New Invoice
+            {t('newInvoice')}
           </Button>
         </Link>
       </div>
+
+      <GettingStartedChecklist />
 
       {hasData && analytics && report ? (
         <DashboardContent analytics={analytics} report={report} />
@@ -97,11 +102,11 @@ export default async function DashboardPage() {
                 />
               </svg>
             }
-            title="Create your first invoice"
-            description="Get started by creating an invoice. You can use AI to draft it from a simple description."
+            title={t('createFirstInvoice')}
+            description={t('createFirstDescription')}
             action={
               <Link href="/invoices/new">
-                <Button>Create Invoice</Button>
+                <Button>{t('createInvoice')}</Button>
               </Link>
             }
           />

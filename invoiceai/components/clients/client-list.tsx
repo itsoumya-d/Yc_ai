@@ -9,6 +9,7 @@ import { Avatar } from '@/components/ui/avatar';
 import { EmptyState } from '@/components/ui/empty-state';
 import { DataTable } from '@/components/ui/data-table';
 import { ClientFormDialog } from './client-form-dialog';
+import { CSVImport } from '@/components/CSVImport';
 import { formatCurrency } from '@/lib/utils';
 import type { Client } from '@/types/database';
 
@@ -22,6 +23,7 @@ type FilterStatus = 'active' | 'archived' | 'all';
 export function ClientList({ initialClients, totalCount }: ClientListProps) {
   const router = useRouter();
   const [showCreateDialog, setShowCreateDialog] = useState(false);
+  const [showCSVImport, setShowCSVImport] = useState(false);
   const [filterStatus, setFilterStatus] = useState<FilterStatus>('active');
   const [search, setSearch] = useState('');
 
@@ -122,19 +124,56 @@ export function ClientList({ initialClients, totalCount }: ClientListProps) {
             {totalCount} {totalCount === 1 ? 'client' : 'clients'} total
           </p>
         </div>
-        <Button onClick={() => setShowCreateDialog(true)}>
-          <svg
-            className="mr-2 h-4 w-4"
-            fill="none"
-            viewBox="0 0 24 24"
-            stroke="currentColor"
-            strokeWidth={2}
+        <div className="flex items-center gap-2">
+          <Button
+            variant="outline"
+            onClick={() => setShowCSVImport((v) => !v)}
           >
-            <path strokeLinecap="round" strokeLinejoin="round" d="M12 4.5v15m7.5-7.5h-15" />
-          </svg>
-          Add Client
-        </Button>
+            <svg
+              className="mr-2 h-4 w-4"
+              fill="none"
+              viewBox="0 0 24 24"
+              stroke="currentColor"
+              strokeWidth={2}
+            >
+              <path strokeLinecap="round" strokeLinejoin="round" d="M3 16.5v2.25A2.25 2.25 0 0 0 5.25 21h13.5A2.25 2.25 0 0 0 21 18.75V16.5m-13.5-9L12 3m0 0 4.5 4.5M12 3v13.5" />
+            </svg>
+            Import CSV
+          </Button>
+          <Button onClick={() => setShowCreateDialog(true)}>
+            <svg
+              className="mr-2 h-4 w-4"
+              fill="none"
+              viewBox="0 0 24 24"
+              stroke="currentColor"
+              strokeWidth={2}
+            >
+              <path strokeLinecap="round" strokeLinejoin="round" d="M12 4.5v15m7.5-7.5h-15" />
+            </svg>
+            Add Client
+          </Button>
+        </div>
       </div>
+
+      {showCSVImport && (
+        <div className="mt-4 rounded-xl border border-[var(--border)] bg-[var(--card)] p-6">
+          <div className="mb-4 flex items-center justify-between">
+            <div>
+              <h3 className="font-semibold text-[var(--foreground)]">Import Clients from CSV</h3>
+              <p className="text-sm text-[var(--muted-foreground)] mt-0.5">Upload a CSV file with columns: name, email, company, phone</p>
+            </div>
+            <button
+              onClick={() => setShowCSVImport(false)}
+              className="text-[var(--muted-foreground)] hover:text-[var(--foreground)] transition-colors"
+            >
+              <svg className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                <path strokeLinecap="round" strokeLinejoin="round" d="M6 18 18 6M6 6l12 12" />
+              </svg>
+            </button>
+          </div>
+          <CSVImport type="clients" />
+        </div>
+      )}
 
       <div className="mt-6 flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
         <div className="flex gap-1 rounded-lg bg-[var(--muted)] p-1">

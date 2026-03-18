@@ -3,6 +3,7 @@
 import { createClient } from '@/lib/supabase/server';
 import { revalidatePath } from 'next/cache';
 import type { Resolution } from '@/types/database';
+import { resolutionSchema } from '@/lib/validations';
 
 interface ActionResult<T = null> { data?: T; error?: string; }
 
@@ -28,11 +29,19 @@ export async function createResolution(formData: FormData): Promise<ActionResult
   const supabase = await createClient();
   const { data: { user } } = await supabase.auth.getUser();
   if (!user) return { error: 'Not authenticated' };
+
+  const parsed = resolutionSchema.safeParse({
+    title: formData.get('title'),
+    body: formData.get('body') || undefined,
+    meetingId: formData.get('meeting_id') || undefined,
+  });
+  if (!parsed.success) return { error: parsed.error.errors[0]?.message ?? 'Invalid input' };
+
   const { data, error } = await supabase.from('resolutions').insert({
     user_id: user.id,
-    meeting_id: formData.get('meeting_id') as string || null,
-    title: formData.get('title') as string,
-    body: formData.get('body') as string || null,
+    meeting_id: parsed.data.meetingId || null,
+    title: parsed.data.title,
+    body: parsed.data.body || null,
     status: 'draft',
     votes_for: 0,
     votes_against: 0,
@@ -48,9 +57,17 @@ export async function updateResolution(id: string, formData: FormData): Promise<
   const supabase = await createClient();
   const { data: { user } } = await supabase.auth.getUser();
   if (!user) return { error: 'Not authenticated' };
+
+  const parsed = resolutionSchema.safeParse({
+    title: formData.get('title'),
+    body: formData.get('body') || undefined,
+    meetingId: formData.get('meeting_id') || undefined,
+  });
+  if (!parsed.success) return { error: parsed.error.errors[0]?.message ?? 'Invalid input' };
+
   const { data, error } = await supabase.from('resolutions').update({
-    title: formData.get('title') as string,
-    body: formData.get('body') as string || null,
+    title: parsed.data.title,
+    body: parsed.data.body || null,
     status: formData.get('status') as string || 'draft',
     votes_for: parseInt(formData.get('votes_for') as string) || 0,
     votes_against: parseInt(formData.get('votes_against') as string) || 0,

@@ -640,7 +640,7 @@ export default function HomePage() {
               <Link href="/privacy" className="hover:text-brand-600 transition-colors">Privacy</Link>
               <Link href="/terms" className="hover:text-brand-600 transition-colors">Terms</Link>
             </div>
-            <p className="text-sm text-gray-400">© {new Date().getFullYear()} PetOS. All rights reserved.</p>
+            <p className="text-sm text-gray-400">© 2026 PetOS. All rights reserved.</p>
           </div>
         </div>
       </footer>

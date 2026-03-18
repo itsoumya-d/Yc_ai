@@ -1,12 +1,14 @@
+import { getTranslations } from 'next-intl/server';
 import { PageHeader } from '@/components/layout/page-header';
 import { MemberForm } from '@/components/board-members/member-form';
 
 export const dynamic = 'force-dynamic';
 
-export default function NewBoardMemberPage() {
+export default async function NewBoardMemberPage() {
+  const t = await getTranslations('boardMembers');
   return (
     <div className="space-y-6">
-      <PageHeader title="Add Board Member" description="Add a new member to your board." />
+      <PageHeader title={t('add')} description={t('addDescription')} />
       <MemberForm />
     </div>
   );
