@@ -1,0 +1,13 @@
+{
+  "nav": {"dashboard":"Painel","pets":"Meus Pets","health":"Saúde","telehealth":"Telessaúde","settings":"Configurações","billing":"Faturamento","signOut":"Sair"},
+  "dashboard": {"title":"Painel de Pets","welcome":"Bem-vindo de volta","petsTracked":"Pets Rastreados","upcomingVaccines":"Vacinas Próximas","healthAlerts":"Alertas de Saúde","nextVetVisit":"Próxima Visita ao Veterinário","recentActivity":"Atividade Recente","noActivity":"Nenhuma atividade recente"},
+  "pets": {"title":"Meus Pets","add":"Adicionar Pet","name":"Nome","species":"Espécie","breed":"Raça","age":"Idade","weight":"Peso","dog":"Cachorro","cat":"Gato","bird":"Pássaro","rabbit":"Coelho","other":"Outro","noPets":"Nenhum pet adicionado ainda","addFirst":"Adicione seu primeiro pet"},
+  "health": {"title":"Registros de Saúde","vaccines":"Vacinas","medications":"Medicamentos","checkups":"Consultas","symptoms":"Sintomas","addRecord":"Adicionar Registro","dueDate":"Data de Vencimento","completed":"Concluído","upcoming":"Próximo","noRecords":"Nenhum registro de saúde"},
+  "telehealth": {"title":"Telessaúde","bookConsultation":"Agendar Consulta","availableVets":"Veterinários Disponíveis","myConsultations":"Minhas Consultas","upcoming":"Próximas","past":"Anteriores","videoCall":"Videochamada","chat":"Chat","noConsultations":"Nenhuma consulta agendada"},
+  "settings": {"title":"Configurações","profile":"Perfil","notifications":"Notificações","language":"Idioma","privacy":"Política de Privacidade","terms":"Termos de Serviço"},
+  "auth": {"welcome":"Melhor Cuidado para Pets com IA","tagline":"Seu companheiro de saúde animal com IA","signIn":"Entrar","signUp":"Criar Conta","email":"E-mail","password":"Senha","forgotPassword":"Esqueceu a senha?","continueWithGoogle":"Continuar com Google"},
+  "billing": {"title":"Faturamento","plan":"Plano Atual","upgrade":"Melhorar Plano","monthly":"Mensal","annual":"Anual"},
+  "common": {"save":"Salvar","cancel":"Cancelar","delete":"Excluir","edit":"Editar","loading":"Carregando...","error":"Algo deu errado","tryAgain":"Tentar Novamente","search":"Pesquisar","back":"Voltar","close":"Fechar","confirm":"Confirmar","yes":"Sim","no":"Não"},
+  "landing": {"hero":"Cuidados veterinários impulsionados por IA","cta":"Iniciar Teste Gratuito","features":"Recursos","pricing":"Preços"},
+  "language": {"selectLanguage":"Selecionar Idioma","en":"English","es":"Español","hi":"हिन्दी","zh":"中文","ar":"العربية","pt":"Português","fr":"Français","de":"Deutsch","ja":"日本語","ko":"한국어"}
+}

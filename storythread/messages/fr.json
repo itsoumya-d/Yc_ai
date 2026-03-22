@@ -1,0 +1,119 @@
+{
+  "nav": {
+    "dashboard": "Tableau de bord",
+    "stories": "Histoires",
+    "explore": "Explorer",
+    "collaborations": "Collaborations",
+    "settings": "Paramètres",
+    "billing": "Facturation",
+    "signOut": "Se déconnecter"
+  },
+  "dashboard": {
+    "title": "Tableau de bord d'écriture",
+    "welcome": "Bon retour",
+    "storiesWritten": "Histoires écrites",
+    "wordsThisMonth": "Mots ce mois-ci",
+    "collaborators": "Collaborateurs actifs",
+    "readTime": "Temps de lecture total",
+    "recentStories": "Histoires récentes",
+    "noStories": "Aucune histoire pour l'instant"
+  },
+  "stories": {
+    "title": "Mes histoires",
+    "new": "Nouvelle histoire",
+    "draft": "Brouillon",
+    "published": "Publié",
+    "archived": "Archivé",
+    "wordCount": "Nombre de mots",
+    "chapters": "Chapitres",
+    "edit": "Modifier",
+    "publish": "Publier",
+    "unpublish": "Dépublier",
+    "delete": "Supprimer",
+    "noStories": "Aucune histoire pour l'instant",
+    "createFirst": "Créez votre première histoire"
+  },
+  "explore": {
+    "title": "Explorer les histoires",
+    "trending": "Tendances",
+    "recent": "Récentes",
+    "genre": "Genre",
+    "fiction": "Fiction",
+    "nonfiction": "Non-fiction",
+    "fantasy": "Fantaisie",
+    "romance": "Romance",
+    "mystery": "Mystère",
+    "scifi": "Science-fiction",
+    "thriller": "Thriller"
+  },
+  "collaborations": {
+    "title": "Collaborations",
+    "active": "Actives",
+    "pending": "En attente",
+    "invite": "Inviter un collaborateur",
+    "accept": "Accepter",
+    "decline": "Refuser",
+    "noCollabs": "Aucune collaboration pour l'instant"
+  },
+  "settings": {
+    "title": "Paramètres",
+    "profile": "Profil",
+    "notifications": "Notifications",
+    "language": "Langue",
+    "privacy": "Politique de confidentialité",
+    "terms": "Conditions d'utilisation"
+  },
+  "auth": {
+    "welcome": "Racontez votre histoire",
+    "tagline": "Plateforme d'écriture collaborative alimentée par l'IA",
+    "signIn": "Se connecter",
+    "signUp": "Créer un compte",
+    "email": "E-mail",
+    "password": "Mot de passe",
+    "forgotPassword": "Mot de passe oublié ?",
+    "continueWithGoogle": "Continuer avec Google"
+  },
+  "billing": {
+    "title": "Facturation",
+    "plan": "Plan actuel",
+    "upgrade": "Mettre à niveau",
+    "monthly": "Mensuel",
+    "annual": "Annuel",
+    "cancelAnytime": "Annulez à tout moment"
+  },
+  "common": {
+    "save": "Enregistrer",
+    "cancel": "Annuler",
+    "delete": "Supprimer",
+    "edit": "Modifier",
+    "loading": "Chargement...",
+    "error": "Une erreur s'est produite",
+    "tryAgain": "Réessayer",
+    "search": "Rechercher",
+    "back": "Retour",
+    "close": "Fermer",
+    "confirm": "Confirmer",
+    "yes": "Oui",
+    "no": "Non",
+    "share": "Partager"
+  },
+  "landing": {
+    "hero": "Écrivez des histoires qui captivent les lecteurs",
+    "cta": "Commencer à écrire gratuitement",
+    "features": "Fonctionnalités",
+    "pricing": "Tarifs"
+  },
+  "language": {
+    "selectLanguage": "Sélectionner la langue",
+    "en": "English",
+    "es": "Español",
+    "hi": "हिन्दी",
+    "zh": "中文",
+    "ar": "العربية",
+    "pt": "Português",
+    "fr": "Français",
+    "de": "Deutsch",
+    "ja": "日本語",
+    "ko": "한국어"
+  }
+}

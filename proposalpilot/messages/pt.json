@@ -1,0 +1,137 @@
+{
+  "nav": {
+    "dashboard": "Painel",
+    "proposals": "Propostas",
+    "templates": "Modelos",
+    "clients": "Clientes",
+    "signatures": "Assinaturas",
+    "analytics": "Análises",
+    "settings": "Configurações",
+    "billing": "Faturamento",
+    "referral": "Programa de Indicação",
+    "signOut": "Sair"
+  },
+  "dashboard": {
+    "title": "Painel de Propostas",
+    "welcome": "Bem-vindo de volta",
+    "totalProposals": "Total de Propostas",
+    "winRate": "Taxa de Sucesso",
+    "avgValue": "Valor Médio da Proposta",
+    "pendingSig": "Assinaturas Pendentes",
+    "recentProposals": "Propostas Recentes",
+    "topClients": "Melhores Clientes",
+    "conversionRate": "Taxa de Conversão"
+  },
+  "proposals": {
+    "title": "Propostas",
+    "new": "Nova Proposta",
+    "draft": "Rascunho",
+    "sent": "Enviada",
+    "viewed": "Visualizada",
+    "signed": "Assinada",
+    "rejected": "Rejeitada",
+    "expired": "Expirada",
+    "generateAI": "Gerar com IA",
+    "preview": "Visualizar",
+    "send": "Enviar ao Cliente",
+    "duplicate": "Duplicar",
+    "template": "Salvar como Modelo",
+    "exportPDF": "Exportar PDF",
+    "noProposals": "Nenhuma proposta ainda",
+    "createFirst": "Crie sua primeira proposta"
+  },
+  "templates": {
+    "title": "Modelos",
+    "new": "Novo Modelo",
+    "myTemplates": "Meus Modelos",
+    "library": "Biblioteca de Modelos",
+    "web": "Design Web",
+    "consulting": "Consultoria",
+    "marketing": "Marketing",
+    "development": "Desenvolvimento",
+    "useTemplate": "Usar Modelo",
+    "editTemplate": "Editar Modelo"
+  },
+  "clients": {
+    "title": "Clientes",
+    "add": "Adicionar Cliente",
+    "name": "Nome do Cliente",
+    "email": "E-mail",
+    "company": "Empresa",
+    "phone": "Telefone",
+    "proposals": "Propostas",
+    "totalValue": "Valor Total",
+    "noClients": "Nenhum cliente ainda",
+    "addFirst": "Adicione seu primeiro cliente"
+  },
+  "signatures": {
+    "title": "Assinaturas",
+    "pending": "Pendente",
+    "signed": "Assinado",
+    "expired": "Expirado",
+    "request": "Solicitar Assinatura",
+    "sign": "Assinar Documento",
+    "download": "Baixar Assinado",
+    "reminder": "Enviar Lembrete",
+    "deadline": "Prazo para Assinatura"
+  },
+  "settings": {
+    "title": "Configurações",
+    "profile": "Perfil",
+    "branding": "Identidade Visual",
+    "notifications": "Notificações",
+    "language": "Idioma",
+    "billing": "Faturamento",
+    "deleteAccount": "Excluir Conta"
+  },
+  "auth": {
+    "signIn": "Entrar",
+    "signUp": "Cadastrar",
+    "email": "E-mail",
+    "password": "Senha",
+    "forgotPassword": "Esqueceu a senha?",
+    "continueWithGoogle": "Continuar com Google"
+  },
+  "billing": {
+    "title": "Faturamento",
+    "free": "Gratuito",
+    "professional": "Profissional",
+    "agency": "Agência",
+    "upgrade": "Atualizar",
+    "perMonth": "/mês",
+    "perYear": "/ano"
+  },
+  "common": {
+    "save": "Salvar",
+    "cancel": "Cancelar",
+    "delete": "Excluir",
+    "edit": "Editar",
+    "loading": "Carregando...",
+    "error": "Algo deu errado",
+    "search": "Pesquisar",
+    "noResults": "Sem resultados",
+    "viewAll": "Ver Tudo",
+    "back": "Voltar",
+    "close": "Fechar",
+    "confirm": "Confirmar",
+    "send": "Enviar"
+  },
+  "landing": {
+    "hero": "Propostas com IA que Conquistam Clientes",
+    "heroSub": "Crie propostas impressionantes em minutos, acompanhe quando os clientes as visualizam e feche negócios com assinaturas eletrônicas",
+    "getStarted": "Iniciar Teste Gratuito"
+  },
+  "language": {
+    "selectLanguage": "Selecionar Idioma",
+    "en": "English",
+    "es": "Español",
+    "hi": "हिन्दी",
+    "zh": "中文",
+    "ar": "العربية",
+    "pt": "Português",
+    "fr": "Français",
+    "de": "Deutsch",
+    "ja": "日本語",
+    "ko": "한국어"
+  }
+}

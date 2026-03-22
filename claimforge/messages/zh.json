@@ -1,0 +1,13 @@
+{
+  "nav": {"dashboard":"控制台","cases":"案件","documents":"文档","analysis":"分析","settings":"设置","billing":"账单","signOut":"退出登录"},
+  "dashboard": {"title":"索赔控制台","welcome":"欢迎回来","activeCases":"活跃案件","totalClaimed":"总索赔额","successRate":"成功率","pendingReview":"待审核","recentCases":"最近案件","noCases":"暂无案件"},
+  "cases": {"title":"案件","new":"新建案件","open":"未结","inProgress":"进行中","resolved":"已解决","closed":"已关闭","claimAmount":"索赔金额","editCase":"编辑案件","closeCase":"关闭案件","noCases":"暂无案件","createFirst":"创建您的第一个案件"},
+  "documents": {"title":"文档","upload":"上传文档","ocr":"OCR分析","extracting":"正在提取文本...","documentType":"文档类型","noDocuments":"尚未上传文档","addFirst":"上传您的第一个文档"},
+  "analysis": {"title":"AI分析","analyze":"分析案件","strengthScore":"案件强度","evidenceAnalysis":"证据分析","recommendations":"建议","riskFactors":"风险因素","noAnalysis":"尚无分析","runAnalysis":"运行分析"},
+  "settings": {"title":"设置","profile":"个人资料","notifications":"通知","language":"语言","privacy":"隐私政策","terms":"服务条款"},
+  "auth": {"welcome":"构建制胜案件","tagline":"AI驱动的法律索赔管理","signIn":"登录","signUp":"创建账户","email":"电子邮件","password":"密码","forgotPassword":"忘记密码？","continueWithGoogle":"使用Google继续"},
+  "billing": {"title":"账单","plan":"当前套餐","upgrade":"升级","monthly":"月付","annual":"年付"},
+  "common": {"save":"保存","cancel":"取消","delete":"删除","edit":"编辑","loading":"加载中...","error":"出错了","tryAgain":"重试","search":"搜索","back":"返回","close":"关闭","confirm":"确认","yes":"是","no":"否"},
+  "landing": {"hero":"AI驱动的制胜索赔","cta":"开始免费试用","features":"功能","pricing":"价格"},
+  "language": {"selectLanguage":"选择语言","en":"English","es":"Español","hi":"हिन्दी","zh":"中文","ar":"العربية","pt":"Português","fr":"Français","de":"Deutsch","ja":"日本語","ko":"한국어"}
+}

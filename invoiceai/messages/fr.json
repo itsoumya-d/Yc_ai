@@ -1,0 +1,115 @@
+{
+  "nav": {
+    "dashboard": "Tableau de bord",
+    "invoices": "Factures",
+    "clients": "Clients",
+    "reports": "Rapports",
+    "settings": "Paramètres",
+    "billing": "Facturation",
+    "signOut": "Se déconnecter"
+  },
+  "dashboard": {
+    "title": "Tableau de bord financier",
+    "welcome": "Bon retour",
+    "outstanding": "En attente",
+    "paid": "Encaissé ce mois",
+    "overdue": "En retard",
+    "totalRevenue": "Chiffre d'affaires total",
+    "recentInvoices": "Factures récentes",
+    "noInvoices": "Aucune facture pour l'instant"
+  },
+  "invoices": {
+    "title": "Factures",
+    "new": "Nouvelle facture",
+    "draft": "Brouillon",
+    "sent": "Envoyée",
+    "paid": "Payée",
+    "overdue": "En retard",
+    "void": "Annulée",
+    "send": "Envoyer la facture",
+    "markPaid": "Marquer comme payée",
+    "duplicate": "Dupliquer",
+    "delete": "Supprimer",
+    "noInvoices": "Aucune facture pour l'instant",
+    "createFirst": "Créez votre première facture"
+  },
+  "clients": {
+    "title": "Clients",
+    "add": "Ajouter un client",
+    "name": "Nom",
+    "email": "E-mail",
+    "phone": "Téléphone",
+    "address": "Adresse",
+    "totalInvoiced": "Total facturé",
+    "paymentTerms": "Conditions de paiement",
+    "noClients": "Aucun client pour l'instant"
+  },
+  "reports": {
+    "title": "Rapports",
+    "revenue": "Chiffre d'affaires",
+    "expenses": "Dépenses",
+    "profit": "Bénéfice",
+    "agingReport": "Rapport d'antériorité",
+    "taxSummary": "Récapitulatif fiscal",
+    "export": "Exporter le rapport"
+  },
+  "settings": {
+    "title": "Paramètres",
+    "profile": "Profil",
+    "notifications": "Notifications",
+    "language": "Langue",
+    "privacy": "Politique de confidentialité",
+    "terms": "Conditions d'utilisation"
+  },
+  "auth": {
+    "welcome": "Soyez payé plus rapidement",
+    "tagline": "Facturation alimentée par l'IA pour les freelances et les entreprises",
+    "signIn": "Se connecter",
+    "signUp": "Créer un compte",
+    "email": "E-mail",
+    "password": "Mot de passe",
+    "forgotPassword": "Mot de passe oublié ?",
+    "continueWithGoogle": "Continuer avec Google"
+  },
+  "billing": {
+    "title": "Facturation",
+    "plan": "Plan actuel",
+    "upgrade": "Mettre à niveau",
+    "monthly": "Mensuel",
+    "annual": "Annuel"
+  },
+  "common": {
+    "save": "Enregistrer",
+    "cancel": "Annuler",
+    "delete": "Supprimer",
+    "edit": "Modifier",
+    "loading": "Chargement...",
+    "error": "Une erreur s'est produite",
+    "tryAgain": "Réessayer",
+    "search": "Rechercher",
+    "back": "Retour",
+    "close": "Fermer",
+    "confirm": "Confirmer",
+    "yes": "Oui",
+    "no": "Non"
+  },
+  "landing": {
+    "hero": "La facturation qui vous fait payer plus vite",
+    "cta": "Commencer l'essai gratuit",
+    "features": "Fonctionnalités",
+    "pricing": "Tarifs"
+  },
+  "language": {
+    "selectLanguage": "Sélectionner la langue",
+    "en": "English",
+    "es": "Español",
+    "hi": "हिन्दी",
+    "zh": "中文",
+    "ar": "العربية",
+    "pt": "Português",
+    "fr": "Français",
+    "de": "Deutsch",
+    "ja": "日本語",
+    "ko": "한국어"
+  }
+}

@@ -1,0 +1,13 @@
+{
+  "nav": {"dashboard":"控制台","pets":"我的宠物","health":"健康","telehealth":"远程医疗","settings":"设置","billing":"账单","signOut":"退出登录"},
+  "dashboard": {"title":"宠物控制台","welcome":"欢迎回来","petsTracked":"已跟踪宠物","upcomingVaccines":"即将到来的疫苗","healthAlerts":"健康警报","nextVetVisit":"下次兽医就诊","recentActivity":"最近活动","noActivity":"暂无最近活动"},
+  "pets": {"title":"我的宠物","add":"添加宠物","name":"名称","species":"种类","breed":"品种","age":"年龄","weight":"体重","dog":"狗","cat":"猫","bird":"鸟","rabbit":"兔子","other":"其他","noPets":"尚未添加宠物","addFirst":"添加您的第一只宠物"},
+  "health": {"title":"健康记录","vaccines":"疫苗","medications":"药物","checkups":"体检","symptoms":"症状","addRecord":"添加记录","dueDate":"到期日期","completed":"已完成","upcoming":"即将到来","noRecords":"没有健康记录"},
+  "telehealth": {"title":"远程医疗","bookConsultation":"预约咨询","availableVets":"可用兽医","myConsultations":"我的咨询","upcoming":"即将到来","past":"过去","videoCall":"视频通话","chat":"聊天","noConsultations":"没有预约咨询"},
+  "settings": {"title":"设置","profile":"个人资料","notifications":"通知","language":"语言","privacy":"隐私政策","terms":"服务条款"},
+  "auth": {"welcome":"AI助力更好的宠物护理","tagline":"您的AI驱动宠物健康伴侣","signIn":"登录","signUp":"创建账户","email":"电子邮件","password":"密码","forgotPassword":"忘记密码？","continueWithGoogle":"使用Google继续"},
+  "billing": {"title":"账单","plan":"当前套餐","upgrade":"升级","monthly":"月付","annual":"年付"},
+  "common": {"save":"保存","cancel":"取消","delete":"删除","edit":"编辑","loading":"加载中...","error":"出错了","tryAgain":"重试","search":"搜索","back":"返回","close":"关闭","confirm":"确认","yes":"是","no":"否"},
+  "landing": {"hero":"AI驱动的宠物健康护理","cta":"开始免费试用","features":"功能","pricing":"价格"},
+  "language": {"selectLanguage":"选择语言","en":"English","es":"Español","hi":"हिन्दी","zh":"中文","ar":"العربية","pt":"Português","fr":"Français","de":"Deutsch","ja":"日本語","ko":"한국어"}
+}

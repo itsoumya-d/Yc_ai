@@ -1,0 +1,137 @@
+{
+  "nav": {
+    "dashboard": "Dashboard",
+    "proposals": "Angebote",
+    "templates": "Vorlagen",
+    "clients": "Kunden",
+    "signatures": "Unterschriften",
+    "analytics": "Analysen",
+    "settings": "Einstellungen",
+    "billing": "Abrechnung",
+    "referral": "Empfehlungsprogramm",
+    "signOut": "Abmelden"
+  },
+  "dashboard": {
+    "title": "Angebots-Dashboard",
+    "welcome": "Willkommen zurück",
+    "totalProposals": "Angebote gesamt",
+    "winRate": "Erfolgsquote",
+    "avgValue": "Durchschn. Angebotswert",
+    "pendingSig": "Ausstehende Unterschriften",
+    "recentProposals": "Aktuelle Angebote",
+    "topClients": "Top-Kunden",
+    "conversionRate": "Konversionsrate"
+  },
+  "proposals": {
+    "title": "Angebote",
+    "new": "Neues Angebot",
+    "draft": "Entwurf",
+    "sent": "Gesendet",
+    "viewed": "Angesehen",
+    "signed": "Unterschrieben",
+    "rejected": "Abgelehnt",
+    "expired": "Abgelaufen",
+    "generateAI": "Mit KI generieren",
+    "preview": "Vorschau",
+    "send": "An Kunden senden",
+    "duplicate": "Duplizieren",
+    "template": "Als Vorlage speichern",
+    "exportPDF": "PDF exportieren",
+    "noProposals": "Noch keine Angebote",
+    "createFirst": "Erstellen Sie Ihr erstes Angebot"
+  },
+  "templates": {
+    "title": "Vorlagen",
+    "new": "Neue Vorlage",
+    "myTemplates": "Meine Vorlagen",
+    "library": "Vorlagenbibliothek",
+    "web": "Webdesign",
+    "consulting": "Beratung",
+    "marketing": "Marketing",
+    "development": "Entwicklung",
+    "useTemplate": "Vorlage verwenden",
+    "editTemplate": "Vorlage bearbeiten"
+  },
+  "clients": {
+    "title": "Kunden",
+    "add": "Kunden hinzufügen",
+    "name": "Kundenname",
+    "email": "E-Mail",
+    "company": "Unternehmen",
+    "phone": "Telefon",
+    "proposals": "Angebote",
+    "totalValue": "Gesamtwert",
+    "noClients": "Noch keine Kunden",
+    "addFirst": "Fügen Sie Ihren ersten Kunden hinzu"
+  },
+  "signatures": {
+    "title": "Unterschriften",
+    "pending": "Ausstehend",
+    "signed": "Unterschrieben",
+    "expired": "Abgelaufen",
+    "request": "Unterschrift anfordern",
+    "sign": "Dokument unterzeichnen",
+    "download": "Unterschriebenes herunterladen",
+    "reminder": "Erinnerung senden",
+    "deadline": "Unterzeichnungsfrist"
+  },
+  "settings": {
+    "title": "Einstellungen",
+    "profile": "Profil",
+    "branding": "Markenidentität",
+    "notifications": "Benachrichtigungen",
+    "language": "Sprache",
+    "billing": "Abrechnung",
+    "deleteAccount": "Konto löschen"
+  },
+  "auth": {
+    "signIn": "Anmelden",
+    "signUp": "Registrieren",
+    "email": "E-Mail",
+    "password": "Passwort",
+    "forgotPassword": "Passwort vergessen?",
+    "continueWithGoogle": "Mit Google fortfahren"
+  },
+  "billing": {
+    "title": "Abrechnung",
+    "free": "Kostenlos",
+    "professional": "Professionell",
+    "agency": "Agentur",
+    "upgrade": "Upgrade",
+    "perMonth": "/Monat",
+    "perYear": "/Jahr"
+  },
+  "common": {
+    "save": "Speichern",
+    "cancel": "Abbrechen",
+    "delete": "Löschen",
+    "edit": "Bearbeiten",
+    "loading": "Laden...",
+    "error": "Etwas ist schiefgelaufen",
+    "search": "Suchen",
+    "noResults": "Keine Ergebnisse gefunden",
+    "viewAll": "Alle anzeigen",
+    "back": "Zurück",
+    "close": "Schließen",
+    "confirm": "Bestätigen",
+    "send": "Senden"
+  },
+  "landing": {
+    "hero": "KI-gestützte Angebote, die Aufträge gewinnen",
+    "heroSub": "Erstellen Sie beeindruckende Angebote in Minuten, verfolgen Sie wann Kunden sie ansehen und schließen Sie Deals mit digitalen Unterschriften",
+    "getStarted": "Kostenlos testen"
+  },
+  "language": {
+    "selectLanguage": "Sprache auswählen",
+    "en": "English",
+    "es": "Español",
+    "hi": "हिन्दी",
+    "zh": "中文",
+    "ar": "العربية",
+    "pt": "Português",
+    "fr": "Français",
+    "de": "Deutsch",
+    "ja": "日本語",
+    "ko": "한국어"
+  }
+}

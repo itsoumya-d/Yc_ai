@@ -1,0 +1,108 @@
+const fs = require('fs');
+const path = require('path');
+
+const apps = [
+  { dir: 'mortal', name: 'Mortal', bundleId: 'com.mortal.app', defaultsKey: 'mortal_life_percentage', color: 'Color(red: 0.2, green: 0.2, blue: 0.8)', emoji: '\u23f3', subtitle: '% of life lived', widgetDesc: 'Visualize the percentage of your life lived' },
+  { dir: 'stockpulse', name: 'StockPulse', bundleId: 'com.stockpulse.app', defaultsKey: 'stockpulse_low_stock_count', color: 'Color(red: 0.9, green: 0.4, blue: 0.1)', emoji: '\ud83d\udce6', subtitle: 'items low in stock', widgetDesc: 'See items running low at a glance' },
+  { dir: 'routeai', name: 'RouteAI', bundleId: 'com.routeai.app', defaultsKey: 'routeai_stops_today', color: 'Color(red: 0.1, green: 0.6, blue: 0.3)', emoji: '\ud83d\uddfa\ufe0f', subtitle: 'stops today', widgetDesc: "View today's route at a glance" },
+  { dir: 'inspector-ai', name: 'InspectorAI', bundleId: 'com.inspectorai.app', defaultsKey: 'inspectorai_inspections_today', color: 'Color(red: 0.6, green: 0.1, blue: 0.7)', emoji: '\ud83d\udd0d', subtitle: 'inspections today', widgetDesc: 'Track inspections for the day' },
+  { dir: 'sitesync', name: 'SiteSync', bundleId: 'com.sitesync.app', defaultsKey: 'sitesync_active_sites', color: 'Color(red: 0.1, green: 0.5, blue: 0.8)', emoji: '\ud83c\udfd7\ufe0f', subtitle: 'active sites', widgetDesc: 'Monitor your active project sites' },
+  { dir: 'govpass', name: 'GovPass', bundleId: 'com.govpass.app', defaultsKey: 'govpass_days_until_expiry', color: 'Color(red: 0.1, green: 0.3, blue: 0.7)', emoji: '\ud83e\udea2', subtitle: 'days until next expiry', widgetDesc: 'Days until your next document expires' },
+  { dir: 'claimback', name: 'ClaimBack', bundleId: 'com.claimback.app', defaultsKey: 'claimback_active_claims', color: 'Color(red: 0.8, green: 0.2, blue: 0.3)', emoji: '\u2696\ufe0f', subtitle: 'active claims', widgetDesc: 'Track your in-progress claims' },
+  { dir: 'aura-check', name: 'AuraCheck', bundleId: 'com.auracheck.app', defaultsKey: 'auracheck_wellness_score', color: 'Color(red: 0.5, green: 0.1, blue: 0.8)', emoji: '\u2728', subtitle: 'wellness score', widgetDesc: 'Your daily wellness score at a glance' },
+  { dir: 'fieldlens', name: 'FieldLens', bundleId: 'com.fieldlens.app', defaultsKey: 'fieldlens_open_jobs', color: 'Color(red: 0.9, green: 0.6, blue: 0.1)', emoji: '\ud83d\udd27', subtitle: 'open jobs', widgetDesc: 'See your open field jobs at a glance' },
+  { dir: 'compliancesnap-expo', name: 'ComplianceSnap', bundleId: 'com.compliancesnap.app', defaultsKey: 'compliancesnap_violations_today', color: 'Color(red: 0.9, green: 0.2, blue: 0.2)', emoji: '\u26a0\ufe0f', subtitle: 'violations today', widgetDesc: 'Track compliance violations for today' },
+];
+
+apps.forEach(app => {
+  const basePath = 'E:/Yc_ai/' + app.dir;
+  if (!fs.existsSync(basePath)) { console.log('SKIP:', app.dir); return; }
+
+  const widgetDir = basePath + '/widgets/ios';
+  fs.mkdirSync(widgetDir, { recursive: true });
+
+  const swift = [
+    'import WidgetKit',
+    'import SwiftUI',
+    '',
+    '// MARK: - Data Model',
+    'struct ' + app.name + 'WidgetEntry: TimelineEntry {',
+    '    let date: Date',
+    '    let value: Int',
+    '}',
+    '',
+    '// MARK: - Timeline Provider',
+    'struct ' + app.name + 'WidgetProvider: TimelineProvider {',
+    '    func placeholder(in context: Context) -> ' + app.name + 'WidgetEntry {',
+    '        ' + app.name + 'WidgetEntry(date: Date(), value: 0)',
+    '    }',
+    '',
+    '    func getSnapshot(in context: Context, completion: @escaping (' + app.name + 'WidgetEntry) -> Void) {',
+    '        completion(' + app.name + 'WidgetEntry(date: Date(), value: loadValue()))',
+    '    }',
+    '',
+    '    func getTimeline(in context: Context, completion: @escaping (Timeline<' + app.name + 'WidgetEntry>) -> Void) {',
+    '        let entry = ' + app.name + 'WidgetEntry(date: Date(), value: loadValue())',
+    '        let nextUpdate = Calendar.current.date(byAdding: .minute, value: 30, to: Date())!',
+    '        completion(Timeline(entries: [entry], policy: .after(nextUpdate)))',
+    '    }',
+    '',
+    '    private func loadValue() -> Int {',
+    '        let defaults = UserDefaults(suiteName: "group.' + app.bundleId + '")',
+    '        return defaults?.integer(forKey: "' + app.defaultsKey + '") ?? 0',
+    '    }',
+    '}',
+    '',
+    '// MARK: - Widget View',
+    'struct ' + app.name + 'WidgetEntryView: View {',
+    '    var entry: ' + app.name + 'WidgetEntry',
+    '',
+    '    var body: some View {',
+    '        ZStack {',
+    '            ContainerRelativeShape()',
+    '                .fill(' + app.color + '.gradient)',
+    '            VStack(alignment: .leading, spacing: 4) {',
+    '                Text("' + app.emoji + '")',
+    '                    .font(.title2)',
+    '                Spacer()',
+    '                Text("\\(entry.value)")',
+    '                    .font(.system(size: 36, weight: .bold, design: .rounded))',
+    '                    .foregroundColor(.white)',
+    '                Text("' + app.subtitle + '")',
+    '                    .font(.caption)',
+    '                    .foregroundColor(.white.opacity(0.85))',
+    '            }',
+    '            .padding()',
+    '            .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .leading)',
+    '        }',
+    '    }',
+    '}',
+    '',
+    '// MARK: - Widget Configuration',
+    'struct ' + app.name + 'Widget: Widget {',
+    '    let kind: String = "' + app.name + 'Widget"',
+    '',
+    '    var body: some WidgetConfiguration {',
+    '        StaticConfiguration(kind: kind, provider: ' + app.name + 'WidgetProvider()) { entry in',
+    '            ' + app.name + 'WidgetEntryView(entry: entry)',
+    '                .containerBackground(' + app.color + '.gradient, for: .widget)',
+    '        }',
+    '        .configurationDisplayName("' + app.name + '")',
+    '        .description("' + app.widgetDesc + '")',
+    '        .supportedFamilies([.systemSmall, .systemMedium])',
+    '    }',
+    '}',
+    '',
+    '// MARK: - Preview',
+    '#Preview(as: .systemSmall) {',
+    '    ' + app.name + 'Widget()',
+    '} timeline: {',
+    '    ' + app.name + 'WidgetEntry(date: .now, value: 7)',
+    '}',
+    '',
+  ].join('\n');
+
+  fs.writeFileSync(widgetDir + '/' + app.name + 'Widget.swift', swift, 'utf8');
+  console.log('Created widget:', app.dir);
+});
+console.log('Done!');

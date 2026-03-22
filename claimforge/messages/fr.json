@@ -1,0 +1,13 @@
+{
+  "nav": {"dashboard":"Tableau de bord","cases":"Affaires","documents":"Documents","analysis":"Analyse","settings":"Paramètres","billing":"Facturation","signOut":"Déconnexion"},
+  "dashboard": {"title":"Tableau de bord des Réclamations","welcome":"Bon retour","activeCases":"Affaires actives","totalClaimed":"Total réclamé","successRate":"Taux de réussite","pendingReview":"En attente de révision","recentCases":"Affaires récentes","noCases":"Aucune affaire pour l'instant"},
+  "cases": {"title":"Affaires","new":"Nouvelle affaire","open":"Ouverte","inProgress":"En cours","resolved":"Résolue","closed":"Fermée","claimAmount":"Montant de la réclamation","editCase":"Modifier l'affaire","closeCase":"Fermer l'affaire","noCases":"Aucune affaire pour l'instant","createFirst":"Créez votre première affaire"},
+  "documents": {"title":"Documents","upload":"Télécharger un document","ocr":"Analyse OCR","extracting":"Extraction du texte...","documentType":"Type de document","noDocuments":"Aucun document téléchargé","addFirst":"Téléchargez votre premier document"},
+  "analysis": {"title":"Analyse IA","analyze":"Analyser l'affaire","strengthScore":"Force de l'affaire","evidenceAnalysis":"Analyse des preuves","recommendations":"Recommandations","riskFactors":"Facteurs de risque","noAnalysis":"Aucune analyse pour l'instant","runAnalysis":"Lancer l'analyse"},
+  "settings": {"title":"Paramètres","profile":"Profil","notifications":"Notifications","language":"Langue","privacy":"Politique de confidentialité","terms":"Conditions d'utilisation"},
+  "auth": {"welcome":"Constituez des dossiers gagnants","tagline":"Gestion des réclamations juridiques par IA","signIn":"Connexion","signUp":"Créer un compte","email":"E-mail","password":"Mot de passe","forgotPassword":"Mot de passe oublié ?","continueWithGoogle":"Continuer avec Google"},
+  "billing": {"title":"Facturation","plan":"Plan actuel","upgrade":"Mettre à niveau","monthly":"Mensuel","annual":"Annuel"},
+  "common": {"save":"Enregistrer","cancel":"Annuler","delete":"Supprimer","edit":"Modifier","loading":"Chargement...","error":"Une erreur s'est produite","tryAgain":"Réessayer","search":"Rechercher","back":"Retour","close":"Fermer","confirm":"Confirmer","yes":"Oui","no":"Non"},
+  "landing": {"hero":"Des réclamations IA qui gagnent","cta":"Démarrer l'essai gratuit","features":"Fonctionnalités","pricing":"Tarifs"},
+  "language": {"selectLanguage":"Choisir la langue","en":"English","es":"Español","hi":"हिन्दी","zh":"中文","ar":"العربية","pt":"Português","fr":"Français","de":"Deutsch","ja":"日本語","ko":"한국어"}
+}

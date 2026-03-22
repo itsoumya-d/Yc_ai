@@ -1,0 +1,115 @@
+{
+  "nav": {
+    "dashboard": "डैशबोर्ड",
+    "invoices": "चालान",
+    "clients": "ग्राहक",
+    "reports": "रिपोर्ट",
+    "settings": "सेटिंग्स",
+    "billing": "बिलिंग",
+    "signOut": "साइन आउट"
+  },
+  "dashboard": {
+    "title": "वित्त डैशबोर्ड",
+    "welcome": "वापस स्वागत है",
+    "outstanding": "बकाया",
+    "paid": "इस महीने भुगतान",
+    "overdue": "अतिदेय",
+    "totalRevenue": "कुल राजस्व",
+    "recentInvoices": "हाल के चालान",
+    "noInvoices": "अभी तक कोई चालान नहीं"
+  },
+  "invoices": {
+    "title": "चालान",
+    "new": "नया चालान",
+    "draft": "मसौदा",
+    "sent": "भेजा गया",
+    "paid": "भुगतान हो गया",
+    "overdue": "अतिदेय",
+    "void": "अमान्य",
+    "send": "चालान भेजें",
+    "markPaid": "भुगतान के रूप में चिह्नित करें",
+    "duplicate": "डुप्लिकेट",
+    "delete": "हटाएं",
+    "noInvoices": "अभी तक कोई चालान नहीं",
+    "createFirst": "अपना पहला चालान बनाएं"
+  },
+  "clients": {
+    "title": "ग्राहक",
+    "add": "ग्राहक जोड़ें",
+    "name": "नाम",
+    "email": "ईमेल",
+    "phone": "फोन",
+    "address": "पता",
+    "totalInvoiced": "कुल चालान राशि",
+    "paymentTerms": "भुगतान शर्तें",
+    "noClients": "अभी तक कोई ग्राहक नहीं"
+  },
+  "reports": {
+    "title": "रिपोर्ट",
+    "revenue": "राजस्व",
+    "expenses": "व्यय",
+    "profit": "लाभ",
+    "agingReport": "बकाया रिपोर्ट",
+    "taxSummary": "कर सारांश",
+    "export": "रिपोर्ट निर्यात करें"
+  },
+  "settings": {
+    "title": "सेटिंग्स",
+    "profile": "प्रोफ़ाइल",
+    "notifications": "सूचनाएं",
+    "language": "भाषा",
+    "privacy": "गोपनीयता नीति",
+    "terms": "सेवा की शर्तें"
+  },
+  "auth": {
+    "welcome": "जल्दी भुगतान पाएं",
+    "tagline": "फ्रीलांसर और व्यवसायों के लिए AI-संचालित चालान",
+    "signIn": "साइन इन करें",
+    "signUp": "खाता बनाएं",
+    "email": "ईमेल",
+    "password": "पासवर्ड",
+    "forgotPassword": "पासवर्ड भूल गए?",
+    "continueWithGoogle": "Google के साथ जारी रखें"
+  },
+  "billing": {
+    "title": "बिलिंग",
+    "plan": "वर्तमान योजना",
+    "upgrade": "अपग्रेड करें",
+    "monthly": "मासिक",
+    "annual": "वार्षिक"
+  },
+  "common": {
+    "save": "सहेजें",
+    "cancel": "रद्द करें",
+    "delete": "हटाएं",
+    "edit": "संपादित करें",
+    "loading": "लोड हो रहा है...",
+    "error": "कुछ गलत हो गया",
+    "tryAgain": "फिर से प्रयास करें",
+    "search": "खोजें",
+    "back": "वापस",
+    "close": "बंद करें",
+    "confirm": "पुष्टि करें",
+    "yes": "हाँ",
+    "no": "नहीं"
+  },
+  "landing": {
+    "hero": "चालान जो आपको जल्दी भुगतान दिलाएं",
+    "cta": "मुफ़्त परीक्षण शुरू करें",
+    "features": "विशेषताएं",
+    "pricing": "मूल्य निर्धारण"
+  },
+  "language": {
+    "selectLanguage": "भाषा चुनें",
+    "en": "English",
+    "es": "Español",
+    "hi": "हिन्दी",
+    "zh": "中文",
+    "ar": "العربية",
+    "pt": "Português",
+    "fr": "Français",
+    "de": "Deutsch",
+    "ja": "日本語",
+    "ko": "한국어"
+  }
+}

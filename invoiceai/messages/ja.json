@@ -1,0 +1,115 @@
+{
+  "nav": {
+    "dashboard": "ダッシュボード",
+    "invoices": "請求書",
+    "clients": "クライアント",
+    "reports": "レポート",
+    "settings": "設定",
+    "billing": "お支払い",
+    "signOut": "サインアウト"
+  },
+  "dashboard": {
+    "title": "財務ダッシュボード",
+    "welcome": "おかえりなさい",
+    "outstanding": "未払い",
+    "paid": "今月の入金",
+    "overdue": "期限超過",
+    "totalRevenue": "総収益",
+    "recentInvoices": "最近の請求書",
+    "noInvoices": "まだ請求書がありません"
+  },
+  "invoices": {
+    "title": "請求書",
+    "new": "新しい請求書",
+    "draft": "下書き",
+    "sent": "送信済み",
+    "paid": "支払済み",
+    "overdue": "期限超過",
+    "void": "無効",
+    "send": "請求書を送信",
+    "markPaid": "支払済みにする",
+    "duplicate": "複製",
+    "delete": "削除",
+    "noInvoices": "まだ請求書がありません",
+    "createFirst": "最初の請求書を作成する"
+  },
+  "clients": {
+    "title": "クライアント",
+    "add": "クライアントを追加",
+    "name": "名前",
+    "email": "メールアドレス",
+    "phone": "電話番号",
+    "address": "住所",
+    "totalInvoiced": "請求総額",
+    "paymentTerms": "支払条件",
+    "noClients": "まだクライアントがいません"
+  },
+  "reports": {
+    "title": "レポート",
+    "revenue": "売上",
+    "expenses": "経費",
+    "profit": "利益",
+    "agingReport": "売掛金エイジングレポート",
+    "taxSummary": "税務サマリー",
+    "export": "レポートを出力"
+  },
+  "settings": {
+    "title": "設定",
+    "profile": "プロフィール",
+    "notifications": "通知",
+    "language": "言語",
+    "privacy": "プライバシーポリシー",
+    "terms": "利用規約"
+  },
+  "auth": {
+    "welcome": "より早く支払いを受けよう",
+    "tagline": "フリーランサーとビジネス向けのAI請求管理",
+    "signIn": "サインイン",
+    "signUp": "アカウント作成",
+    "email": "メールアドレス",
+    "password": "パスワード",
+    "forgotPassword": "パスワードをお忘れですか？",
+    "continueWithGoogle": "Googleで続ける"
+  },
+  "billing": {
+    "title": "お支払い",
+    "plan": "現在のプラン",
+    "upgrade": "アップグレード",
+    "monthly": "月払い",
+    "annual": "年払い"
+  },
+  "common": {
+    "save": "保存",
+    "cancel": "キャンセル",
+    "delete": "削除",
+    "edit": "編集",
+    "loading": "読み込み中...",
+    "error": "エラーが発生しました",
+    "tryAgain": "再試行",
+    "search": "検索",
+    "back": "戻る",
+    "close": "閉じる",
+    "confirm": "確認",
+    "yes": "はい",
+    "no": "いいえ"
+  },
+  "landing": {
+    "hero": "より早く入金される請求管理",
+    "cta": "無料トライアルを始める",
+    "features": "機能",
+    "pricing": "料金"
+  },
+  "language": {
+    "selectLanguage": "言語を選択",
+    "en": "English",
+    "es": "Español",
+    "hi": "हिन्दी",
+    "zh": "中文",
+    "ar": "العربية",
+    "pt": "Português",
+    "fr": "Français",
+    "de": "Deutsch",
+    "ja": "日本語",
+    "ko": "한국어"
+  }
+}

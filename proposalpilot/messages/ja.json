@@ -1,0 +1,137 @@
+{
+  "nav": {
+    "dashboard": "ダッシュボード",
+    "proposals": "提案書",
+    "templates": "テンプレート",
+    "clients": "クライアント",
+    "signatures": "署名",
+    "analytics": "分析",
+    "settings": "設定",
+    "billing": "請求",
+    "referral": "紹介プログラム",
+    "signOut": "サインアウト"
+  },
+  "dashboard": {
+    "title": "提案書ダッシュボード",
+    "welcome": "おかえりなさい",
+    "totalProposals": "提案書総数",
+    "winRate": "受注率",
+    "avgValue": "平均提案書額",
+    "pendingSig": "署名待ち",
+    "recentProposals": "最近の提案書",
+    "topClients": "主要クライアント",
+    "conversionRate": "コンバージョン率"
+  },
+  "proposals": {
+    "title": "提案書",
+    "new": "新しい提案書",
+    "draft": "下書き",
+    "sent": "送信済み",
+    "viewed": "閲覧済み",
+    "signed": "署名済み",
+    "rejected": "却下",
+    "expired": "期限切れ",
+    "generateAI": "AIで生成",
+    "preview": "プレビュー",
+    "send": "クライアントに送信",
+    "duplicate": "複製",
+    "template": "テンプレートとして保存",
+    "exportPDF": "PDFをエクスポート",
+    "noProposals": "まだ提案書がありません",
+    "createFirst": "最初の提案書を作成する"
+  },
+  "templates": {
+    "title": "テンプレート",
+    "new": "新しいテンプレート",
+    "myTemplates": "マイテンプレート",
+    "library": "テンプレートライブラリ",
+    "web": "ウェブデザイン",
+    "consulting": "コンサルティング",
+    "marketing": "マーケティング",
+    "development": "開発",
+    "useTemplate": "テンプレートを使用",
+    "editTemplate": "テンプレートを編集"
+  },
+  "clients": {
+    "title": "クライアント",
+    "add": "クライアントを追加",
+    "name": "クライアント名",
+    "email": "メール",
+    "company": "会社",
+    "phone": "電話",
+    "proposals": "提案書",
+    "totalValue": "合計金額",
+    "noClients": "まだクライアントがありません",
+    "addFirst": "最初のクライアントを追加する"
+  },
+  "signatures": {
+    "title": "署名",
+    "pending": "保留中",
+    "signed": "署名済み",
+    "expired": "期限切れ",
+    "request": "署名をリクエスト",
+    "sign": "文書に署名",
+    "download": "署名済みをダウンロード",
+    "reminder": "リマインダーを送信",
+    "deadline": "署名期限"
+  },
+  "settings": {
+    "title": "設定",
+    "profile": "プロフィール",
+    "branding": "ブランディング",
+    "notifications": "通知",
+    "language": "言語",
+    "billing": "請求",
+    "deleteAccount": "アカウントを削除"
+  },
+  "auth": {
+    "signIn": "サインイン",
+    "signUp": "サインアップ",
+    "email": "メール",
+    "password": "パスワード",
+    "forgotPassword": "パスワードをお忘れですか？",
+    "continueWithGoogle": "Googleで続ける"
+  },
+  "billing": {
+    "title": "請求",
+    "free": "無料",
+    "professional": "プロフェッショナル",
+    "agency": "エージェンシー",
+    "upgrade": "アップグレード",
+    "perMonth": "/月",
+    "perYear": "/年"
+  },
+  "common": {
+    "save": "保存",
+    "cancel": "キャンセル",
+    "delete": "削除",
+    "edit": "編集",
+    "loading": "読み込み中...",
+    "error": "エラーが発生しました",
+    "search": "検索",
+    "noResults": "結果が見つかりません",
+    "viewAll": "すべて表示",
+    "back": "戻る",
+    "close": "閉じる",
+    "confirm": "確認",
+    "send": "送信"
+  },
+  "landing": {
+    "hero": "AIが生み出す受注できる提案書",
+    "heroSub": "数分で印象的な提案書を作成し、クライアントの閲覧状況をトラッキングし、電子署名でスムーズにクロージング",
+    "getStarted": "無料トライアル開始"
+  },
+  "language": {
+    "selectLanguage": "言語を選択",
+    "en": "English",
+    "es": "Español",
+    "hi": "हिन्दी",
+    "zh": "中文",
+    "ar": "العربية",
+    "pt": "Português",
+    "fr": "Français",
+    "de": "Deutsch",
+    "ja": "日本語",
+    "ko": "한국어"
+  }
+}

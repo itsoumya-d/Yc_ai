@@ -1,0 +1,119 @@
+{
+  "nav": {
+    "dashboard": "لوحة التحكم",
+    "stories": "القصص",
+    "explore": "استكشاف",
+    "collaborations": "التعاون",
+    "settings": "الإعدادات",
+    "billing": "الفواتير",
+    "signOut": "تسجيل الخروج"
+  },
+  "dashboard": {
+    "title": "لوحة الكتابة",
+    "welcome": "مرحباً بعودتك",
+    "storiesWritten": "القصص المكتوبة",
+    "wordsThisMonth": "كلمات هذا الشهر",
+    "collaborators": "المتعاونون النشطون",
+    "readTime": "إجمالي وقت القراءة",
+    "recentStories": "القصص الأخيرة",
+    "noStories": "لا توجد قصص بعد"
+  },
+  "stories": {
+    "title": "قصصي",
+    "new": "قصة جديدة",
+    "draft": "مسودة",
+    "published": "منشور",
+    "archived": "مؤرشف",
+    "wordCount": "عدد الكلمات",
+    "chapters": "الفصول",
+    "edit": "تعديل",
+    "publish": "نشر",
+    "unpublish": "إلغاء النشر",
+    "delete": "حذف",
+    "noStories": "لا توجد قصص بعد",
+    "createFirst": "أنشئ قصتك الأولى"
+  },
+  "explore": {
+    "title": "استكشاف القصص",
+    "trending": "الرائج",
+    "recent": "الأحدث",
+    "genre": "النوع",
+    "fiction": "خيال",
+    "nonfiction": "غير خيالي",
+    "fantasy": "فانتازيا",
+    "romance": "رومانسي",
+    "mystery": "غموض",
+    "scifi": "خيال علمي",
+    "thriller": "إثارة"
+  },
+  "collaborations": {
+    "title": "التعاون",
+    "active": "نشط",
+    "pending": "معلق",
+    "invite": "دعوة متعاون",
+    "accept": "قبول",
+    "decline": "رفض",
+    "noCollabs": "لا يوجد تعاون بعد"
+  },
+  "settings": {
+    "title": "الإعدادات",
+    "profile": "الملف الشخصي",
+    "notifications": "الإشعارات",
+    "language": "اللغة",
+    "privacy": "سياسة الخصوصية",
+    "terms": "شروط الخدمة"
+  },
+  "auth": {
+    "welcome": "احكِ قصتك",
+    "tagline": "منصة كتابة تعاونية مدعومة بالذكاء الاصطناعي",
+    "signIn": "تسجيل الدخول",
+    "signUp": "إنشاء حساب",
+    "email": "البريد الإلكتروني",
+    "password": "كلمة المرور",
+    "forgotPassword": "نسيت كلمة المرور؟",
+    "continueWithGoogle": "المتابعة مع Google"
+  },
+  "billing": {
+    "title": "الفواتير",
+    "plan": "الخطة الحالية",
+    "upgrade": "ترقية",
+    "monthly": "شهري",
+    "annual": "سنوي",
+    "cancelAnytime": "إلغاء في أي وقت"
+  },
+  "common": {
+    "save": "حفظ",
+    "cancel": "إلغاء",
+    "delete": "حذف",
+    "edit": "تعديل",
+    "loading": "جارٍ التحميل...",
+    "error": "حدث خطأ ما",
+    "tryAgain": "حاول مرة أخرى",
+    "search": "بحث",
+    "back": "رجوع",
+    "close": "إغلاق",
+    "confirm": "تأكيد",
+    "yes": "نعم",
+    "no": "لا",
+    "share": "مشاركة"
+  },
+  "landing": {
+    "hero": "اكتب قصصاً تأسر القراء",
+    "cta": "ابدأ الكتابة مجاناً",
+    "features": "المميزات",
+    "pricing": "الأسعار"
+  },
+  "language": {
+    "selectLanguage": "اختر اللغة",
+    "en": "English",
+    "es": "Español",
+    "hi": "हिन्दी",
+    "zh": "中文",
+    "ar": "العربية",
+    "pt": "Português",
+    "fr": "Français",
+    "de": "Deutsch",
+    "ja": "日本語",
+    "ko": "한국어"
+  }
+}

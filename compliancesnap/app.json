@@ -1,0 +1,27 @@
+{
+  "expo": {
+    "name": "ComplianceSnap",
+    "slug": "compliancesnap",
+    "version": "1.0.0",
+    "orientation": "portrait",
+    "scheme": "compliancesnap",
+    "userInterfaceStyle": "light",
+    "splash": {
+      "resizeMode": "contain",
+      "backgroundColor": "#F8FAFC"
+    },
+    "ios": {
+      "supportsTablet": true,
+      "bundleIdentifier": "com.compliancesnap.app"
+    },
+    "android": {
+      "adaptiveIcon": {
+        "backgroundColor": "#F8FAFC"
+      },
+      "package": "com.compliancesnap.app"
+    },
+    "plugins": [
+      "expo-router"
+    ]
+  }
+}

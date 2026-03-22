@@ -1,0 +1,13 @@
+{
+  "nav": {"dashboard":"ダッシュボード","cases":"案件","documents":"書類","analysis":"分析","settings":"設定","billing":"お支払い","signOut":"サインアウト"},
+  "dashboard": {"title":"クレームダッシュボード","welcome":"おかえりなさい","activeCases":"進行中の案件","totalClaimed":"総クレーム額","successRate":"成功率","pendingReview":"レビュー待ち","recentCases":"最近の案件","noCases":"案件がありません"},
+  "cases": {"title":"案件","new":"新規案件","open":"未着手","inProgress":"対応中","resolved":"解決済み","closed":"終了","claimAmount":"クレーム金額","editCase":"案件を編集","closeCase":"案件を閉じる","noCases":"案件がありません","createFirst":"最初の案件を作成してください"},
+  "documents": {"title":"書類","upload":"書類をアップロード","ocr":"OCR分析","extracting":"テキストを抽出中...","documentType":"書類種別","noDocuments":"書類がアップロードされていません","addFirst":"最初の書類をアップロードしてください"},
+  "analysis": {"title":"AI分析","analyze":"案件を分析","strengthScore":"案件の強度","evidenceAnalysis":"証拠分析","recommendations":"推奨事項","riskFactors":"リスク要因","noAnalysis":"分析がまだありません","runAnalysis":"分析を実行"},
+  "settings": {"title":"設定","profile":"プロフィール","notifications":"通知","language":"言語","privacy":"プライバシーポリシー","terms":"利用規約"},
+  "auth": {"welcome":"勝利する案件を構築","tagline":"AI搭載の法的クレーム管理","signIn":"サインイン","signUp":"アカウント作成","email":"メール","password":"パスワード","forgotPassword":"パスワードをお忘れですか？","continueWithGoogle":"Googleで続ける"},
+  "billing": {"title":"お支払い","plan":"現在のプラン","upgrade":"アップグレード","monthly":"月払い","annual":"年払い"},
+  "common": {"save":"保存","cancel":"キャンセル","delete":"削除","edit":"編集","loading":"読み込み中...","error":"エラーが発生しました","tryAgain":"再試行","search":"検索","back":"戻る","close":"閉じる","confirm":"確認","yes":"はい","no":"いいえ"},
+  "landing": {"hero":"AIで勝利するクレーム","cta":"無料トライアルを開始","features":"機能","pricing":"料金"},
+  "language": {"selectLanguage":"言語を選択","en":"English","es":"Español","hi":"हिन्दी","zh":"中文","ar":"العربية","pt":"Português","fr":"Français","de":"Deutsch","ja":"日本語","ko":"한국어"}
+}

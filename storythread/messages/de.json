@@ -1,0 +1,119 @@
+{
+  "nav": {
+    "dashboard": "Dashboard",
+    "stories": "Geschichten",
+    "explore": "Entdecken",
+    "collaborations": "Kollaborationen",
+    "settings": "Einstellungen",
+    "billing": "Abrechnung",
+    "signOut": "Abmelden"
+  },
+  "dashboard": {
+    "title": "Schreib-Dashboard",
+    "welcome": "Willkommen zurück",
+    "storiesWritten": "Geschriebene Geschichten",
+    "wordsThisMonth": "Wörter diesen Monat",
+    "collaborators": "Aktive Mitarbeiter",
+    "readTime": "Gesamte Lesezeit",
+    "recentStories": "Neueste Geschichten",
+    "noStories": "Noch keine Geschichten"
+  },
+  "stories": {
+    "title": "Meine Geschichten",
+    "new": "Neue Geschichte",
+    "draft": "Entwurf",
+    "published": "Veröffentlicht",
+    "archived": "Archiviert",
+    "wordCount": "Wortanzahl",
+    "chapters": "Kapitel",
+    "edit": "Bearbeiten",
+    "publish": "Veröffentlichen",
+    "unpublish": "Zurückziehen",
+    "delete": "Löschen",
+    "noStories": "Noch keine Geschichten",
+    "createFirst": "Erstelle deine erste Geschichte"
+  },
+  "explore": {
+    "title": "Geschichten entdecken",
+    "trending": "Trending",
+    "recent": "Neueste",
+    "genre": "Genre",
+    "fiction": "Fiktion",
+    "nonfiction": "Sachbuch",
+    "fantasy": "Fantasy",
+    "romance": "Romantik",
+    "mystery": "Krimi",
+    "scifi": "Science-Fiction",
+    "thriller": "Thriller"
+  },
+  "collaborations": {
+    "title": "Kollaborationen",
+    "active": "Aktiv",
+    "pending": "Ausstehend",
+    "invite": "Mitarbeiter einladen",
+    "accept": "Annehmen",
+    "decline": "Ablehnen",
+    "noCollabs": "Noch keine Kollaborationen"
+  },
+  "settings": {
+    "title": "Einstellungen",
+    "profile": "Profil",
+    "notifications": "Benachrichtigungen",
+    "language": "Sprache",
+    "privacy": "Datenschutzerklärung",
+    "terms": "Nutzungsbedingungen"
+  },
+  "auth": {
+    "welcome": "Erzähl deine Geschichte",
+    "tagline": "KI-gestützte kollaborative Schreibplattform",
+    "signIn": "Anmelden",
+    "signUp": "Konto erstellen",
+    "email": "E-Mail",
+    "password": "Passwort",
+    "forgotPassword": "Passwort vergessen?",
+    "continueWithGoogle": "Mit Google fortfahren"
+  },
+  "billing": {
+    "title": "Abrechnung",
+    "plan": "Aktueller Plan",
+    "upgrade": "Upgrade",
+    "monthly": "Monatlich",
+    "annual": "Jährlich",
+    "cancelAnytime": "Jederzeit kündigen"
+  },
+  "common": {
+    "save": "Speichern",
+    "cancel": "Abbrechen",
+    "delete": "Löschen",
+    "edit": "Bearbeiten",
+    "loading": "Wird geladen...",
+    "error": "Etwas ist schiefgelaufen",
+    "tryAgain": "Erneut versuchen",
+    "search": "Suchen",
+    "back": "Zurück",
+    "close": "Schließen",
+    "confirm": "Bestätigen",
+    "yes": "Ja",
+    "no": "Nein",
+    "share": "Teilen"
+  },
+  "landing": {
+    "hero": "Schreibe Geschichten, die Leser fesseln",
+    "cta": "Kostenlos mit dem Schreiben beginnen",
+    "features": "Funktionen",
+    "pricing": "Preise"
+  },
+  "language": {
+    "selectLanguage": "Sprache auswählen",
+    "en": "English",
+    "es": "Español",
+    "hi": "हिन्दी",
+    "zh": "中文",
+    "ar": "العربية",
+    "pt": "Português",
+    "fr": "Français",
+    "de": "Deutsch",
+    "ja": "日本語",
+    "ko": "한국어"
+  }
+}

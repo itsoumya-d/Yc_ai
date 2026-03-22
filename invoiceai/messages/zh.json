@@ -1,0 +1,115 @@
+{
+  "nav": {
+    "dashboard": "仪表板",
+    "invoices": "发票",
+    "clients": "客户",
+    "reports": "报告",
+    "settings": "设置",
+    "billing": "账单",
+    "signOut": "退出登录"
+  },
+  "dashboard": {
+    "title": "财务仪表板",
+    "welcome": "欢迎回来",
+    "outstanding": "未付款",
+    "paid": "本月已收款",
+    "overdue": "逾期",
+    "totalRevenue": "总收入",
+    "recentInvoices": "最近发票",
+    "noInvoices": "还没有发票"
+  },
+  "invoices": {
+    "title": "发票",
+    "new": "新发票",
+    "draft": "草稿",
+    "sent": "已发送",
+    "paid": "已付款",
+    "overdue": "逾期",
+    "void": "已作废",
+    "send": "发送发票",
+    "markPaid": "标记为已付款",
+    "duplicate": "复制",
+    "delete": "删除",
+    "noInvoices": "还没有发票",
+    "createFirst": "创建你的第一张发票"
+  },
+  "clients": {
+    "title": "客户",
+    "add": "添加客户",
+    "name": "姓名",
+    "email": "邮箱",
+    "phone": "电话",
+    "address": "地址",
+    "totalInvoiced": "总开票金额",
+    "paymentTerms": "付款条款",
+    "noClients": "还没有客户"
+  },
+  "reports": {
+    "title": "报告",
+    "revenue": "收入",
+    "expenses": "支出",
+    "profit": "利润",
+    "agingReport": "账龄报告",
+    "taxSummary": "税务汇总",
+    "export": "导出报告"
+  },
+  "settings": {
+    "title": "设置",
+    "profile": "个人资料",
+    "notifications": "通知",
+    "language": "语言",
+    "privacy": "隐私政策",
+    "terms": "服务条款"
+  },
+  "auth": {
+    "welcome": "更快收款",
+    "tagline": "面向自由职业者和企业的AI发票管理",
+    "signIn": "登录",
+    "signUp": "创建账户",
+    "email": "邮箱",
+    "password": "密码",
+    "forgotPassword": "忘记密码？",
+    "continueWithGoogle": "使用Google继续"
+  },
+  "billing": {
+    "title": "账单",
+    "plan": "当前计划",
+    "upgrade": "升级",
+    "monthly": "月付",
+    "annual": "年付"
+  },
+  "common": {
+    "save": "保存",
+    "cancel": "取消",
+    "delete": "删除",
+    "edit": "编辑",
+    "loading": "加载中...",
+    "error": "出现错误",
+    "tryAgain": "重试",
+    "search": "搜索",
+    "back": "返回",
+    "close": "关闭",
+    "confirm": "确认",
+    "yes": "是",
+    "no": "否"
+  },
+  "landing": {
+    "hero": "让你更快收到款项的发票管理",
+    "cta": "开始免费试用",
+    "features": "功能",
+    "pricing": "价格"
+  },
+  "language": {
+    "selectLanguage": "选择语言",
+    "en": "English",
+    "es": "Español",
+    "hi": "हिन्दी",
+    "zh": "中文",
+    "ar": "العربية",
+    "pt": "Português",
+    "fr": "Français",
+    "de": "Deutsch",
+    "ja": "日本語",
+    "ko": "한국어"
+  }
+}

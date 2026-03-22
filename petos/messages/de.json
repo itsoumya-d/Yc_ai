@@ -1,0 +1,13 @@
+{
+  "nav": {"dashboard":"Dashboard","pets":"Meine Haustiere","health":"Gesundheit","telehealth":"Telemedizin","settings":"Einstellungen","billing":"Abrechnung","signOut":"Abmelden"},
+  "dashboard": {"title":"Haustier-Dashboard","welcome":"Willkommen zurück","petsTracked":"Erfasste Haustiere","upcomingVaccines":"Bevorstehende Impfungen","healthAlerts":"Gesundheitswarnungen","nextVetVisit":"Nächster Tierarztbesuch","recentActivity":"Letzte Aktivitäten","noActivity":"Keine aktuellen Aktivitäten"},
+  "pets": {"title":"Meine Haustiere","add":"Haustier hinzufügen","name":"Name","species":"Tierart","breed":"Rasse","age":"Alter","weight":"Gewicht","dog":"Hund","cat":"Katze","bird":"Vogel","rabbit":"Kaninchen","other":"Sonstiges","noPets":"Noch keine Haustiere hinzugefügt","addFirst":"Fügen Sie Ihr erstes Haustier hinzu"},
+  "health": {"title":"Gesundheitsakte","vaccines":"Impfungen","medications":"Medikamente","checkups":"Vorsorgeuntersuchungen","symptoms":"Symptome","addRecord":"Eintrag hinzufügen","dueDate":"Fälligkeitsdatum","completed":"Abgeschlossen","upcoming":"Bevorstehend","noRecords":"Keine Gesundheitseinträge"},
+  "telehealth": {"title":"Telemedizin","bookConsultation":"Termin buchen","availableVets":"Verfügbare Tierärzte","myConsultations":"Meine Konsultationen","upcoming":"Bevorstehend","past":"Vergangen","videoCall":"Videoanruf","chat":"Chat","noConsultations":"Keine Termine geplant"},
+  "settings": {"title":"Einstellungen","profile":"Profil","notifications":"Benachrichtigungen","language":"Sprache","privacy":"Datenschutzrichtlinie","terms":"Nutzungsbedingungen"},
+  "auth": {"welcome":"Bessere Haustierpflege mit KI","tagline":"Ihr KI-gestützter Begleiter für Tiergesundheit","signIn":"Anmelden","signUp":"Konto erstellen","email":"E-Mail","password":"Passwort","forgotPassword":"Passwort vergessen?","continueWithGoogle":"Mit Google fortfahren"},
+  "billing": {"title":"Abrechnung","plan":"Aktueller Plan","upgrade":"Upgrade","monthly":"Monatlich","annual":"Jährlich"},
+  "common": {"save":"Speichern","cancel":"Abbrechen","delete":"Löschen","edit":"Bearbeiten","loading":"Laden...","error":"Etwas ist schiefgelaufen","tryAgain":"Erneut versuchen","search":"Suchen","back":"Zurück","close":"Schließen","confirm":"Bestätigen","yes":"Ja","no":"Nein"},
+  "landing": {"hero":"KI-gestützte Tiergesundheitsversorgung","cta":"Kostenlos testen","features":"Funktionen","pricing":"Preise"},
+  "language": {"selectLanguage":"Sprache auswählen","en":"English","es":"Español","hi":"हिन्दी","zh":"中文","ar":"العربية","pt":"Português","fr":"Français","de":"Deutsch","ja":"日本語","ko":"한국어"}
+}

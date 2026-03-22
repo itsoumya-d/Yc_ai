@@ -1,0 +1,119 @@
+{
+  "nav": {
+    "dashboard": "仪表板",
+    "stories": "故事",
+    "explore": "探索",
+    "collaborations": "协作",
+    "settings": "设置",
+    "billing": "账单",
+    "signOut": "退出登录"
+  },
+  "dashboard": {
+    "title": "写作仪表板",
+    "welcome": "欢迎回来",
+    "storiesWritten": "已写故事",
+    "wordsThisMonth": "本月字数",
+    "collaborators": "活跃协作者",
+    "readTime": "总阅读时间",
+    "recentStories": "最近的故事",
+    "noStories": "还没有故事"
+  },
+  "stories": {
+    "title": "我的故事",
+    "new": "新故事",
+    "draft": "草稿",
+    "published": "已发布",
+    "archived": "已归档",
+    "wordCount": "字数",
+    "chapters": "章节",
+    "edit": "编辑",
+    "publish": "发布",
+    "unpublish": "取消发布",
+    "delete": "删除",
+    "noStories": "还没有故事",
+    "createFirst": "创建你的第一个故事"
+  },
+  "explore": {
+    "title": "探索故事",
+    "trending": "热门",
+    "recent": "最近",
+    "genre": "类型",
+    "fiction": "小说",
+    "nonfiction": "非小说",
+    "fantasy": "奇幻",
+    "romance": "言情",
+    "mystery": "悬疑",
+    "scifi": "科幻",
+    "thriller": "惊悚"
+  },
+  "collaborations": {
+    "title": "协作",
+    "active": "进行中",
+    "pending": "待处理",
+    "invite": "邀请协作者",
+    "accept": "接受",
+    "decline": "拒绝",
+    "noCollabs": "还没有协作"
+  },
+  "settings": {
+    "title": "设置",
+    "profile": "个人资料",
+    "notifications": "通知",
+    "language": "语言",
+    "privacy": "隐私政策",
+    "terms": "服务条款"
+  },
+  "auth": {
+    "welcome": "讲述你的故事",
+    "tagline": "AI驱动的协作写作平台",
+    "signIn": "登录",
+    "signUp": "创建账户",
+    "email": "邮箱",
+    "password": "密码",
+    "forgotPassword": "忘记密码？",
+    "continueWithGoogle": "使用Google继续"
+  },
+  "billing": {
+    "title": "账单",
+    "plan": "当前计划",
+    "upgrade": "升级",
+    "monthly": "月付",
+    "annual": "年付",
+    "cancelAnytime": "随时取消"
+  },
+  "common": {
+    "save": "保存",
+    "cancel": "取消",
+    "delete": "删除",
+    "edit": "编辑",
+    "loading": "加载中...",
+    "error": "出现错误",
+    "tryAgain": "重试",
+    "search": "搜索",
+    "back": "返回",
+    "close": "关闭",
+    "confirm": "确认",
+    "yes": "是",
+    "no": "否",
+    "share": "分享"
+  },
+  "landing": {
+    "hero": "写出吸引读者的故事",
+    "cta": "免费开始写作",
+    "features": "功能",
+    "pricing": "价格"
+  },
+  "language": {
+    "selectLanguage": "选择语言",
+    "en": "English",
+    "es": "Español",
+    "hi": "हिन्दी",
+    "zh": "中文",
+    "ar": "العربية",
+    "pt": "Português",
+    "fr": "Français",
+    "de": "Deutsch",
+    "ja": "日本語",
+    "ko": "한국어"
+  }
+}

@@ -36,5 +36,10 @@ next-env.d.ts
 .idea/
 .vscode/
 
+# Claude Code local config
+.claude/
+.claire/
+.clone/
+
 # Git folders in subdirectories (important since we're making this a single repo)
 **/.git/

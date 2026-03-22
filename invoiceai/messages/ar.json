@@ -1,0 +1,115 @@
+{
+  "nav": {
+    "dashboard": "لوحة التحكم",
+    "invoices": "الفواتير",
+    "clients": "العملاء",
+    "reports": "التقارير",
+    "settings": "الإعدادات",
+    "billing": "الفوترة",
+    "signOut": "تسجيل الخروج"
+  },
+  "dashboard": {
+    "title": "لوحة الأداء المالي",
+    "welcome": "مرحباً بعودتك",
+    "outstanding": "المستحق",
+    "paid": "المدفوع هذا الشهر",
+    "overdue": "متأخر السداد",
+    "totalRevenue": "إجمالي الإيرادات",
+    "recentInvoices": "الفواتير الأخيرة",
+    "noInvoices": "لا توجد فواتير بعد"
+  },
+  "invoices": {
+    "title": "الفواتير",
+    "new": "فاتورة جديدة",
+    "draft": "مسودة",
+    "sent": "مُرسلة",
+    "paid": "مدفوعة",
+    "overdue": "متأخرة",
+    "void": "ملغاة",
+    "send": "إرسال الفاتورة",
+    "markPaid": "وضع علامة مدفوعة",
+    "duplicate": "نسخ",
+    "delete": "حذف",
+    "noInvoices": "لا توجد فواتير بعد",
+    "createFirst": "أنشئ فاتورتك الأولى"
+  },
+  "clients": {
+    "title": "العملاء",
+    "add": "إضافة عميل",
+    "name": "الاسم",
+    "email": "البريد الإلكتروني",
+    "phone": "الهاتف",
+    "address": "العنوان",
+    "totalInvoiced": "إجمالي الفواتير",
+    "paymentTerms": "شروط الدفع",
+    "noClients": "لا يوجد عملاء بعد"
+  },
+  "reports": {
+    "title": "التقارير",
+    "revenue": "الإيرادات",
+    "expenses": "المصاريف",
+    "profit": "الربح",
+    "agingReport": "تقرير الديون المتقادمة",
+    "taxSummary": "ملخص الضريبة",
+    "export": "تصدير التقرير"
+  },
+  "settings": {
+    "title": "الإعدادات",
+    "profile": "الملف الشخصي",
+    "notifications": "الإشعارات",
+    "language": "اللغة",
+    "privacy": "سياسة الخصوصية",
+    "terms": "شروط الخدمة"
+  },
+  "auth": {
+    "welcome": "احصل على مدفوعاتك أسرع",
+    "tagline": "فوترة مدعومة بالذكاء الاصطناعي للمستقلين والشركات",
+    "signIn": "تسجيل الدخول",
+    "signUp": "إنشاء حساب",
+    "email": "البريد الإلكتروني",
+    "password": "كلمة المرور",
+    "forgotPassword": "نسيت كلمة المرور؟",
+    "continueWithGoogle": "المتابعة مع Google"
+  },
+  "billing": {
+    "title": "الفوترة",
+    "plan": "الخطة الحالية",
+    "upgrade": "ترقية",
+    "monthly": "شهري",
+    "annual": "سنوي"
+  },
+  "common": {
+    "save": "حفظ",
+    "cancel": "إلغاء",
+    "delete": "حذف",
+    "edit": "تعديل",
+    "loading": "جارٍ التحميل...",
+    "error": "حدث خطأ ما",
+    "tryAgain": "حاول مرة أخرى",
+    "search": "بحث",
+    "back": "رجوع",
+    "close": "إغلاق",
+    "confirm": "تأكيد",
+    "yes": "نعم",
+    "no": "لا"
+  },
+  "landing": {
+    "hero": "الفوترة التي تجعلك تحصل على أموالك بشكل أسرع",
+    "cta": "ابدأ التجربة المجانية",
+    "features": "المميزات",
+    "pricing": "الأسعار"
+  },
+  "language": {
+    "selectLanguage": "اختر اللغة",
+    "en": "English",
+    "es": "Español",
+    "hi": "हिन्दी",
+    "zh": "中文",
+    "ar": "العربية",
+    "pt": "Português",
+    "fr": "Français",
+    "de": "Deutsch",
+    "ja": "日本語",
+    "ko": "한국어"
+  }
+}

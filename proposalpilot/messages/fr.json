@@ -1,0 +1,137 @@
+{
+  "nav": {
+    "dashboard": "Tableau de bord",
+    "proposals": "Propositions",
+    "templates": "Modèles",
+    "clients": "Clients",
+    "signatures": "Signatures",
+    "analytics": "Analyses",
+    "settings": "Paramètres",
+    "billing": "Facturation",
+    "referral": "Programme de Parrainage",
+    "signOut": "Se déconnecter"
+  },
+  "dashboard": {
+    "title": "Tableau de bord des Propositions",
+    "welcome": "Bon retour",
+    "totalProposals": "Total des Propositions",
+    "winRate": "Taux de Réussite",
+    "avgValue": "Valeur Moy. des Propositions",
+    "pendingSig": "Signatures en Attente",
+    "recentProposals": "Propositions Récentes",
+    "topClients": "Meilleurs Clients",
+    "conversionRate": "Taux de Conversion"
+  },
+  "proposals": {
+    "title": "Propositions",
+    "new": "Nouvelle Proposition",
+    "draft": "Brouillon",
+    "sent": "Envoyée",
+    "viewed": "Vue",
+    "signed": "Signée",
+    "rejected": "Rejetée",
+    "expired": "Expirée",
+    "generateAI": "Générer avec l'IA",
+    "preview": "Aperçu",
+    "send": "Envoyer au Client",
+    "duplicate": "Dupliquer",
+    "template": "Enregistrer comme Modèle",
+    "exportPDF": "Exporter en PDF",
+    "noProposals": "Aucune proposition pour l'instant",
+    "createFirst": "Créez votre première proposition"
+  },
+  "templates": {
+    "title": "Modèles",
+    "new": "Nouveau Modèle",
+    "myTemplates": "Mes Modèles",
+    "library": "Bibliothèque de Modèles",
+    "web": "Design Web",
+    "consulting": "Conseil",
+    "marketing": "Marketing",
+    "development": "Développement",
+    "useTemplate": "Utiliser le Modèle",
+    "editTemplate": "Modifier le Modèle"
+  },
+  "clients": {
+    "title": "Clients",
+    "add": "Ajouter un Client",
+    "name": "Nom du Client",
+    "email": "E-mail",
+    "company": "Entreprise",
+    "phone": "Téléphone",
+    "proposals": "Propositions",
+    "totalValue": "Valeur Totale",
+    "noClients": "Aucun client pour l'instant",
+    "addFirst": "Ajoutez votre premier client"
+  },
+  "signatures": {
+    "title": "Signatures",
+    "pending": "En attente",
+    "signed": "Signé",
+    "expired": "Expiré",
+    "request": "Demander une Signature",
+    "sign": "Signer le Document",
+    "download": "Télécharger le Signé",
+    "reminder": "Envoyer un Rappel",
+    "deadline": "Date Limite de Signature"
+  },
+  "settings": {
+    "title": "Paramètres",
+    "profile": "Profil",
+    "branding": "Image de marque",
+    "notifications": "Notifications",
+    "language": "Langue",
+    "billing": "Facturation",
+    "deleteAccount": "Supprimer le compte"
+  },
+  "auth": {
+    "signIn": "Se connecter",
+    "signUp": "S'inscrire",
+    "email": "E-mail",
+    "password": "Mot de passe",
+    "forgotPassword": "Mot de passe oublié ?",
+    "continueWithGoogle": "Continuer avec Google"
+  },
+  "billing": {
+    "title": "Facturation",
+    "free": "Gratuit",
+    "professional": "Professionnel",
+    "agency": "Agence",
+    "upgrade": "Mettre à niveau",
+    "perMonth": "/mois",
+    "perYear": "/an"
+  },
+  "common": {
+    "save": "Enregistrer",
+    "cancel": "Annuler",
+    "delete": "Supprimer",
+    "edit": "Modifier",
+    "loading": "Chargement...",
+    "error": "Une erreur s'est produite",
+    "search": "Rechercher",
+    "noResults": "Aucun résultat trouvé",
+    "viewAll": "Voir tout",
+    "back": "Retour",
+    "close": "Fermer",
+    "confirm": "Confirmer",
+    "send": "Envoyer"
+  },
+  "landing": {
+    "hero": "Des Propositions IA qui Gagnent",
+    "heroSub": "Créez des propositions époustouflantes en minutes, suivez quand vos clients les consultent et finalisez les contrats avec des signatures électroniques",
+    "getStarted": "Démarrer l'Essai Gratuit"
+  },
+  "language": {
+    "selectLanguage": "Choisir la langue",
+    "en": "English",
+    "es": "Español",
+    "hi": "हिन्दी",
+    "zh": "中文",
+    "ar": "العربية",
+    "pt": "Português",
+    "fr": "Français",
+    "de": "Deutsch",
+    "ja": "日本語",
+    "ko": "한국어"
+  }
+}

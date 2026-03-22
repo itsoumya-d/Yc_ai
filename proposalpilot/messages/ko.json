@@ -1,0 +1,137 @@
+{
+  "nav": {
+    "dashboard": "대시보드",
+    "proposals": "제안서",
+    "templates": "템플릿",
+    "clients": "고객",
+    "signatures": "서명",
+    "analytics": "분석",
+    "settings": "설정",
+    "billing": "결제",
+    "referral": "추천 프로그램",
+    "signOut": "로그아웃"
+  },
+  "dashboard": {
+    "title": "제안서 대시보드",
+    "welcome": "다시 오신 것을 환영합니다",
+    "totalProposals": "총 제안서",
+    "winRate": "수주율",
+    "avgValue": "평균 제안서 금액",
+    "pendingSig": "서명 대기 중",
+    "recentProposals": "최근 제안서",
+    "topClients": "주요 고객",
+    "conversionRate": "전환율"
+  },
+  "proposals": {
+    "title": "제안서",
+    "new": "새 제안서",
+    "draft": "초안",
+    "sent": "발송됨",
+    "viewed": "조회됨",
+    "signed": "서명됨",
+    "rejected": "거절됨",
+    "expired": "만료됨",
+    "generateAI": "AI로 생성",
+    "preview": "미리보기",
+    "send": "고객에게 발송",
+    "duplicate": "복제",
+    "template": "템플릿으로 저장",
+    "exportPDF": "PDF 내보내기",
+    "noProposals": "아직 제안서가 없습니다",
+    "createFirst": "첫 번째 제안서를 만드세요"
+  },
+  "templates": {
+    "title": "템플릿",
+    "new": "새 템플릿",
+    "myTemplates": "내 템플릿",
+    "library": "템플릿 라이브러리",
+    "web": "웹 디자인",
+    "consulting": "컨설팅",
+    "marketing": "마케팅",
+    "development": "개발",
+    "useTemplate": "템플릿 사용",
+    "editTemplate": "템플릿 편집"
+  },
+  "clients": {
+    "title": "고객",
+    "add": "고객 추가",
+    "name": "고객 이름",
+    "email": "이메일",
+    "company": "회사",
+    "phone": "전화",
+    "proposals": "제안서",
+    "totalValue": "총 금액",
+    "noClients": "아직 고객이 없습니다",
+    "addFirst": "첫 번째 고객을 추가하세요"
+  },
+  "signatures": {
+    "title": "서명",
+    "pending": "대기 중",
+    "signed": "서명됨",
+    "expired": "만료됨",
+    "request": "서명 요청",
+    "sign": "문서 서명",
+    "download": "서명본 다운로드",
+    "reminder": "리마인더 발송",
+    "deadline": "서명 마감일"
+  },
+  "settings": {
+    "title": "설정",
+    "profile": "프로필",
+    "branding": "브랜딩",
+    "notifications": "알림",
+    "language": "언어",
+    "billing": "결제",
+    "deleteAccount": "계정 삭제"
+  },
+  "auth": {
+    "signIn": "로그인",
+    "signUp": "회원가입",
+    "email": "이메일",
+    "password": "비밀번호",
+    "forgotPassword": "비밀번호를 잊으셨나요?",
+    "continueWithGoogle": "Google로 계속하기"
+  },
+  "billing": {
+    "title": "결제",
+    "free": "무료",
+    "professional": "프로페셔널",
+    "agency": "에이전시",
+    "upgrade": "업그레이드",
+    "perMonth": "/월",
+    "perYear": "/년"
+  },
+  "common": {
+    "save": "저장",
+    "cancel": "취소",
+    "delete": "삭제",
+    "edit": "편집",
+    "loading": "로딩 중...",
+    "error": "오류가 발생했습니다",
+    "search": "검색",
+    "noResults": "결과를 찾을 수 없습니다",
+    "viewAll": "전체 보기",
+    "back": "뒤로",
+    "close": "닫기",
+    "confirm": "확인",
+    "send": "발송"
+  },
+  "landing": {
+    "hero": "수주하는 AI 제안서",
+    "heroSub": "몇 분 안에 멋진 제안서를 작성하고, 고객이 언제 열어봤는지 추적하고, 전자서명으로 계약을 성사시키세요",
+    "getStarted": "무료 체험 시작"
+  },
+  "language": {
+    "selectLanguage": "언어 선택",
+    "en": "English",
+    "es": "Español",
+    "hi": "हिन्दी",
+    "zh": "中文",
+    "ar": "العربية",
+    "pt": "Português",
+    "fr": "Français",
+    "de": "Deutsch",
+    "ja": "日本語",
+    "ko": "한국어"
+  }
+}

@@ -1,0 +1,119 @@
+{
+  "nav": {
+    "dashboard": "대시보드",
+    "stories": "스토리",
+    "explore": "탐색",
+    "collaborations": "협업",
+    "settings": "설정",
+    "billing": "결제",
+    "signOut": "로그아웃"
+  },
+  "dashboard": {
+    "title": "글쓰기 대시보드",
+    "welcome": "다시 오셨군요",
+    "storiesWritten": "작성한 스토리",
+    "wordsThisMonth": "이번 달 단어 수",
+    "collaborators": "활성 협업자",
+    "readTime": "총 읽기 시간",
+    "recentStories": "최근 스토리",
+    "noStories": "아직 스토리가 없습니다"
+  },
+  "stories": {
+    "title": "내 스토리",
+    "new": "새 스토리",
+    "draft": "초안",
+    "published": "게시됨",
+    "archived": "보관됨",
+    "wordCount": "단어 수",
+    "chapters": "챕터",
+    "edit": "편집",
+    "publish": "게시",
+    "unpublish": "게시 취소",
+    "delete": "삭제",
+    "noStories": "아직 스토리가 없습니다",
+    "createFirst": "첫 번째 스토리를 만들어보세요"
+  },
+  "explore": {
+    "title": "스토리 탐색",
+    "trending": "인기",
+    "recent": "최신",
+    "genre": "장르",
+    "fiction": "소설",
+    "nonfiction": "비소설",
+    "fantasy": "판타지",
+    "romance": "로맨스",
+    "mystery": "미스터리",
+    "scifi": "SF",
+    "thriller": "스릴러"
+  },
+  "collaborations": {
+    "title": "협업",
+    "active": "진행 중",
+    "pending": "대기 중",
+    "invite": "협업자 초대",
+    "accept": "수락",
+    "decline": "거절",
+    "noCollabs": "아직 협업이 없습니다"
+  },
+  "settings": {
+    "title": "설정",
+    "profile": "프로필",
+    "notifications": "알림",
+    "language": "언어",
+    "privacy": "개인정보처리방침",
+    "terms": "서비스 약관"
+  },
+  "auth": {
+    "welcome": "당신의 이야기를 들려주세요",
+    "tagline": "AI 기반 협업 글쓰기 플랫폼",
+    "signIn": "로그인",
+    "signUp": "계정 만들기",
+    "email": "이메일",
+    "password": "비밀번호",
+    "forgotPassword": "비밀번호를 잊으셨나요?",
+    "continueWithGoogle": "Google로 계속하기"
+  },
+  "billing": {
+    "title": "결제",
+    "plan": "현재 플랜",
+    "upgrade": "업그레이드",
+    "monthly": "월간",
+    "annual": "연간",
+    "cancelAnytime": "언제든지 취소 가능"
+  },
+  "common": {
+    "save": "저장",
+    "cancel": "취소",
+    "delete": "삭제",
+    "edit": "편집",
+    "loading": "로딩 중...",
+    "error": "오류가 발생했습니다",
+    "tryAgain": "다시 시도",
+    "search": "검색",
+    "back": "뒤로",
+    "close": "닫기",
+    "confirm": "확인",
+    "yes": "예",
+    "no": "아니오",
+    "share": "공유"
+  },
+  "landing": {
+    "hero": "독자를 사로잡는 스토리를 써보세요",
+    "cta": "무료로 글쓰기 시작",
+    "features": "기능",
+    "pricing": "요금제"
+  },
+  "language": {
+    "selectLanguage": "언어 선택",
+    "en": "English",
+    "es": "Español",
+    "hi": "हिन्दी",
+    "zh": "中文",
+    "ar": "العربية",
+    "pt": "Português",
+    "fr": "Français",
+    "de": "Deutsch",
+    "ja": "日本語",
+    "ko": "한국어"
+  }
+}

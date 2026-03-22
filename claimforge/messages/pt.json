@@ -1,0 +1,13 @@
+{
+  "nav": {"dashboard":"Painel","cases":"Casos","documents":"Documentos","analysis":"Análise","settings":"Configurações","billing":"Faturamento","signOut":"Sair"},
+  "dashboard": {"title":"Painel de Reclamações","welcome":"Bem-vindo de volta","activeCases":"Casos Ativos","totalClaimed":"Total Reivindicado","successRate":"Taxa de Sucesso","pendingReview":"Revisão Pendente","recentCases":"Casos Recentes","noCases":"Nenhum caso ainda"},
+  "cases": {"title":"Casos","new":"Novo Caso","open":"Aberto","inProgress":"Em andamento","resolved":"Resolvido","closed":"Fechado","claimAmount":"Valor da Reclamação","editCase":"Editar Caso","closeCase":"Fechar Caso","noCases":"Nenhum caso ainda","createFirst":"Crie seu primeiro caso"},
+  "documents": {"title":"Documentos","upload":"Carregar Documento","ocr":"Análise OCR","extracting":"Extraindo texto...","documentType":"Tipo de Documento","noDocuments":"Nenhum documento carregado","addFirst":"Carregue seu primeiro documento"},
+  "analysis": {"title":"Análise IA","analyze":"Analisar Caso","strengthScore":"Força do Caso","evidenceAnalysis":"Análise de Evidências","recommendations":"Recomendações","riskFactors":"Fatores de Risco","noAnalysis":"Nenhuma análise ainda","runAnalysis":"Executar Análise"},
+  "settings": {"title":"Configurações","profile":"Perfil","notifications":"Notificações","language":"Idioma","privacy":"Política de Privacidade","terms":"Termos de Serviço"},
+  "auth": {"welcome":"Construa Casos Vencedores","tagline":"Gestão de reclamações legais com IA","signIn":"Entrar","signUp":"Criar Conta","email":"E-mail","password":"Senha","forgotPassword":"Esqueceu a senha?","continueWithGoogle":"Continuar com Google"},
+  "billing": {"title":"Faturamento","plan":"Plano Atual","upgrade":"Melhorar Plano","monthly":"Mensal","annual":"Anual"},
+  "common": {"save":"Salvar","cancel":"Cancelar","delete":"Excluir","edit":"Editar","loading":"Carregando...","error":"Algo deu errado","tryAgain":"Tentar Novamente","search":"Pesquisar","back":"Voltar","close":"Fechar","confirm":"Confirmar","yes":"Sim","no":"Não"},
+  "landing": {"hero":"Reclamações com IA que ganham","cta":"Iniciar Teste Gratuito","features":"Recursos","pricing":"Preços"},
+  "language": {"selectLanguage":"Selecionar Idioma","en":"English","es":"Español","hi":"हिन्दी","zh":"中文","ar":"العربية","pt":"Português","fr":"Français","de":"Deutsch","ja":"日本語","ko":"한국어"}
+}

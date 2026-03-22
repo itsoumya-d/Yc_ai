@@ -1,0 +1,13 @@
+{
+  "nav": {"dashboard":"لوحة التحكم","pets":"حيواناتي الأليفة","health":"الصحة","telehealth":"الرعاية الصحية عن بُعد","settings":"الإعدادات","billing":"الفواتير","signOut":"تسجيل الخروج"},
+  "dashboard": {"title":"لوحة تحكم الحيوانات الأليفة","welcome":"مرحباً بعودتك","petsTracked":"الحيوانات المتابعة","upcomingVaccines":"اللقاحات القادمة","healthAlerts":"تنبيهات الصحة","nextVetVisit":"زيارة الطبيح البيطري القادمة","recentActivity":"النشاط الأخير","noActivity":"لا يوجد نشاط حديث"},
+  "pets": {"title":"حيواناتي الأليفة","add":"إضافة حيوان أليف","name":"الاسم","species":"النوع","breed":"السلالة","age":"العمر","weight":"الوزن","dog":"كلب","cat":"قط","bird":"طائر","rabbit":"أرنب","other":"أخرى","noPets":"لم يتم إضافة حيوانات أليفة بعد","addFirst":"أضف أول حيوان أليف لك"},
+  "health": {"title":"السجلات الصحية","vaccines":"اللقاحات","medications":"الأدوية","checkups":"الفحوصات","symptoms":"الأعراض","addRecord":"إضافة سجل","dueDate":"تاريخ الاستحقاق","completed":"مكتمل","upcoming":"قادم","noRecords":"لا توجد سجلات صحية"},
+  "telehealth": {"title":"الرعاية عن بُعد","bookConsultation":"حجز استشارة","availableVets":"الأطباء البيطريون المتاحون","myConsultations":"استشاراتي","upcoming":"القادمة","past":"السابقة","videoCall":"مكالمة فيديو","chat":"دردشة","noConsultations":"لا توجد استشارات مجدولة"},
+  "settings": {"title":"الإعدادات","profile":"الملف الشخصي","notifications":"الإشعارات","language":"اللغة","privacy":"سياسة الخصوصية","terms":"شروط الخدمة"},
+  "auth": {"welcome":"رعاية أفضل للحيوانات الأليفة بالذكاء الاصطناعي","tagline":"رفيقك الذكي لصحة حيوانك الأليف","signIn":"تسجيل الدخول","signUp":"إنشاء حساب","email":"البريد الإلكتروني","password":"كلمة المرور","forgotPassword":"نسيت كلمة المرور؟","continueWithGoogle":"المتابعة مع Google"},
+  "billing": {"title":"الفواتير","plan":"الخطة الحالية","upgrade":"ترقية","monthly":"شهري","annual":"سنوي"},
+  "common": {"save":"حفظ","cancel":"إلغاء","delete":"حذف","edit":"تعديل","loading":"جارٍ التحميل...","error":"حدث خطأ ما","tryAgain":"حاول مجدداً","search":"بحث","back":"رجوع","close":"إغلاق","confirm":"تأكيد","yes":"نعم","no":"لا"},
+  "landing": {"hero":"رعاية صحية للحيوانات الأليفة مدعومة بالذكاء الاصطناعي","cta":"ابدأ التجربة المجانية","features":"الميزات","pricing":"الأسعار"},
+  "language": {"selectLanguage":"اختر اللغة","en":"English","es":"Español","hi":"हिन्दी","zh":"中文","ar":"العربية","pt":"Português","fr":"Français","de":"Deutsch","ja":"日本語","ko":"한국어"}
+}

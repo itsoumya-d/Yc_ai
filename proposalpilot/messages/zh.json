@@ -1,0 +1,137 @@
+{
+  "nav": {
+    "dashboard": "仪表盘",
+    "proposals": "提案",
+    "templates": "模板",
+    "clients": "客户",
+    "signatures": "签名",
+    "analytics": "分析",
+    "settings": "设置",
+    "billing": "账单",
+    "referral": "推荐计划",
+    "signOut": "退出登录"
+  },
+  "dashboard": {
+    "title": "提案仪表盘",
+    "welcome": "欢迎回来",
+    "totalProposals": "提案总数",
+    "winRate": "成功率",
+    "avgValue": "平均提案价值",
+    "pendingSig": "待签名",
+    "recentProposals": "最近提案",
+    "topClients": "顶级客户",
+    "conversionRate": "转化率"
+  },
+  "proposals": {
+    "title": "提案",
+    "new": "新建提案",
+    "draft": "草稿",
+    "sent": "已发送",
+    "viewed": "已查看",
+    "signed": "已签名",
+    "rejected": "已拒绝",
+    "expired": "已过期",
+    "generateAI": "AI生成",
+    "preview": "预览",
+    "send": "发送给客户",
+    "duplicate": "复制",
+    "template": "保存为模板",
+    "exportPDF": "导出PDF",
+    "noProposals": "暂无提案",
+    "createFirst": "创建您的第一个提案"
+  },
+  "templates": {
+    "title": "模板",
+    "new": "新建模板",
+    "myTemplates": "我的模板",
+    "library": "模板库",
+    "web": "网页设计",
+    "consulting": "咨询",
+    "marketing": "营销",
+    "development": "开发",
+    "useTemplate": "使用模板",
+    "editTemplate": "编辑模板"
+  },
+  "clients": {
+    "title": "客户",
+    "add": "添加客户",
+    "name": "客户名称",
+    "email": "邮箱",
+    "company": "公司",
+    "phone": "电话",
+    "proposals": "提案",
+    "totalValue": "总价值",
+    "noClients": "暂无客户",
+    "addFirst": "添加您的第一个客户"
+  },
+  "signatures": {
+    "title": "签名",
+    "pending": "待签",
+    "signed": "已签",
+    "expired": "已过期",
+    "request": "请求签名",
+    "sign": "签署文件",
+    "download": "下载已签文件",
+    "reminder": "发送提醒",
+    "deadline": "签名截止日期"
+  },
+  "settings": {
+    "title": "设置",
+    "profile": "个人资料",
+    "branding": "品牌",
+    "notifications": "通知",
+    "language": "语言",
+    "billing": "账单",
+    "deleteAccount": "删除账户"
+  },
+  "auth": {
+    "signIn": "登录",
+    "signUp": "注册",
+    "email": "邮箱",
+    "password": "密码",
+    "forgotPassword": "忘记密码？",
+    "continueWithGoogle": "使用Google继续"
+  },
+  "billing": {
+    "title": "账单",
+    "free": "免费",
+    "professional": "专业版",
+    "agency": "机构版",
+    "upgrade": "升级",
+    "perMonth": "/月",
+    "perYear": "/年"
+  },
+  "common": {
+    "save": "保存",
+    "cancel": "取消",
+    "delete": "删除",
+    "edit": "编辑",
+    "loading": "加载中...",
+    "error": "出错了",
+    "search": "搜索",
+    "noResults": "无结果",
+    "viewAll": "查看全部",
+    "back": "返回",
+    "close": "关闭",
+    "confirm": "确认",
+    "send": "发送"
+  },
+  "landing": {
+    "hero": "AI驱动的获胜提案",
+    "heroSub": "几分钟内创建精美提案，追踪客户查看情况，并通过电子签名完成交易",
+    "getStarted": "开始免费试用"
+  },
+  "language": {
+    "selectLanguage": "选择语言",
+    "en": "English",
+    "es": "Español",
+    "hi": "हिन्दी",
+    "zh": "中文",
+    "ar": "العربية",
+    "pt": "Português",
+    "fr": "Français",
+    "de": "Deutsch",
+    "ja": "日本語",
+    "ko": "한국어"
+  }
+}

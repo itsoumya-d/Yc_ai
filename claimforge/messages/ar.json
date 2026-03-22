@@ -1,0 +1,13 @@
+{
+  "nav": {"dashboard":"لوحة التحكم","cases":"القضايا","documents":"المستندات","analysis":"التحليل","settings":"الإعدادات","billing":"الفواتير","signOut":"تسجيل الخروج"},
+  "dashboard": {"title":"لوحة تحكم المطالبات","welcome":"مرحباً بعودتك","activeCases":"القضايا النشطة","totalClaimed":"إجمالي المطالبات","successRate":"معدل النجاح","pendingReview":"قيد المراجعة","recentCases":"القضايا الأخيرة","noCases":"لا توجد قضايا بعد"},
+  "cases": {"title":"القضايا","new":"قضية جديدة","open":"مفتوحة","inProgress":"قيد التقدم","resolved":"محلولة","closed":"مغلقة","claimAmount":"مبلغ المطالبة","editCase":"تعديل القضية","closeCase":"إغلاق القضية","noCases":"لا توجد قضايا بعد","createFirst":"أنشئ أول قضية لك"},
+  "documents": {"title":"المستندات","upload":"رفع مستند","ocr":"تحليل OCR","extracting":"جارٍ استخراج النص...","documentType":"نوع المستند","noDocuments":"لم يتم رفع أي مستندات","addFirst":"ارفع أول مستند لك"},
+  "analysis": {"title":"التحليل بالذكاء الاصطناعي","analyze":"تحليل القضية","strengthScore":"قوة القضية","evidenceAnalysis":"تحليل الأدلة","recommendations":"التوصيات","riskFactors":"عوامل الخطر","noAnalysis":"لا يوجد تحليل بعد","runAnalysis":"تشغيل التحليل"},
+  "settings": {"title":"الإعدادات","profile":"الملف الشخصي","notifications":"الإشعارات","language":"اللغة","privacy":"سياسة الخصوصية","terms":"شروط الخدمة"},
+  "auth": {"welcome":"ابنِ قضايا رابحة","tagline":"إدارة المطالبات القانونية بالذكاء الاصطناعي","signIn":"تسجيل الدخول","signUp":"إنشاء حساب","email":"البريد الإلكتروني","password":"كلمة المرور","forgotPassword":"نسيت كلمة المرور؟","continueWithGoogle":"المتابعة مع Google"},
+  "billing": {"title":"الفواتير","plan":"الخطة الحالية","upgrade":"ترقية","monthly":"شهري","annual":"سنوي"},
+  "common": {"save":"حفظ","cancel":"إلغاء","delete":"حذف","edit":"تعديل","loading":"جارٍ التحميل...","error":"حدث خطأ ما","tryAgain":"حاول مجدداً","search":"بحث","back":"رجوع","close":"إغلاق","confirm":"تأكيد","yes":"نعم","no":"لا"},
+  "landing": {"hero":"مطالبات رابحة مدعومة بالذكاء الاصطناعي","cta":"ابدأ التجربة المجانية","features":"الميزات","pricing":"الأسعار"},
+  "language": {"selectLanguage":"اختر اللغة","en":"English","es":"Español","hi":"हिन्दी","zh":"中文","ar":"العربية","pt":"Português","fr":"Français","de":"Deutsch","ja":"日本語","ko":"한국어"}
+}

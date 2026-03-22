@@ -1,0 +1,13 @@
+{
+  "nav": {"dashboard":"डैशबोर्ड","pets":"मेरे पालतू जानवर","health":"स्वास्थ्य","telehealth":"टेलीहेल्थ","settings":"सेटिंग्स","billing":"बिलिंग","signOut":"साइन आउट"},
+  "dashboard": {"title":"पालतू जानवर डैशबोर्ड","welcome":"वापस स्वागत है","petsTracked":"ट्रैक किए गए पालतू जानवर","upcomingVaccines":"आगामी टीके","healthAlerts":"स्वास्थ्य अलर्ट","nextVetVisit":"अगली पशु चिकित्सक यात्रा","recentActivity":"हालिया गतिविधि","noActivity":"कोई हालिया गतिविधि नहीं"},
+  "pets": {"title":"मेरे पालतू जानवर","add":"पालतू जानवर जोड़ें","name":"नाम","species":"प्रजाति","breed":"नस्ल","age":"उम्र","weight":"वजन","dog":"कुत्ता","cat":"बिल्ली","bird":"पक्षी","rabbit":"खरगोश","other":"अन्य","noPets":"अभी तक कोई पालतू जानवर नहीं जोड़ा","addFirst":"अपना पहला पालतू जानवर जोड़ें"},
+  "health": {"title":"स्वास्थ्य रिकॉर्ड","vaccines":"टीके","medications":"दवाएं","checkups":"जांच","symptoms":"लक्षण","addRecord":"रिकॉर्ड जोड़ें","dueDate":"देय तिथि","completed":"पूर्ण","upcoming":"आगामी","noRecords":"कोई स्वास्थ्य रिकॉर्ड नहीं"},
+  "telehealth": {"title":"टेलीहेल्थ","bookConsultation":"परामर्श बुक करें","availableVets":"उपलब्ध पशु चिकित्सक","myConsultations":"मेरे परामर्श","upcoming":"आगामी","past":"पिछले","videoCall":"वीडियो कॉल","chat":"चैट","noConsultations":"कोई परामर्श निर्धारित नहीं"},
+  "settings": {"title":"सेटिंग्स","profile":"प्रोफ़ाइल","notifications":"सूचनाएं","language":"भाषा","privacy":"गोपनीयता नीति","terms":"सेवा की शर्तें"},
+  "auth": {"welcome":"AI के साथ बेहतर पालतू जानवरों की देखभाल","tagline":"आपका AI-संचालित पालतू स्वास्थ्य साथी","signIn":"साइन इन","signUp":"खाता बनाएं","email":"ईमेल","password":"पासवर्ड","forgotPassword":"पासवर्ड भूल गए?","continueWithGoogle":"Google के साथ जारी रखें"},
+  "billing": {"title":"बिलिंग","plan":"वर्तमान योजना","upgrade":"अपग्रेड करें","monthly":"मासिक","annual":"वार्षिक"},
+  "common": {"save":"सहेजें","cancel":"रद्द करें","delete":"हटाएं","edit":"संपादित करें","loading":"लोड हो रहा है...","error":"कुछ गलत हो गया","tryAgain":"फिर कोशिश करें","search":"खोजें","back":"वापस","close":"बंद करें","confirm":"पुष्टि करें","yes":"हाँ","no":"नहीं"},
+  "landing": {"hero":"AI-संचालित पालतू स्वास्थ्य देखभाल","cta":"निःशुल्क परीक्षण शुरू करें","features":"विशेषताएं","pricing":"मूल्य निर्धारण"},
+  "language": {"selectLanguage":"भाषा चुनें","en":"English","es":"Español","hi":"हिन्दी","zh":"中文","ar":"العربية","pt":"Português","fr":"Français","de":"Deutsch","ja":"日本語","ko":"한국어"}
+}

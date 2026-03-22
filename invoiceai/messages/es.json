@@ -1,0 +1,115 @@
+{
+  "nav": {
+    "dashboard": "Panel",
+    "invoices": "Facturas",
+    "clients": "Clientes",
+    "reports": "Informes",
+    "settings": "Configuración",
+    "billing": "Facturación",
+    "signOut": "Cerrar sesión"
+  },
+  "dashboard": {
+    "title": "Panel financiero",
+    "welcome": "Bienvenido de nuevo",
+    "outstanding": "Pendiente",
+    "paid": "Cobrado este mes",
+    "overdue": "Vencido",
+    "totalRevenue": "Ingresos totales",
+    "recentInvoices": "Facturas recientes",
+    "noInvoices": "Aún no hay facturas"
+  },
+  "invoices": {
+    "title": "Facturas",
+    "new": "Nueva factura",
+    "draft": "Borrador",
+    "sent": "Enviada",
+    "paid": "Pagada",
+    "overdue": "Vencida",
+    "void": "Anulada",
+    "send": "Enviar factura",
+    "markPaid": "Marcar como pagada",
+    "duplicate": "Duplicar",
+    "delete": "Eliminar",
+    "noInvoices": "Aún no hay facturas",
+    "createFirst": "Crea tu primera factura"
+  },
+  "clients": {
+    "title": "Clientes",
+    "add": "Agregar cliente",
+    "name": "Nombre",
+    "email": "Correo electrónico",
+    "phone": "Teléfono",
+    "address": "Dirección",
+    "totalInvoiced": "Total facturado",
+    "paymentTerms": "Condiciones de pago",
+    "noClients": "Aún no hay clientes"
+  },
+  "reports": {
+    "title": "Informes",
+    "revenue": "Ingresos",
+    "expenses": "Gastos",
+    "profit": "Beneficio",
+    "agingReport": "Informe de antigüedad",
+    "taxSummary": "Resumen fiscal",
+    "export": "Exportar informe"
+  },
+  "settings": {
+    "title": "Configuración",
+    "profile": "Perfil",
+    "notifications": "Notificaciones",
+    "language": "Idioma",
+    "privacy": "Política de privacidad",
+    "terms": "Términos de servicio"
+  },
+  "auth": {
+    "welcome": "Cobra más rápido",
+    "tagline": "Facturación con IA para autónomos y empresas",
+    "signIn": "Iniciar sesión",
+    "signUp": "Crear cuenta",
+    "email": "Correo electrónico",
+    "password": "Contraseña",
+    "forgotPassword": "¿Olvidaste tu contraseña?",
+    "continueWithGoogle": "Continuar con Google"
+  },
+  "billing": {
+    "title": "Facturación",
+    "plan": "Plan actual",
+    "upgrade": "Mejorar",
+    "monthly": "Mensual",
+    "annual": "Anual"
+  },
+  "common": {
+    "save": "Guardar",
+    "cancel": "Cancelar",
+    "delete": "Eliminar",
+    "edit": "Editar",
+    "loading": "Cargando...",
+    "error": "Algo salió mal",
+    "tryAgain": "Intentar de nuevo",
+    "search": "Buscar",
+    "back": "Atrás",
+    "close": "Cerrar",
+    "confirm": "Confirmar",
+    "yes": "Sí",
+    "no": "No"
+  },
+  "landing": {
+    "hero": "Facturación que te hace cobrar más rápido",
+    "cta": "Comenzar prueba gratuita",
+    "features": "Características",
+    "pricing": "Precios"
+  },
+  "language": {
+    "selectLanguage": "Seleccionar idioma",
+    "en": "English",
+    "es": "Español",
+    "hi": "हिन्दी",
+    "zh": "中文",
+    "ar": "العربية",
+    "pt": "Português",
+    "fr": "Français",
+    "de": "Deutsch",
+    "ja": "日本語",
+    "ko": "한국어"
+  }
+}

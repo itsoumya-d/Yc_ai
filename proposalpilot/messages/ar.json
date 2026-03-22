@@ -1,0 +1,137 @@
+{
+  "nav": {
+    "dashboard": "لوحة التحكم",
+    "proposals": "المقترحات",
+    "templates": "القوالب",
+    "clients": "العملاء",
+    "signatures": "التوقيعات",
+    "analytics": "التحليلات",
+    "settings": "الإعدادات",
+    "billing": "الفواتير",
+    "referral": "برنامج الإحالة",
+    "signOut": "تسجيل الخروج"
+  },
+  "dashboard": {
+    "title": "لوحة المقترحات",
+    "welcome": "مرحباً بعودتك",
+    "totalProposals": "إجمالي المقترحات",
+    "winRate": "معدل الفوز",
+    "avgValue": "متوسط قيمة المقترح",
+    "pendingSig": "التوقيعات المعلقة",
+    "recentProposals": "المقترحات الأخيرة",
+    "topClients": "أفضل العملاء",
+    "conversionRate": "معدل التحويل"
+  },
+  "proposals": {
+    "title": "المقترحات",
+    "new": "مقترح جديد",
+    "draft": "مسودة",
+    "sent": "مُرسل",
+    "viewed": "تمت المشاهدة",
+    "signed": "موقّع",
+    "rejected": "مرفوض",
+    "expired": "منتهي الصلاحية",
+    "generateAI": "إنشاء بالذكاء الاصطناعي",
+    "preview": "معاينة",
+    "send": "إرسال للعميل",
+    "duplicate": "نسخ",
+    "template": "حفظ كقالب",
+    "exportPDF": "تصدير PDF",
+    "noProposals": "لا توجد مقترحات بعد",
+    "createFirst": "أنشئ مقترحك الأول"
+  },
+  "templates": {
+    "title": "القوالب",
+    "new": "قالب جديد",
+    "myTemplates": "قوالبي",
+    "library": "مكتبة القوالب",
+    "web": "تصميم الويب",
+    "consulting": "الاستشارات",
+    "marketing": "التسويق",
+    "development": "التطوير",
+    "useTemplate": "استخدام القالب",
+    "editTemplate": "تعديل القالب"
+  },
+  "clients": {
+    "title": "العملاء",
+    "add": "إضافة عميل",
+    "name": "اسم العميل",
+    "email": "البريد الإلكتروني",
+    "company": "الشركة",
+    "phone": "الهاتف",
+    "proposals": "المقترحات",
+    "totalValue": "القيمة الإجمالية",
+    "noClients": "لا يوجد عملاء بعد",
+    "addFirst": "أضف أول عميل لك"
+  },
+  "signatures": {
+    "title": "التوقيعات",
+    "pending": "في الانتظار",
+    "signed": "موقّع",
+    "expired": "منتهي",
+    "request": "طلب توقيع",
+    "sign": "توقيع المستند",
+    "download": "تحميل الموقّع",
+    "reminder": "إرسال تذكير",
+    "deadline": "الموعد النهائي للتوقيع"
+  },
+  "settings": {
+    "title": "الإعدادات",
+    "profile": "الملف الشخصي",
+    "branding": "العلامة التجارية",
+    "notifications": "الإشعارات",
+    "language": "اللغة",
+    "billing": "الفواتير",
+    "deleteAccount": "حذف الحساب"
+  },
+  "auth": {
+    "signIn": "تسجيل الدخول",
+    "signUp": "إنشاء حساب",
+    "email": "البريد الإلكتروني",
+    "password": "كلمة المرور",
+    "forgotPassword": "هل نسيت كلمة المرور؟",
+    "continueWithGoogle": "المتابعة مع Google"
+  },
+  "billing": {
+    "title": "الفواتير",
+    "free": "مجاني",
+    "professional": "احترافي",
+    "agency": "وكالة",
+    "upgrade": "ترقية",
+    "perMonth": "/شهر",
+    "perYear": "/سنة"
+  },
+  "common": {
+    "save": "حفظ",
+    "cancel": "إلغاء",
+    "delete": "حذف",
+    "edit": "تعديل",
+    "loading": "جارٍ التحميل...",
+    "error": "حدث خطأ ما",
+    "search": "بحث",
+    "noResults": "لا توجد نتائج",
+    "viewAll": "عرض الكل",
+    "back": "رجوع",
+    "close": "إغلاق",
+    "confirm": "تأكيد",
+    "send": "إرسال"
+  },
+  "landing": {
+    "hero": "مقترحات بالذكاء الاصطناعي تفوز بالعملاء",
+    "heroSub": "أنشئ مقترحات احترافية في دقائق، تتبع مشاهدة العملاء، وأغلق الصفقات بالتوقيع الإلكتروني",
+    "getStarted": "ابدأ التجربة المجانية"
+  },
+  "language": {
+    "selectLanguage": "اختر اللغة",
+    "en": "English",
+    "es": "Español",
+    "hi": "हिन्दी",
+    "zh": "中文",
+    "ar": "العربية",
+    "pt": "Português",
+    "fr": "Français",
+    "de": "Deutsch",
+    "ja": "日本語",
+    "ko": "한국어"
+  }
+}

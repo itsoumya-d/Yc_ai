@@ -1,0 +1,119 @@
+{
+  "nav": {
+    "dashboard": "Panel",
+    "stories": "Historias",
+    "explore": "Explorar",
+    "collaborations": "Colaboraciones",
+    "settings": "Configuración",
+    "billing": "Facturación",
+    "signOut": "Cerrar sesión"
+  },
+  "dashboard": {
+    "title": "Panel de escritura",
+    "welcome": "Bienvenido de nuevo",
+    "storiesWritten": "Historias escritas",
+    "wordsThisMonth": "Palabras este mes",
+    "collaborators": "Colaboradores activos",
+    "readTime": "Tiempo total de lectura",
+    "recentStories": "Historias recientes",
+    "noStories": "Aún no hay historias"
+  },
+  "stories": {
+    "title": "Mis historias",
+    "new": "Nueva historia",
+    "draft": "Borrador",
+    "published": "Publicado",
+    "archived": "Archivado",
+    "wordCount": "Recuento de palabras",
+    "chapters": "Capítulos",
+    "edit": "Editar",
+    "publish": "Publicar",
+    "unpublish": "Despublicar",
+    "delete": "Eliminar",
+    "noStories": "Aún no hay historias",
+    "createFirst": "Crea tu primera historia"
+  },
+  "explore": {
+    "title": "Explorar historias",
+    "trending": "Tendencias",
+    "recent": "Recientes",
+    "genre": "Género",
+    "fiction": "Ficción",
+    "nonfiction": "No ficción",
+    "fantasy": "Fantasía",
+    "romance": "Romance",
+    "mystery": "Misterio",
+    "scifi": "Ciencia ficción",
+    "thriller": "Thriller"
+  },
+  "collaborations": {
+    "title": "Colaboraciones",
+    "active": "Activas",
+    "pending": "Pendientes",
+    "invite": "Invitar colaborador",
+    "accept": "Aceptar",
+    "decline": "Rechazar",
+    "noCollabs": "Aún no hay colaboraciones"
+  },
+  "settings": {
+    "title": "Configuración",
+    "profile": "Perfil",
+    "notifications": "Notificaciones",
+    "language": "Idioma",
+    "privacy": "Política de privacidad",
+    "terms": "Términos de servicio"
+  },
+  "auth": {
+    "welcome": "Cuenta tu historia",
+    "tagline": "Plataforma de escritura colaborativa con IA",
+    "signIn": "Iniciar sesión",
+    "signUp": "Crear cuenta",
+    "email": "Correo electrónico",
+    "password": "Contraseña",
+    "forgotPassword": "¿Olvidaste tu contraseña?",
+    "continueWithGoogle": "Continuar con Google"
+  },
+  "billing": {
+    "title": "Facturación",
+    "plan": "Plan actual",
+    "upgrade": "Mejorar",
+    "monthly": "Mensual",
+    "annual": "Anual",
+    "cancelAnytime": "Cancela cuando quieras"
+  },
+  "common": {
+    "save": "Guardar",
+    "cancel": "Cancelar",
+    "delete": "Eliminar",
+    "edit": "Editar",
+    "loading": "Cargando...",
+    "error": "Algo salió mal",
+    "tryAgain": "Intentar de nuevo",
+    "search": "Buscar",
+    "back": "Atrás",
+    "close": "Cerrar",
+    "confirm": "Confirmar",
+    "yes": "Sí",
+    "no": "No",
+    "share": "Compartir"
+  },
+  "landing": {
+    "hero": "Escribe historias que cautiven lectores",
+    "cta": "Empieza a escribir gratis",
+    "features": "Características",
+    "pricing": "Precios"
+  },
+  "language": {
+    "selectLanguage": "Seleccionar idioma",
+    "en": "English",
+    "es": "Español",
+    "hi": "हिन्दी",
+    "zh": "中文",
+    "ar": "العربية",
+    "pt": "Português",
+    "fr": "Français",
+    "de": "Deutsch",
+    "ja": "日本語",
+    "ko": "한국어"
+  }
+}

@@ -1,0 +1,225 @@
+{
+  "version": "2026-03-18",
+  "root": "E:/Yc_ai",
+  "canonicalPortfolio": {
+    "web": [
+      {
+        "slug": "boardbrief",
+        "title": "BoardBrief",
+        "platform": "web",
+        "path": "E:/Yc_ai/boardbrief",
+        "saasDocsPath": "E:/Yc_ai/boardbrief/saas-docs",
+        "auditPath": "E:/Yc_ai/audit-2026-03-12/apps/boardbrief-audit.md"
+      },
+      {
+        "slug": "claimforge",
+        "title": "ClaimForge",
+        "platform": "web",
+        "path": "E:/Yc_ai/claimforge",
+        "saasDocsPath": "E:/Yc_ai/claimforge/saas-docs",
+        "auditPath": "E:/Yc_ai/audit-2026-03-12/apps/claimforge-audit.md"
+      },
+      {
+        "slug": "complibot",
+        "title": "CompliBot",
+        "platform": "web",
+        "path": "E:/Yc_ai/complibot",
+        "saasDocsPath": "E:/Yc_ai/complibot/saas-docs",
+        "auditPath": "E:/Yc_ai/audit-2026-03-12/apps/complibot-audit.md"
+      },
+      {
+        "slug": "dealroom",
+        "title": "DealRoom",
+        "platform": "web",
+        "path": "E:/Yc_ai/dealroom",
+        "saasDocsPath": "E:/Yc_ai/dealroom/saas-docs",
+        "auditPath": "E:/Yc_ai/audit-2026-03-12/apps/dealroom-audit.md"
+      },
+      {
+        "slug": "invoiceai",
+        "title": "InvoiceAI",
+        "platform": "web",
+        "path": "E:/Yc_ai/invoiceai",
+        "saasDocsPath": "E:/Yc_ai/invoiceai/saas-docs",
+        "auditPath": "E:/Yc_ai/audit-2026-03-12/apps/invoiceai-audit.md"
+      },
+      {
+        "slug": "neighbordao",
+        "title": "NeighborDAO",
+        "platform": "web",
+        "path": "E:/Yc_ai/neighbordao",
+        "saasDocsPath": "E:/Yc_ai/neighbordao/saas-docs",
+        "auditPath": "E:/Yc_ai/audit-2026-03-12/apps/neighbordao-audit.md"
+      },
+      {
+        "slug": "petos",
+        "title": "PetOS",
+        "platform": "web",
+        "path": "E:/Yc_ai/petos",
+        "saasDocsPath": "E:/Yc_ai/petos/saas-docs",
+        "auditPath": "E:/Yc_ai/audit-2026-03-12/apps/petos-audit.md"
+      },
+      {
+        "slug": "proposalpilot",
+        "title": "ProposalPilot",
+        "platform": "web",
+        "path": "E:/Yc_ai/proposalpilot",
+        "saasDocsPath": "E:/Yc_ai/proposalpilot/saas-docs",
+        "auditPath": "E:/Yc_ai/audit-2026-03-12/apps/proposalpilot-audit.md"
+      },
+      {
+        "slug": "skillbridge",
+        "title": "SkillBridge",
+        "platform": "web",
+        "path": "E:/Yc_ai/skillbridge",
+        "saasDocsPath": "E:/Yc_ai/skillbridge/saas-docs",
+        "auditPath": "E:/Yc_ai/audit-2026-03-12/apps/skillbridge-audit.md"
+      },
+      {
+        "slug": "storythread",
+        "title": "StoryThread",
+        "platform": "web",
+        "path": "E:/Yc_ai/storythread",
+        "saasDocsPath": "E:/Yc_ai/storythread/saas-docs",
+        "auditPath": "E:/Yc_ai/audit-2026-03-12/apps/storythread-audit.md"
+      }
+    ],
+    "mobile": [
+      {
+        "slug": "aura-check",
+        "title": "AuraCheck",
+        "platform": "mobile",
+        "path": "E:/Yc_ai/aura-check",
+        "saasDocsPath": "E:/Yc_ai/aura-check/saas-docs",
+        "auditPath": "E:/Yc_ai/audit-2026-03-12/apps/aura-check-audit.md"
+      },
+      {
+        "slug": "claimback",
+        "title": "ClaimBack",
+        "platform": "mobile",
+        "path": "E:/Yc_ai/claimback",
+        "saasDocsPath": "E:/Yc_ai/claimback/saas-docs",
+        "auditPath": "E:/Yc_ai/audit-2026-03-12/apps/claimback-audit.md"
+      },
+      {
+        "slug": "compliancesnap-expo",
+        "title": "ComplianceSnap",
+        "platform": "mobile",
+        "path": "E:/Yc_ai/compliancesnap-expo",
+        "saasDocsPath": "E:/Yc_ai/compliancesnap-expo/saas-docs",
+        "auditPath": "E:/Yc_ai/audit-2026-03-12/apps/compliancesnap-expo-audit.md"
+      },
+      {
+        "slug": "fieldlens",
+        "title": "FieldLens",
+        "platform": "mobile",
+        "path": "E:/Yc_ai/fieldlens",
+        "saasDocsPath": "E:/Yc_ai/fieldlens/saas-docs",
+        "auditPath": "E:/Yc_ai/audit-2026-03-12/apps/fieldlens-audit.md"
+      },
+      {
+        "slug": "govpass",
+        "title": "GovPass",
+        "platform": "mobile",
+        "path": "E:/Yc_ai/govpass",
+        "saasDocsPath": "E:/Yc_ai/govpass/saas-docs",
+        "auditPath": "E:/Yc_ai/audit-2026-03-12/apps/govpass-audit.md"
+      },
+      {
+        "slug": "inspector-ai",
+        "title": "InspectorAI",
+        "platform": "mobile",
+        "path": "E:/Yc_ai/inspector-ai",
+        "saasDocsPath": "E:/Yc_ai/inspector-ai/saas-docs",
+        "auditPath": "E:/Yc_ai/audit-2026-03-12/apps/inspector-ai-audit.md"
+      },
+      {
+        "slug": "mortal",
+        "title": "Mortal",
+        "platform": "mobile",
+        "path": "E:/Yc_ai/mortal",
+        "saasDocsPath": "E:/Yc_ai/mortal/saas-docs",
+        "auditPath": "E:/Yc_ai/audit-2026-03-12/apps/mortal-audit.md"
+      },
+      {
+        "slug": "routeai",
+        "title": "RouteAI",
+        "platform": "mobile",
+        "path": "E:/Yc_ai/routeai",
+        "saasDocsPath": "E:/Yc_ai/routeai/saas-docs",
+        "auditPath": "E:/Yc_ai/audit-2026-03-12/apps/routeai-audit.md"
+      },
+      {
+        "slug": "sitesync",
+        "title": "SiteSync",
+        "platform": "mobile",
+        "path": "E:/Yc_ai/sitesync",
+        "saasDocsPath": "E:/Yc_ai/sitesync/saas-docs",
+        "auditPath": "E:/Yc_ai/audit-2026-03-12/apps/sitesync-audit.md"
+      },
+      {
+        "slug": "stockpulse",
+        "title": "StockPulse",
+        "platform": "mobile",
+        "path": "E:/Yc_ai/stockpulse",
+        "saasDocsPath": "E:/Yc_ai/stockpulse/saas-docs",
+        "auditPath": "E:/Yc_ai/audit-2026-03-12/apps/stockpulse-audit.md"
+      }
+    ]
+  },
+  "shannonTrack": {
+    "slug": "shannon",
+    "title": "Shannon",
+    "path": "E:/Yc_ai/shannon",
+    "webPath": "E:/Yc_ai/shannon/web",
+    "mcpServerPath": "E:/Yc_ai/shannon/mcp-server",
+    "envExamplePath": "E:/Yc_ai/shannon/web/.env.example",
+    "purpose": "Separate setup and infrastructure track for the portfolio audit workflow"
+  },
+  "excluded": [
+    {
+      "slug": "compliancesnap",
+      "reason": "Legacy duplicate; compliancesnap-expo is the canonical ComplianceSnap mobile app"
+    },
+    {
+      "slug": "fieldlens__",
+      "reason": "Scratch or duplicate workspace; not a canonical app"
+    },
+    {
+      "slug": "agentforge",
+      "reason": "Desktop or Electron-style root outside the canonical 20-app web/mobile portfolio"
+    },
+    {
+      "slug": "cortex",
+      "reason": "Desktop or Electron-style root outside the canonical 20-app web/mobile portfolio"
+    },
+    {
+      "slug": "deepfocus",
+      "reason": "Desktop or Electron-style root outside the canonical 20-app web/mobile portfolio"
+    },
+    {
+      "slug": "legalforge",
+      "reason": "Desktop or Electron-style root outside the canonical 20-app web/mobile portfolio"
+    },
+    {
+      "slug": "luminary",
+      "reason": "Desktop or Electron-style root outside the canonical 20-app web/mobile portfolio"
+    },
+    {
+      "slug": "modelops",
+      "reason": "Desktop or Electron-style root outside the canonical 20-app web/mobile portfolio"
+    },
+    {
+      "slug": "patternforge",
+      "reason": "Desktop or Electron-style root outside the canonical 20-app web/mobile portfolio"
+    },
+    {
+      "slug": "spectracad",
+      "reason": "Desktop or Electron-style root outside the canonical 20-app web/mobile portfolio"
+    },
+    {
+      "slug": "vaultedit",
+      "reason": "Desktop or Electron-style root outside the canonical 20-app web/mobile portfolio"
+    }
+  ]
+}

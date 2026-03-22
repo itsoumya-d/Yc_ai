@@ -1,0 +1,13 @@
+{
+  "nav": {"dashboard":"Dashboard","cases":"Fälle","documents":"Dokumente","analysis":"Analyse","settings":"Einstellungen","billing":"Abrechnung","signOut":"Abmelden"},
+  "dashboard": {"title":"Schadenersatz-Dashboard","welcome":"Willkommen zurück","activeCases":"Aktive Fälle","totalClaimed":"Gesamtforderung","successRate":"Erfolgsquote","pendingReview":"Ausstehende Prüfung","recentCases":"Aktuelle Fälle","noCases":"Noch keine Fälle"},
+  "cases": {"title":"Fälle","new":"Neuer Fall","open":"Offen","inProgress":"In Bearbeitung","resolved":"Gelöst","closed":"Geschlossen","claimAmount":"Forderungsbetrag","editCase":"Fall bearbeiten","closeCase":"Fall schließen","noCases":"Noch keine Fälle","createFirst":"Erstellen Sie Ihren ersten Fall"},
+  "documents": {"title":"Dokumente","upload":"Dokument hochladen","ocr":"OCR-Analyse","extracting":"Text wird extrahiert...","documentType":"Dokumenttyp","noDocuments":"Keine Dokumente hochgeladen","addFirst":"Laden Sie Ihr erstes Dokument hoch"},
+  "analysis": {"title":"KI-Analyse","analyze":"Fall analysieren","strengthScore":"Fallstärke","evidenceAnalysis":"Beweisanalyse","recommendations":"Empfehlungen","riskFactors":"Risikofaktoren","noAnalysis":"Noch keine Analyse","runAnalysis":"Analyse starten"},
+  "settings": {"title":"Einstellungen","profile":"Profil","notifications":"Benachrichtigungen","language":"Sprache","privacy":"Datenschutzrichtlinie","terms":"Nutzungsbedingungen"},
+  "auth": {"welcome":"Erstellen Sie gewinnende Fälle","tagline":"KI-gestütztes Rechtsforderungsmanagement","signIn":"Anmelden","signUp":"Konto erstellen","email":"E-Mail","password":"Passwort","forgotPassword":"Passwort vergessen?","continueWithGoogle":"Mit Google fortfahren"},
+  "billing": {"title":"Abrechnung","plan":"Aktueller Plan","upgrade":"Upgrade","monthly":"Monatlich","annual":"Jährlich"},
+  "common": {"save":"Speichern","cancel":"Abbrechen","delete":"Löschen","edit":"Bearbeiten","loading":"Laden...","error":"Etwas ist schiefgelaufen","tryAgain":"Erneut versuchen","search":"Suchen","back":"Zurück","close":"Schließen","confirm":"Bestätigen","yes":"Ja","no":"Nein"},
+  "landing": {"hero":"KI-gestützte Forderungen, die gewinnen","cta":"Kostenlos testen","features":"Funktionen","pricing":"Preise"},
+  "language": {"selectLanguage":"Sprache auswählen","en":"English","es":"Español","hi":"हिन्दी","zh":"中文","ar":"العربية","pt":"Português","fr":"Français","de":"Deutsch","ja":"日本語","ko":"한국어"}
+}

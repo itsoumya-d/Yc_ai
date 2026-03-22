@@ -1,0 +1,137 @@
+{
+  "nav": {
+    "dashboard": "Panel de Control",
+    "proposals": "Propuestas",
+    "templates": "Plantillas",
+    "clients": "Clientes",
+    "signatures": "Firmas",
+    "analytics": "Analíticas",
+    "settings": "Configuración",
+    "billing": "Facturación",
+    "referral": "Programa de Referidos",
+    "signOut": "Cerrar Sesión"
+  },
+  "dashboard": {
+    "title": "Panel de Propuestas",
+    "welcome": "Bienvenido de vuelta",
+    "totalProposals": "Total de Propuestas",
+    "winRate": "Tasa de Éxito",
+    "avgValue": "Valor Promedio de Propuesta",
+    "pendingSig": "Firmas Pendientes",
+    "recentProposals": "Propuestas Recientes",
+    "topClients": "Mejores Clientes",
+    "conversionRate": "Tasa de Conversión"
+  },
+  "proposals": {
+    "title": "Propuestas",
+    "new": "Nueva Propuesta",
+    "draft": "Borrador",
+    "sent": "Enviada",
+    "viewed": "Vista",
+    "signed": "Firmada",
+    "rejected": "Rechazada",
+    "expired": "Expirada",
+    "generateAI": "Generar con IA",
+    "preview": "Vista Previa",
+    "send": "Enviar al Cliente",
+    "duplicate": "Duplicar",
+    "template": "Guardar como Plantilla",
+    "exportPDF": "Exportar PDF",
+    "noProposals": "Aún no hay propuestas",
+    "createFirst": "Crea tu primera propuesta"
+  },
+  "templates": {
+    "title": "Plantillas",
+    "new": "Nueva Plantilla",
+    "myTemplates": "Mis Plantillas",
+    "library": "Biblioteca de Plantillas",
+    "web": "Diseño Web",
+    "consulting": "Consultoría",
+    "marketing": "Marketing",
+    "development": "Desarrollo",
+    "useTemplate": "Usar Plantilla",
+    "editTemplate": "Editar Plantilla"
+  },
+  "clients": {
+    "title": "Clientes",
+    "add": "Agregar Cliente",
+    "name": "Nombre del Cliente",
+    "email": "Correo",
+    "company": "Empresa",
+    "phone": "Teléfono",
+    "proposals": "Propuestas",
+    "totalValue": "Valor Total",
+    "noClients": "Aún no hay clientes",
+    "addFirst": "Agrega tu primer cliente"
+  },
+  "signatures": {
+    "title": "Firmas",
+    "pending": "Pendiente",
+    "signed": "Firmado",
+    "expired": "Expirado",
+    "request": "Solicitar Firma",
+    "sign": "Firmar Documento",
+    "download": "Descargar Firmado",
+    "reminder": "Enviar Recordatorio",
+    "deadline": "Fecha Límite de Firma"
+  },
+  "settings": {
+    "title": "Configuración",
+    "profile": "Perfil",
+    "branding": "Marca",
+    "notifications": "Notificaciones",
+    "language": "Idioma",
+    "billing": "Facturación",
+    "deleteAccount": "Eliminar Cuenta"
+  },
+  "auth": {
+    "signIn": "Iniciar Sesión",
+    "signUp": "Registrarse",
+    "email": "Correo Electrónico",
+    "password": "Contraseña",
+    "forgotPassword": "¿Olvidaste tu contraseña?",
+    "continueWithGoogle": "Continuar con Google"
+  },
+  "billing": {
+    "title": "Facturación",
+    "free": "Gratuito",
+    "professional": "Profesional",
+    "agency": "Agencia",
+    "upgrade": "Actualizar",
+    "perMonth": "/mes",
+    "perYear": "/año"
+  },
+  "common": {
+    "save": "Guardar",
+    "cancel": "Cancelar",
+    "delete": "Eliminar",
+    "edit": "Editar",
+    "loading": "Cargando...",
+    "error": "Algo salió mal",
+    "search": "Buscar",
+    "noResults": "Sin resultados",
+    "viewAll": "Ver Todo",
+    "back": "Atrás",
+    "close": "Cerrar",
+    "confirm": "Confirmar",
+    "send": "Enviar"
+  },
+  "landing": {
+    "hero": "Propuestas con IA que Ganan",
+    "heroSub": "Crea propuestas impresionantes en minutos, rastrea cuándo los clientes las ven y cierra acuerdos con firmas electrónicas",
+    "getStarted": "Comenzar Prueba Gratuita"
+  },
+  "language": {
+    "selectLanguage": "Seleccionar Idioma",
+    "en": "English",
+    "es": "Español",
+    "hi": "हिन्दी",
+    "zh": "中文",
+    "ar": "العربية",
+    "pt": "Português",
+    "fr": "Français",
+    "de": "Deutsch",
+    "ja": "日本語",
+    "ko": "한국어"
+  }
+}

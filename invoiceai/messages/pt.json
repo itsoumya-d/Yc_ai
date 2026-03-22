@@ -1,0 +1,115 @@
+{
+  "nav": {
+    "dashboard": "Painel",
+    "invoices": "Faturas",
+    "clients": "Clientes",
+    "reports": "Relatórios",
+    "settings": "Configurações",
+    "billing": "Faturamento",
+    "signOut": "Sair"
+  },
+  "dashboard": {
+    "title": "Painel Financeiro",
+    "welcome": "Bem-vindo de volta",
+    "outstanding": "Em Aberto",
+    "paid": "Recebido Este Mês",
+    "overdue": "Vencido",
+    "totalRevenue": "Receita Total",
+    "recentInvoices": "Faturas Recentes",
+    "noInvoices": "Nenhuma fatura ainda"
+  },
+  "invoices": {
+    "title": "Faturas",
+    "new": "Nova Fatura",
+    "draft": "Rascunho",
+    "sent": "Enviada",
+    "paid": "Paga",
+    "overdue": "Vencida",
+    "void": "Cancelada",
+    "send": "Enviar Fatura",
+    "markPaid": "Marcar como Paga",
+    "duplicate": "Duplicar",
+    "delete": "Excluir",
+    "noInvoices": "Nenhuma fatura ainda",
+    "createFirst": "Crie sua primeira fatura"
+  },
+  "clients": {
+    "title": "Clientes",
+    "add": "Adicionar Cliente",
+    "name": "Nome",
+    "email": "E-mail",
+    "phone": "Telefone",
+    "address": "Endereço",
+    "totalInvoiced": "Total Faturado",
+    "paymentTerms": "Condições de Pagamento",
+    "noClients": "Nenhum cliente ainda"
+  },
+  "reports": {
+    "title": "Relatórios",
+    "revenue": "Receita",
+    "expenses": "Despesas",
+    "profit": "Lucro",
+    "agingReport": "Relatório de Inadimplência",
+    "taxSummary": "Resumo Fiscal",
+    "export": "Exportar Relatório"
+  },
+  "settings": {
+    "title": "Configurações",
+    "profile": "Perfil",
+    "notifications": "Notificações",
+    "language": "Idioma",
+    "privacy": "Política de Privacidade",
+    "terms": "Termos de Serviço"
+  },
+  "auth": {
+    "welcome": "Receba Mais Rápido",
+    "tagline": "Faturamento com IA para freelancers e empresas",
+    "signIn": "Entrar",
+    "signUp": "Criar Conta",
+    "email": "E-mail",
+    "password": "Senha",
+    "forgotPassword": "Esqueceu a senha?",
+    "continueWithGoogle": "Continuar com Google"
+  },
+  "billing": {
+    "title": "Faturamento",
+    "plan": "Plano Atual",
+    "upgrade": "Fazer Upgrade",
+    "monthly": "Mensal",
+    "annual": "Anual"
+  },
+  "common": {
+    "save": "Salvar",
+    "cancel": "Cancelar",
+    "delete": "Excluir",
+    "edit": "Editar",
+    "loading": "Carregando...",
+    "error": "Algo deu errado",
+    "tryAgain": "Tentar novamente",
+    "search": "Pesquisar",
+    "back": "Voltar",
+    "close": "Fechar",
+    "confirm": "Confirmar",
+    "yes": "Sim",
+    "no": "Não"
+  },
+  "landing": {
+    "hero": "Faturamento que te faz receber mais rápido",
+    "cta": "Começar Teste Grátis",
+    "features": "Recursos",
+    "pricing": "Preços"
+  },
+  "language": {
+    "selectLanguage": "Selecionar Idioma",
+    "en": "English",
+    "es": "Español",
+    "hi": "हिन्दी",
+    "zh": "中文",
+    "ar": "العربية",
+    "pt": "Português",
+    "fr": "Français",
+    "de": "Deutsch",
+    "ja": "日本語",
+    "ko": "한국어"
+  }
+}

@@ -1,0 +1,115 @@
+{
+  "nav": {
+    "dashboard": "Dashboard",
+    "invoices": "Rechnungen",
+    "clients": "Kunden",
+    "reports": "Berichte",
+    "settings": "Einstellungen",
+    "billing": "Abrechnung",
+    "signOut": "Abmelden"
+  },
+  "dashboard": {
+    "title": "Finanz-Dashboard",
+    "welcome": "Willkommen zurück",
+    "outstanding": "Ausstehend",
+    "paid": "Diesen Monat bezahlt",
+    "overdue": "Überfällig",
+    "totalRevenue": "Gesamtumsatz",
+    "recentInvoices": "Neueste Rechnungen",
+    "noInvoices": "Noch keine Rechnungen"
+  },
+  "invoices": {
+    "title": "Rechnungen",
+    "new": "Neue Rechnung",
+    "draft": "Entwurf",
+    "sent": "Gesendet",
+    "paid": "Bezahlt",
+    "overdue": "Überfällig",
+    "void": "Storniert",
+    "send": "Rechnung senden",
+    "markPaid": "Als bezahlt markieren",
+    "duplicate": "Duplizieren",
+    "delete": "Löschen",
+    "noInvoices": "Noch keine Rechnungen",
+    "createFirst": "Erstelle deine erste Rechnung"
+  },
+  "clients": {
+    "title": "Kunden",
+    "add": "Kunden hinzufügen",
+    "name": "Name",
+    "email": "E-Mail",
+    "phone": "Telefon",
+    "address": "Adresse",
+    "totalInvoiced": "Gesamt in Rechnung gestellt",
+    "paymentTerms": "Zahlungsbedingungen",
+    "noClients": "Noch keine Kunden"
+  },
+  "reports": {
+    "title": "Berichte",
+    "revenue": "Umsatz",
+    "expenses": "Ausgaben",
+    "profit": "Gewinn",
+    "agingReport": "Offene-Posten-Liste",
+    "taxSummary": "Steuerübersicht",
+    "export": "Bericht exportieren"
+  },
+  "settings": {
+    "title": "Einstellungen",
+    "profile": "Profil",
+    "notifications": "Benachrichtigungen",
+    "language": "Sprache",
+    "privacy": "Datenschutzerklärung",
+    "terms": "Nutzungsbedingungen"
+  },
+  "auth": {
+    "welcome": "Schneller bezahlt werden",
+    "tagline": "KI-gestützte Rechnungsstellung für Freelancer und Unternehmen",
+    "signIn": "Anmelden",
+    "signUp": "Konto erstellen",
+    "email": "E-Mail",
+    "password": "Passwort",
+    "forgotPassword": "Passwort vergessen?",
+    "continueWithGoogle": "Mit Google fortfahren"
+  },
+  "billing": {
+    "title": "Abrechnung",
+    "plan": "Aktueller Plan",
+    "upgrade": "Upgrade",
+    "monthly": "Monatlich",
+    "annual": "Jährlich"
+  },
+  "common": {
+    "save": "Speichern",
+    "cancel": "Abbrechen",
+    "delete": "Löschen",
+    "edit": "Bearbeiten",
+    "loading": "Wird geladen...",
+    "error": "Etwas ist schiefgelaufen",
+    "tryAgain": "Erneut versuchen",
+    "search": "Suchen",
+    "back": "Zurück",
+    "close": "Schließen",
+    "confirm": "Bestätigen",
+    "yes": "Ja",
+    "no": "Nein"
+  },
+  "landing": {
+    "hero": "Rechnungsstellung, die schneller bezahlt wird",
+    "cta": "Kostenlos testen",
+    "features": "Funktionen",
+    "pricing": "Preise"
+  },
+  "language": {
+    "selectLanguage": "Sprache auswählen",
+    "en": "English",
+    "es": "Español",
+    "hi": "हिन्दी",
+    "zh": "中文",
+    "ar": "العربية",
+    "pt": "Português",
+    "fr": "Français",
+    "de": "Deutsch",
+    "ja": "日本語",
+    "ko": "한국어"
+  }
+}

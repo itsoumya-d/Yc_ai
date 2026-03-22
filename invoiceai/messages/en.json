@@ -1,0 +1,131 @@
+{
+  "nav": {
+    "dashboard": "Dashboard",
+    "invoices": "Invoices",
+    "clients": "Clients",
+    "expenses": "Expenses",
+    "recurring": "Recurring",
+    "followUps": "Follow-ups",
+    "reports": "Reports",
+    "settings": "Settings",
+    "billing": "Billing",
+    "referral": "Referral",
+    "signOut": "Sign Out",
+    "newInvoice": "New Invoice"
+  },
+  "dashboard": {
+    "title": "Finance Dashboard",
+    "welcome": "Welcome back",
+    "description": "Here's how your business is doing today.",
+    "outstanding": "Outstanding",
+    "paid": "Paid This Month",
+    "overdue": "Overdue",
+    "totalRevenue": "Total Revenue",
+    "recentInvoices": "Recent Invoices",
+    "noInvoices": "No invoices yet",
+    "newInvoice": "New Invoice",
+    "createFirstInvoice": "Create your first invoice",
+    "createFirstDescription": "Get started by creating an invoice. You can use AI to draft it from a simple description.",
+    "createInvoice": "Create Invoice"
+  },
+  "invoices": {
+    "title": "Invoices",
+    "new": "New Invoice",
+    "draft": "Draft",
+    "sent": "Sent",
+    "paid": "Paid",
+    "overdue": "Overdue",
+    "void": "Void",
+    "send": "Send Invoice",
+    "markPaid": "Mark as Paid",
+    "duplicate": "Duplicate",
+    "delete": "Delete",
+    "noInvoices": "No invoices yet",
+    "createFirst": "Create your first invoice"
+  },
+  "clients": {
+    "title": "Clients",
+    "add": "Add Client",
+    "name": "Name",
+    "email": "Email",
+    "phone": "Phone",
+    "address": "Address",
+    "totalInvoiced": "Total Invoiced",
+    "paymentTerms": "Payment Terms",
+    "noClients": "No clients yet"
+  },
+  "reports": {
+    "title": "Reports",
+    "revenue": "Revenue",
+    "expenses": "Expenses",
+    "profit": "Profit",
+    "agingReport": "Aging Report",
+    "taxSummary": "Tax Summary",
+    "export": "Export Report"
+  },
+  "settings": {
+    "title": "Settings",
+    "description": "Manage your account, branding, and integrations.",
+    "profile": "Profile",
+    "notifications": "Notifications",
+    "language": "Language",
+    "privacy": "Privacy Policy",
+    "terms": "Terms of Service"
+  },
+  "auth": {
+    "welcome": "Get Paid Faster",
+    "tagline": "AI-powered invoicing for freelancers and businesses",
+    "signIn": "Sign In",
+    "signingIn": "Signing in...",
+    "signUp": "Create Account",
+    "email": "Email",
+    "password": "Password",
+    "forgotPassword": "Forgot Password?",
+    "continueWithGoogle": "Continue with Google",
+    "continueWithGitHub": "Continue with GitHub",
+    "orContinueWith": "Or continue with",
+    "noAccount": "Don't have an account?",
+    "sendMagicLink": "Send magic link"
+  },
+  "billing": {
+    "title": "Billing",
+    "plan": "Current Plan",
+    "upgrade": "Upgrade",
+    "monthly": "Monthly",
+    "annual": "Annual"
+  },
+  "common": {
+    "save": "Save",
+    "cancel": "Cancel",
+    "delete": "Delete",
+    "edit": "Edit",
+    "loading": "Loading...",
+    "error": "Something went wrong",
+    "tryAgain": "Try Again",
+    "search": "Search",
+    "back": "Back",
+    "close": "Close",
+    "confirm": "Confirm",
+    "yes": "Yes",
+    "no": "No"
+  },
+  "landing": {
+    "hero": "Invoicing that gets you paid faster",
+    "cta": "Start Free Trial",
+    "features": "Features",
+    "pricing": "Pricing"
+  },
+  "language": {
+    "selectLanguage": "Select Language",
+    "en": "English",
+    "es": "Espa\u00f1ol",
+    "hi": "\u0939\u093f\u0928\u094d\u0926\u0940",
+    "zh": "\u4e2d\u6587",
+    "ar": "\u0627\u0644\u0639\u0631\u0628\u064a\u0629",
+    "pt": "Portugu\u00eas",
+    "fr": "Fran\u00e7ais",
+    "de": "Deutsch",
+    "ja": "\u65e5\u672c\u8a9e",
+    "ko": "\ud55c\uad6d\uc5b4"
+  }
+}
