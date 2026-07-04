@@ -71,14 +71,29 @@ export function WorkspaceView() {
     });
 
     return numericCols.slice(0, 4).map((col) => {
-      const values = queryResults.map((r) => Number(r[col]) || 0);
-      const total = values.reduce((a, b) => a + b, 0);
-      const avg = total / values.length;
+      // ⚡ Bolt: Prevent array allocations by replacing .map().reduce() with a single-pass loop
+      // Expected impact: Eliminates O(N) intermediate array creation, improves render time for large datasets
+      let total = 0;
+      let firstHalfTotal = 0;
+      let secondHalfTotal = 0;
+      const len = queryResults.length;
+      const mid = Math.floor(len / 2);
+
+      for (let i = 0; i < len; i++) {
+        const val = Number(queryResults[i]?.[col]) || 0;
+        total += val;
+        if (i < mid) {
+          firstHalfTotal += val;
+        } else {
+          secondHalfTotal += val;
+        }
+      }
+
+      const avg = len > 0 ? total / len : 0; // Preserved for correctness even if unused directly
 
       // Calculate change from first half to second half
-      const mid = Math.floor(values.length / 2);
-      const firstHalf = values.slice(0, mid).reduce((a, b) => a + b, 0) / (mid || 1);
-      const secondHalf = values.slice(mid).reduce((a, b) => a + b, 0) / ((values.length - mid) || 1);
+      const firstHalf = firstHalfTotal / (mid || 1);
+      const secondHalf = secondHalfTotal / ((len - mid) || 1);
       const changePct = firstHalf > 0 ? ((secondHalf - firstHalf) / firstHalf) * 100 : 0;
 
       return {
@@ -100,10 +115,18 @@ export function WorkspaceView() {
 
     if (!labelCol || !valueCol) return [];
 
-    return queryResults.slice(0, 50).map((row) => ({
-      label: String(row[labelCol] ?? ''),
-      value: Number(row[valueCol] ?? 0),
-    }));
+    // ⚡ Bolt: Prevent slicing array and iterating twice. Populate chartData in single pass.
+    const data = [];
+    const limit = Math.min(queryResults.length, 50);
+    for (let i = 0; i < limit; i++) {
+      const row = queryResults[i];
+      if (!row) continue;
+      data.push({
+        label: String(row[labelCol] ?? ''),
+        value: Number(row[valueCol] ?? 0),
+      });
+    }
+    return data;
   }, [queryResults, queryColumns]);
 
   const maxChartValue = useMemo(() => Math.max(...chartData.map((d) => d.value), 1), [chartData]);
