@@ -71,14 +71,29 @@ export function WorkspaceView() {
     });
 
     return numericCols.slice(0, 4).map((col) => {
-      const values = queryResults.map((r) => Number(r[col]) || 0);
-      const total = values.reduce((a, b) => a + b, 0);
-      const avg = total / values.length;
+      // Performance Optimization: Replaced chained .map().reduce().slice() calls
+      // with a single loop to avoid multiple O(N) array allocations per column.
+      let total = 0;
+      let firstHalfSum = 0;
+      let secondHalfSum = 0;
+      const len = queryResults.length;
+      const mid = Math.floor(len / 2);
+
+      for (let i = 0; i < len; i++) {
+        const val = Number(queryResults[i]?.[col]) || 0;
+        total += val;
+        if (i < mid) {
+          firstHalfSum += val;
+        } else {
+          secondHalfSum += val;
+        }
+      }
+
+      const avg = total / len;
 
       // Calculate change from first half to second half
-      const mid = Math.floor(values.length / 2);
-      const firstHalf = values.slice(0, mid).reduce((a, b) => a + b, 0) / (mid || 1);
-      const secondHalf = values.slice(mid).reduce((a, b) => a + b, 0) / ((values.length - mid) || 1);
+      const firstHalf = firstHalfSum / (mid || 1);
+      const secondHalf = secondHalfSum / ((len - mid) || 1);
       const changePct = firstHalf > 0 ? ((secondHalf - firstHalf) / firstHalf) * 100 : 0;
 
       return {
