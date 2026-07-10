@@ -222,23 +222,44 @@ export function getDashboardStats() {
   const contracts = getContracts();
   const obligations = getObligations();
 
-  const active = contracts.filter((c) => !['executed', 'expired', 'archived'].includes(c.status)).length;
-  const pendingReview = contracts.filter((c) => c.status === 'in_review').length;
-  const executed = contracts.filter((c) => c.status === 'executed').length;
+  let active = 0;
+  let pendingReview = 0;
+  let executed = 0;
+  let totalRisk = 0;
 
-  const avgRisk = contracts.length > 0
-    ? Math.round(contracts.reduce((a, c) => a + (c.risk_score || 0), 0) / contracts.length)
-    : 0;
+  for (const c of contracts) {
+    if (c.status !== 'executed' && c.status !== 'expired' && c.status !== 'archived') {
+      active++;
+    }
+    if (c.status === 'in_review') {
+      pendingReview++;
+    }
+    if (c.status === 'executed') {
+      executed++;
+    }
+    totalRisk += (c.risk_score || 0);
+  }
+
+  const avgRisk = contracts.length > 0 ? Math.round(totalRisk / contracts.length) : 0;
 
   const now = new Date();
   const weekEnd = new Date(now);
   weekEnd.setDate(weekEnd.getDate() + 7);
-  const dueThisWeek = obligations.filter((o) => {
-    const d = new Date(o.due_date);
-    return d >= now && d <= weekEnd && !o.completed;
-  }).length;
 
-  const overdue = obligations.filter((o) => new Date(o.due_date) < now && !o.completed).length;
+  let dueThisWeek = 0;
+  let overdue = 0;
+
+  for (const o of obligations) {
+    if (!o.completed) {
+      const d = new Date(o.due_date);
+      if (d >= now && d <= weekEnd) {
+        dueThisWeek++;
+      }
+      if (d < now) {
+        overdue++;
+      }
+    }
+  }
 
   return { active, pendingReview, executed, avgRisk, dueThisWeek, overdue, total: contracts.length };
 }
