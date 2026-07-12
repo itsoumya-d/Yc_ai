@@ -199,17 +199,18 @@ export function EditorView() {
       {/* Toolbar */}
       <div className="flex items-center justify-between border-b border-border-default bg-bg-surface px-4 py-2">
         <div className="flex items-center gap-1">
-          <button className="rounded p-1.5 text-text-tertiary hover:bg-bg-surface-raised hover:text-text-secondary"><Bold className="h-4 w-4" /></button>
-          <button className="rounded p-1.5 text-text-tertiary hover:bg-bg-surface-raised hover:text-text-secondary"><Italic className="h-4 w-4" /></button>
-          <button className="rounded p-1.5 text-text-tertiary hover:bg-bg-surface-raised hover:text-text-secondary"><Underline className="h-4 w-4" /></button>
+          <button aria-label="Bold" className="rounded p-1.5 text-text-tertiary hover:bg-bg-surface-raised hover:text-text-secondary"><Bold className="h-4 w-4" /></button>
+          <button aria-label="Italic" className="rounded p-1.5 text-text-tertiary hover:bg-bg-surface-raised hover:text-text-secondary"><Italic className="h-4 w-4" /></button>
+          <button aria-label="Underline" className="rounded p-1.5 text-text-tertiary hover:bg-bg-surface-raised hover:text-text-secondary"><Underline className="h-4 w-4" /></button>
           <div className="mx-1 h-4 w-px bg-border-default" />
-          <button className="rounded p-1.5 text-text-tertiary hover:bg-bg-surface-raised hover:text-text-secondary"><Heading1 className="h-4 w-4" /></button>
-          <button className="rounded p-1.5 text-text-tertiary hover:bg-bg-surface-raised hover:text-text-secondary"><Heading2 className="h-4 w-4" /></button>
-          <button className="rounded p-1.5 text-text-tertiary hover:bg-bg-surface-raised hover:text-text-secondary"><List className="h-4 w-4" /></button>
-          <button className="rounded p-1.5 text-text-tertiary hover:bg-bg-surface-raised hover:text-text-secondary"><Table className="h-4 w-4" /></button>
+          <button aria-label="Heading 1" className="rounded p-1.5 text-text-tertiary hover:bg-bg-surface-raised hover:text-text-secondary"><Heading1 className="h-4 w-4" /></button>
+          <button aria-label="Heading 2" className="rounded p-1.5 text-text-tertiary hover:bg-bg-surface-raised hover:text-text-secondary"><Heading2 className="h-4 w-4" /></button>
+          <button aria-label="List" className="rounded p-1.5 text-text-tertiary hover:bg-bg-surface-raised hover:text-text-secondary"><List className="h-4 w-4" /></button>
+          <button aria-label="Table" className="rounded p-1.5 text-text-tertiary hover:bg-bg-surface-raised hover:text-text-secondary"><Table className="h-4 w-4" /></button>
           <div className="mx-1 h-4 w-px bg-border-default" />
-          <button className="rounded p-1.5 text-text-tertiary hover:bg-bg-surface-raised hover:text-text-secondary"><Library className="h-4 w-4" /></button>
+          <button aria-label="Library" className="rounded p-1.5 text-text-tertiary hover:bg-bg-surface-raised hover:text-text-secondary"><Library className="h-4 w-4" /></button>
           <button
+            aria-label="AI Analyze"
             onClick={handleAnalyze}
             disabled={isAnalyzing}
             className={cn('rounded p-1.5 transition-colors', isAnalyzing ? 'text-accent ai-processing' : 'text-text-tertiary hover:bg-bg-surface-raised hover:text-accent')}
@@ -217,7 +218,7 @@ export function EditorView() {
           >
             {isAnalyzing ? <Loader2 className="h-4 w-4 animate-spin" /> : <Sparkles className="h-4 w-4 text-accent" />}
           </button>
-          <button className="rounded p-1.5 text-text-tertiary hover:bg-bg-surface-raised hover:text-text-secondary"><AlertTriangle className="h-4 w-4" /></button>
+          <button aria-label="Alerts" className="rounded p-1.5 text-text-tertiary hover:bg-bg-surface-raised hover:text-text-secondary"><AlertTriangle className="h-4 w-4" /></button>
           <div className="mx-1 h-4 w-px bg-border-default" />
           <button
             onClick={() => setTrackChanges(!trackChanges)}
@@ -239,7 +240,7 @@ export function EditorView() {
               {unresolvedCount} risk{unresolvedCount !== 1 ? 's' : ''}
             </span>
           )}
-          <button onClick={toggleAIPanel} className="rounded p-1.5 text-text-tertiary hover:bg-bg-surface-raised hover:text-accent">
+          <button aria-label={aiPanelOpen ? "Close AI Panel" : "Open AI Panel"} onClick={toggleAIPanel} className="rounded p-1.5 text-text-tertiary hover:bg-bg-surface-raised hover:text-accent">
             {aiPanelOpen ? <PanelRightClose className="h-4 w-4" /> : <PanelRightOpen className="h-4 w-4" />}
           </button>
         </div>
@@ -265,6 +266,7 @@ export function EditorView() {
                 <span className="text-sm font-medium text-text-primary">AI Assistant</span>
               </div>
               <button
+                aria-label="Re-analyze"
                 onClick={handleAnalyze}
                 disabled={isAnalyzing}
                 className="rounded p-1 text-text-tertiary hover:text-accent"
@@ -403,6 +405,7 @@ export function EditorView() {
                         className="h-8 flex-1 rounded border border-border-default bg-bg-surface-raised px-3 text-xs text-text-primary placeholder:text-text-tertiary focus:border-primary-light focus:outline-none"
                       />
                       <button
+                        aria-label="Send message"
                         onClick={handleAsk}
                         disabled={isChatLoading || !chatInput.trim()}
                         className="rounded bg-primary p-2 text-text-on-color hover:bg-primary-hover disabled:opacity-50"
