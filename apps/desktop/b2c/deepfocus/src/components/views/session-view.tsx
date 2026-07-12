@@ -8,16 +8,23 @@ import { useState } from 'react';
 const categories = ['General', 'Coding', 'Writing', 'Design', 'Research', 'Admin', 'Learning'];
 
 export function SessionView() {
-  const {
-    sessionStatus, setSessionStatus,
-    focusMinutes, elapsed, blockingMode,
-    isBreak, setIsBreak, setElapsed,
-    setSessionStartedAt, currentTask, setCurrentTask,
-    currentCategory, setCurrentCategory,
-    sessionsCompleted, setSessionsCompleted,
-    sessionsBeforeLongBreak,
-    setStreak,
-  } = useAppStore();
+  const sessionStatus = useAppStore((s) => s.sessionStatus);
+  const setSessionStatus = useAppStore((s) => s.setSessionStatus);
+  const focusMinutes = useAppStore((s) => s.focusMinutes);
+  const elapsed = useAppStore((s) => s.elapsed);
+  const blockingMode = useAppStore((s) => s.blockingMode);
+  const isBreak = useAppStore((s) => s.isBreak);
+  const setIsBreak = useAppStore((s) => s.setIsBreak);
+  const setElapsed = useAppStore((s) => s.setElapsed);
+  const setSessionStartedAt = useAppStore((s) => s.setSessionStartedAt);
+  const currentTask = useAppStore((s) => s.currentTask);
+  const setCurrentTask = useAppStore((s) => s.setCurrentTask);
+  const currentCategory = useAppStore((s) => s.currentCategory);
+  const setCurrentCategory = useAppStore((s) => s.setCurrentCategory);
+  const sessionsCompleted = useAppStore((s) => s.sessionsCompleted);
+  const setSessionsCompleted = useAppStore((s) => s.setSessionsCompleted);
+  const sessionsBeforeLongBreak = useAppStore((s) => s.sessionsBeforeLongBreak);
+  const setStreak = useAppStore((s) => s.setStreak);
 
   const { remaining, progress, totalSeconds } = useTimer();
   const [task, setTask] = useState('');

@@ -24,7 +24,7 @@ function renderView(view: string) {
 }
 
 export function App() {
-  const { currentView } = useAppStore();
+  const currentView = useAppStore((state) => state.currentView);
   const showTitleBar = currentView !== 'welcome';
 
   // Load settings and apply theme on mount
