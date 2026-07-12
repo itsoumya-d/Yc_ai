@@ -1,0 +1,3 @@
+## 2024-07-12 - Icon-only Button Accessibility and Destructive Action Safeguards
+**Learning:** Icon-only buttons often lack accessible names across the application, making them unusable for screen reader users and confusing for sighted users without tooltips. In addition, destructive actions like deleting agents lacked confirmation safeguards, risking accidental data loss.
+**Action:** Always ensure that icon-only buttons include `aria-label` and `title` attributes. Furthermore, when implementing or auditing destructive actions, verify that a confirmation step (such as `window.confirm` or a modal) is in place.

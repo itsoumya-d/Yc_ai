@@ -71,8 +71,10 @@ export function DashboardView() {
   }, [addAgent]);
 
   const handleDeleteAgent = useCallback((id: string) => {
-    removeAgent(id);
-    deleteAgentStorage(id);
+    if (window.confirm('Are you sure you want to delete this agent?')) {
+      removeAgent(id);
+      deleteAgentStorage(id);
+    }
   }, [removeAgent]);
 
   return (
@@ -94,12 +96,16 @@ export function DashboardView() {
             <button
               onClick={() => setViewMode('grid')}
               className={cn('rounded-l-md p-1.5', viewMode === 'grid' ? 'bg-bg-surface-hover text-text-primary' : 'text-text-tertiary hover:text-text-secondary')}
+              aria-label="Grid view"
+              title="Grid view"
             >
               <LayoutGrid className="h-3.5 w-3.5" />
             </button>
             <button
               onClick={() => setViewMode('list')}
               className={cn('rounded-r-md p-1.5', viewMode === 'list' ? 'bg-bg-surface-hover text-text-primary' : 'text-text-tertiary hover:text-text-secondary')}
+              aria-label="List view"
+              title="List view"
             >
               <List className="h-3.5 w-3.5" />
             </button>
@@ -152,6 +158,8 @@ export function DashboardView() {
                           <button
                             onClick={(e) => e.stopPropagation()}
                             className="opacity-0 transition-opacity group-hover:opacity-100"
+                            aria-label="More actions"
+                            title="More actions"
                           >
                             <MoreHorizontal className="h-4 w-4 text-text-tertiary hover:text-text-secondary" />
                           </button>
@@ -223,13 +231,13 @@ export function DashboardView() {
                             <td className="px-3 py-2 text-xs text-text-tertiary">{formatRelativeDate(agent.updated_at)}</td>
                             <td className="px-3 py-2 text-right">
                               <div className="flex items-center justify-end gap-1">
-                                <button onClick={(e) => { e.stopPropagation(); handleDuplicateAgent(agent); }} className="rounded p-1 text-text-tertiary hover:bg-bg-surface-hover hover:text-text-secondary">
+                                <button onClick={(e) => { e.stopPropagation(); handleDuplicateAgent(agent); }} className="rounded p-1 text-text-tertiary hover:bg-bg-surface-hover hover:text-text-secondary" aria-label="Duplicate agent" title="Duplicate agent">
                                   <Copy className="h-3 w-3" />
                                 </button>
-                                <button onClick={(e) => e.stopPropagation()} className="rounded p-1 text-text-tertiary hover:bg-bg-surface-hover hover:text-text-secondary">
+                                <button onClick={(e) => e.stopPropagation()} className="rounded p-1 text-text-tertiary hover:bg-bg-surface-hover hover:text-text-secondary" aria-label="Export agent" title="Export agent">
                                   <FileOutput className="h-3 w-3" />
                                 </button>
-                                <button onClick={(e) => { e.stopPropagation(); handleDeleteAgent(agent.id); }} className="rounded p-1 text-text-tertiary hover:bg-error/10 hover:text-error">
+                                <button onClick={(e) => { e.stopPropagation(); handleDeleteAgent(agent.id); }} className="rounded p-1 text-text-tertiary hover:bg-error/10 hover:text-error" aria-label="Delete agent" title="Delete agent">
                                   <Trash2 className="h-3 w-3" />
                                 </button>
                               </div>
