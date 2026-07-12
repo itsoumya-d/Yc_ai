@@ -5,7 +5,11 @@ import { Play, Flame, Clock, Shield, Target, Zap, Coffee } from 'lucide-react';
 import { useMemo, useEffect } from 'react';
 
 export function HomeView() {
-  const { setView, streak, setSessionStatus, setCurrentTask, setStreak } = useAppStore();
+  const setView = useAppStore((s) => s.setView);
+  const streak = useAppStore((s) => s.streak);
+  const setSessionStatus = useAppStore((s) => s.setSessionStatus);
+  const setCurrentTask = useAppStore((s) => s.setCurrentTask);
+  const setStreak = useAppStore((s) => s.setStreak);
 
   // Compute real data
   const todayStats = useMemo(() => getDayStats(), []);
