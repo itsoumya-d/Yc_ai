@@ -1,0 +1,3 @@
+## 2024-07-06 - [Missing accessible names on icon buttons]
+**Learning:** Found multiple instances where icon-only buttons (like More Options, Duplicate, Export, Delete) lacked `aria-label` or `title` attributes, making them inaccessible to screen readers and lacking tooltips for mouse users. Also, custom tooltips on sidebar buttons were conflicting with or replacing native `title` attributes, requiring careful application of both `aria-label` and `title` alongside `aria-current` for full accessibility.
+**Action:** When adding icon-only buttons, always ensure they have an `aria-label` for screen readers and a `title` for visual tooltips. Use `aria-current` for navigation states.

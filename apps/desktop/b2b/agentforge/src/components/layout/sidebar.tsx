@@ -90,7 +90,9 @@ function SidebarButton({
   return (
     <button
       onClick={onClick}
+      aria-label={item.label}
       title={item.label}
+      aria-current={isActive ? 'page' : undefined}
       className={cn(
         'group relative flex h-9 w-9 items-center justify-center rounded-md transition-all',
         isActive
