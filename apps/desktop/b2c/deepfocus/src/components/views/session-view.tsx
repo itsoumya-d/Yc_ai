@@ -200,18 +200,18 @@ export function SessionView() {
         {/* Controls */}
         <div className="mt-8 flex items-center gap-4">
           {!isActive ? (
-            <button onClick={handleStart} className="flex h-14 w-14 items-center justify-center rounded-full bg-amber-DEFAULT text-bg-root hover:bg-amber-light">
+            <button onClick={handleStart} className="flex h-14 w-14 items-center justify-center rounded-full bg-amber-DEFAULT text-bg-root hover:bg-amber-light" aria-label="Start session">
               <Play className="h-6 w-6 ml-0.5" />
             </button>
           ) : (
             <>
-              <button onClick={handlePause} className="flex h-12 w-12 items-center justify-center rounded-full border border-border-default text-text-secondary hover:text-text-primary">
+              <button onClick={handlePause} className="flex h-12 w-12 items-center justify-center rounded-full border border-border-default text-text-secondary hover:text-text-primary" aria-label={sessionStatus === 'paused' ? 'Resume session' : 'Pause session'}>
                 {sessionStatus === 'paused' ? <Play className="h-5 w-5 ml-0.5" /> : <Pause className="h-5 w-5" />}
               </button>
-              <button onClick={handleStop} className="flex h-12 w-12 items-center justify-center rounded-full border border-error/30 text-error hover:bg-error/10">
+              <button onClick={handleStop} className="flex h-12 w-12 items-center justify-center rounded-full border border-error/30 text-error hover:bg-error/10" aria-label="Stop session">
                 <Square className="h-5 w-5" />
               </button>
-              <button onClick={handleSkip} className="flex h-12 w-12 items-center justify-center rounded-full border border-border-default text-text-secondary hover:text-text-primary">
+              <button onClick={handleSkip} className="flex h-12 w-12 items-center justify-center rounded-full border border-border-default text-text-secondary hover:text-text-primary" aria-label="Skip break">
                 <SkipForward className="h-5 w-5" />
               </button>
             </>
