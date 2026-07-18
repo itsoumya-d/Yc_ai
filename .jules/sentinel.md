@@ -1,0 +1,4 @@
+## 2024-05-24 - SQL Injection in better-sqlite3 identifier interpolation
+**Vulnerability:** SQL Injection via untrusted SQLite identifiers (table/column names). `better-sqlite3` does not support parameterization of database identifiers (only values). Interpolating unescaped double quotes inside table or column definitions (e.g. `CREATE TABLE "${name}"`) permits query truncation and injection of arbitrary SQL statements.
+**Learning:** We need to manually sanitize any user-provided data intended as a database identifier. The standard way to escape identifiers in SQLite is to wrap the identifier in double quotes and to escape internal double quotes by doubling them (`""`).
+**Prevention:** Always use a helper function (like `escapeId = (id) => id.replace(/"/g, '""')`) and interpolate inside double quotes (`"${escapeId(name)}"`) whenever dealing with dynamic identifiers like table or column names when using `better-sqlite3`.
