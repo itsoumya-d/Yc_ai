@@ -81,11 +81,11 @@ export function EditorView() {
           </div>
           {/* Transport Controls */}
           <div className="flex items-center justify-center gap-4 border-t border-border-default bg-bg-surface px-4 py-2">
-            <button className="rounded p-1 text-text-secondary hover:text-text-primary"><SkipBack className="h-4 w-4" /></button>
-            <button onClick={togglePlayback} className="flex h-8 w-8 items-center justify-center rounded-full bg-primary-DEFAULT text-white hover:bg-primary-light">
+            <button aria-label="Skip Back" className="rounded p-1 text-text-secondary hover:text-text-primary"><SkipBack className="h-4 w-4" /></button>
+            <button aria-label={isPlaying ? "Pause" : "Play"} onClick={togglePlayback} className="flex h-8 w-8 items-center justify-center rounded-full bg-primary-DEFAULT text-white hover:bg-primary-light">
               {isPlaying ? <Pause className="h-4 w-4" /> : <Play className="h-4 w-4 ml-0.5" />}
             </button>
-            <button className="rounded p-1 text-text-secondary hover:text-text-primary"><SkipForward className="h-4 w-4" /></button>
+            <button aria-label="Skip Forward" className="rounded p-1 text-text-secondary hover:text-text-primary"><SkipForward className="h-4 w-4" /></button>
             <span className="timecode text-xs text-text-secondary">{formatTimecode(currentTime)}</span>
             <div className="ml-4 flex items-center gap-2">
               <Volume2 className="h-4 w-4 text-text-tertiary" />
