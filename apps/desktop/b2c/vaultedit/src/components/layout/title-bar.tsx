@@ -31,7 +31,7 @@ export function TitleBar() {
         ))}
       </div>
       <div className="flex items-center gap-1" style={{ WebkitAppRegion: 'no-drag' } as React.CSSProperties}>
-        <button onClick={() => setView('settings')} className="rounded-md p-2 text-text-secondary hover:bg-bg-surface-raised"><Settings className="h-4 w-4" /></button>
+        <button aria-label="Settings" onClick={() => setView('settings')} className="rounded-md p-2 text-text-secondary hover:bg-bg-surface-raised"><Settings className="h-4 w-4" /></button>
         <button className="ml-1 flex h-7 w-7 items-center justify-center rounded-full bg-primary-muted text-xs font-medium text-primary-light">V</button>
       </div>
     </div>
