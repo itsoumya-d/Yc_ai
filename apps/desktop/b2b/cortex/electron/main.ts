@@ -84,7 +84,8 @@ ipcMain.handle('load-csv', async (_event, filePath: string) => {
     const database = getDb();
 
     // Drop table if exists, then create
-    database.exec(`DROP TABLE IF EXISTS "${tableName}"`);
+    const escapedTableName = tableName.replace(/"/g, '""');
+    database.exec(`DROP TABLE IF EXISTS "${escapedTableName}"`);
 
     // Infer column types from first 100 rows
     const typeMap: Record<string, string> = {};
@@ -94,12 +95,12 @@ ipcMain.handle('load-csv', async (_event, filePath: string) => {
       typeMap[col] = isNumeric ? 'REAL' : 'TEXT';
     }
 
-    const colDefs = columns.map((c) => `"${c}" ${typeMap[c]}`).join(', ');
-    database.exec(`CREATE TABLE "${tableName}" (${colDefs})`);
+    const colDefs = columns.map((c) => `"${c.replace(/"/g, '""')}" ${typeMap[c]}`).join(', ');
+    database.exec(`CREATE TABLE "${escapedTableName}" (${colDefs})`);
 
     // Insert in batches
     const placeholders = columns.map(() => '?').join(', ');
-    const insertStmt = database.prepare(`INSERT INTO "${tableName}" VALUES (${placeholders})`);
+    const insertStmt = database.prepare(`INSERT INTO "${escapedTableName}" VALUES (${placeholders})`);
 
     const insertMany = database.transaction((rows: Record<string, unknown>[]) => {
       for (const row of rows) {
@@ -142,18 +143,22 @@ ipcMain.handle('load-sqlite', async (_event, filePath: string) => {
 
       if (!ddlRow) continue;
 
+      const escapedName = name.replace(/"/g, '""');
+
       // Drop and recreate
-      database.exec(`DROP TABLE IF EXISTS "${name}"`);
+      database.exec(`DROP TABLE IF EXISTS "${escapedName}"`);
       database.exec(ddlRow.sql);
 
       // Copy all rows
-      const rows = externalDb.prepare(`SELECT * FROM "${name}"`).all();
+      // Note: The original table name is used here since this is querying the external DB
+      // which already has this table name as-is, but we must escape it for the query syntax
+      const rows = externalDb.prepare(`SELECT * FROM "${escapedName}"`).all();
       if (rows.length === 0) continue;
 
       const cols = Object.keys(rows[0] as Record<string, unknown>);
       const placeholders = cols.map(() => '?').join(', ');
-      const colNames = cols.map((c) => `"${c}"`).join(', ');
-      const insertStmt = database.prepare(`INSERT INTO "${name}" (${colNames}) VALUES (${placeholders})`);
+      const colNames = cols.map((c) => `"${c.replace(/"/g, '""')}"`).join(', ');
+      const insertStmt = database.prepare(`INSERT INTO "${escapedName}" (${colNames}) VALUES (${placeholders})`);
 
       const insertMany = database.transaction((data: Record<string, unknown>[]) => {
         for (const row of data) {
@@ -222,14 +227,15 @@ ipcMain.handle('get-schema', async () => {
     ).all() as { name: string }[];
 
     return tables.map(({ name }) => {
-      const columnsRaw = database.prepare(`PRAGMA table_info("${name}")`).all() as {
+      const escapedName = name.replace(/"/g, '""');
+      const columnsRaw = database.prepare(`PRAGMA table_info("${escapedName}")`).all() as {
         name: string;
         type: string;
         notnull: number;
         pk: number;
       }[];
 
-      const countRow = database.prepare(`SELECT COUNT(*) as cnt FROM "${name}"`).get() as { cnt: number };
+      const countRow = database.prepare(`SELECT COUNT(*) as cnt FROM "${escapedName}"`).get() as { cnt: number };
 
       return {
         name,
@@ -253,7 +259,8 @@ ipcMain.handle('get-schema', async () => {
 ipcMain.handle('drop-table', async (_event, tableName: string) => {
   try {
     const database = getDb();
-    database.exec(`DROP TABLE IF EXISTS "${tableName}"`);
+    const escapedTableName = tableName.replace(/"/g, '""');
+    database.exec(`DROP TABLE IF EXISTS "${escapedTableName}"`);
     return true;
   } catch {
     return false;
