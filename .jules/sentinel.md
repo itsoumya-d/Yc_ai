@@ -1,0 +1,4 @@
+## 2025-01-28 - [SQL Injection via Better-SQLite3 Identifiers]
+**Vulnerability:** SQL injection vulnerability in desktop apps using `better-sqlite3` when dynamic user inputs are directly concatenated into table or column identifiers (e.g., in `DROP TABLE` or `CREATE TABLE` statements).
+**Learning:** SQLite cannot parameterize object identifiers (like table/column names) natively using `?` bindings. `better-sqlite3` strictly enforces this. Thus, constructing SQL strings with raw external inputs for identifiers allows injection of arbitrary SQL logic if a user supplies a crafted string containing double quotes.
+**Prevention:** To prevent injection in object identifiers, double quotes must be safely escaped by replacing each `"` with `""` (`identifier.replace(/"/g, '""')`) prior to string interpolation.
