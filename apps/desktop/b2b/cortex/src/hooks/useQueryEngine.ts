@@ -11,7 +11,9 @@ import type { QueryRecord } from '@/types/database';
  * 3. Results → Display + AI Insight
  */
 export function useQueryEngine() {
-  const store = useAppStore();
+  // ⚡ Bolt: Avoid subscribing to the entire store in the hook body
+  // to prevent consuming components from unnecessarily re-rendering on every store change.
+  // We use useAppStore.getState() inside callbacks instead.
 
   const runQuery = useCallback(async (question: string) => {
     const {
