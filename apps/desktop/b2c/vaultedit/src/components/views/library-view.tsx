@@ -62,10 +62,10 @@ export function LibraryView() {
             />
           </div>
           <div className="flex rounded-md border border-border-default">
-            <button onClick={() => setViewMode('grid')} className={cn('p-2', viewMode === 'grid' ? 'bg-bg-surface-raised text-text-primary' : 'text-text-tertiary')}>
+            <button onClick={() => setViewMode('grid')} aria-label="Grid view" className={cn('p-2', viewMode === 'grid' ? 'bg-bg-surface-raised text-text-primary' : 'text-text-tertiary')}>
               <Grid3X3 className="h-4 w-4" />
             </button>
-            <button onClick={() => setViewMode('list')} className={cn('p-2', viewMode === 'list' ? 'bg-bg-surface-raised text-text-primary' : 'text-text-tertiary')}>
+            <button onClick={() => setViewMode('list')} aria-label="List view" className={cn('p-2', viewMode === 'list' ? 'bg-bg-surface-raised text-text-primary' : 'text-text-tertiary')}>
               <List className="h-4 w-4" />
             </button>
           </div>
@@ -118,6 +118,7 @@ export function LibraryView() {
                 <div className="flex justify-end px-4 pb-2">
                   <button
                     onClick={() => handleDeleteProject(p.id)}
+                    aria-label={`Delete ${p.name}`}
                     className="rounded p-1 text-text-tertiary opacity-0 transition-opacity hover:text-playhead group-hover:opacity-100"
                   >
                     <Trash2 className="h-3.5 w-3.5" />
