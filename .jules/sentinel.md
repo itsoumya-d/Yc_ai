@@ -1,0 +1,4 @@
+## 2025-07-16 - [CRITICAL] SQL Injection in SQLite Table Identifiers
+**Vulnerability:** User inputs (e.g., CSV column headers or table names) were directly interpolated into SQL commands (like `CREATE TABLE`, `DROP TABLE`, `INSERT`) in `apps/desktop/b2b/cortex/electron/main.ts` without properly escaping SQLite identifiers (`"tableName"`).
+**Learning:** `better-sqlite3` and SQLite parameterization only cover values, not identifiers. Developers sometimes assume `"??"` or string interpolation is safe for identifiers when it is not, especially for dynamically generated tables from user files.
+**Prevention:** Always manually escape SQLite identifiers by replacing all double quotes with two double quotes (`.replace(/"/g, '""')`) before using them in dynamic SQL statements when parameterization is unsupported.
