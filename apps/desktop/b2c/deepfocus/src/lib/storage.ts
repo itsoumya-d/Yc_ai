@@ -139,9 +139,9 @@ export function getStreak(): number {
     streak = 1;
   }
 
-  // Continue backwards from the day before
+  // Keep the starting day fixed as the streak count grows.
   for (let i = 1; i < 365; i++) {
-    const d = new Date(streak === 1 && !daysWithSessions.has(todayKey) ? checkFrom : today);
+    const d = new Date(checkFrom);
     d.setDate(d.getDate() - i);
     const key = `${d.getFullYear()}-${d.getMonth()}-${d.getDate()}`;
     if (daysWithSessions.has(key)) {
