@@ -8,7 +8,7 @@ const features = [
 ];
 
 export function WelcomeView() {
-  const { setView } = useAppStore();
+  const setView = useAppStore((s) => s.setView);
   return (
     <div className="flex h-full items-center justify-center p-8">
       <div className="max-w-lg text-center">

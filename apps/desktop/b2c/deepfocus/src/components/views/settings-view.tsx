@@ -23,12 +23,14 @@ const blockingModes: { mode: BlockingMode; label: string; description: string }[
 ];
 
 export function SettingsView() {
-  const {
-    blockingMode, setBlockingMode,
-    focusMinutes, setFocusMinutes,
-    breakMinutes, setBreakMinutes,
-    longBreakMinutes, setLongBreakMinutes,
-  } = useAppStore();
+  const blockingMode = useAppStore((s) => s.blockingMode);
+  const setBlockingMode = useAppStore((s) => s.setBlockingMode);
+  const focusMinutes = useAppStore((s) => s.focusMinutes);
+  const setFocusMinutes = useAppStore((s) => s.setFocusMinutes);
+  const breakMinutes = useAppStore((s) => s.breakMinutes);
+  const setBreakMinutes = useAppStore((s) => s.setBreakMinutes);
+  const longBreakMinutes = useAppStore((s) => s.longBreakMinutes);
+  const setLongBreakMinutes = useAppStore((s) => s.setLongBreakMinutes);
 
   const [activeSection, setActiveSection] = useState('general');
   const [settings, setSettingsState] = useState<AppSettings>(() => getSettings());

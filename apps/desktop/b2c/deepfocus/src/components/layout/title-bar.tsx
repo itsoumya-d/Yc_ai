@@ -12,7 +12,8 @@ const tabs: { view: AppView; label: string }[] = [
 ];
 
 export function TitleBar() {
-  const { currentView, setView } = useAppStore();
+  const currentView = useAppStore((s) => s.currentView);
+  const setView = useAppStore((s) => s.setView);
   return (
     <div className="flex h-12 items-center justify-between border-b border-border-default bg-bg-surface px-4" style={{ WebkitAppRegion: 'drag' } as React.CSSProperties}>
       <div className="flex items-center gap-3" style={{ WebkitAppRegion: 'no-drag' } as React.CSSProperties}>
