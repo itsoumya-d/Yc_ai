@@ -40,5 +40,16 @@ app launch, UI automation, distributable/ASAR packaging test or SQLite-file-impo
 validation. Electron may need a binding rebuilt for its own ABI; see
 [Electron's native-module guidance](https://www.electronjs.org/docs/latest/tutorial/using-native-node-modules).
 No Electron ABI rebuild or desktop launch is established by this test suite.
-The aggregate repository currently has no root GitHub Actions workflow running
-these checks.
+## Continuous integration
+
+The root [Cortex workflow](../../../../../.github/workflows/cortex-ci.yml) runs
+these checks on Node 22 and 24 when Cortex files or the workflow change in a
+pull request or a push to main. It installs the lockfile, typechecks, builds,
+runs source and emitted-bundle tests, and checks that tracked Electron output
+matches the build. Manual dispatch is also declared.
+
+CI skips downloading Electron's desktop binary because the tests stub its
+lifecycle and exercise the host Node native binding. It does not skip SQLite
+installation or claim Electron ABI/UI verification. The job requests only
+repository contents read access and does not deploy or change branch protection.
+Path-filtered runs are not a repository-wide verification claim.

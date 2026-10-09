@@ -1,0 +1,57 @@
+name: Cortex CI
+
+on:
+  pull_request:
+    paths:
+      - 'apps/desktop/b2b/cortex/**'
+      - '.github/workflows/cortex-ci.yml'
+  push:
+    branches: [main]
+    paths:
+      - 'apps/desktop/b2b/cortex/**'
+      - '.github/workflows/cortex-ci.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: cortex-${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  cortex:
+    name: Build and test Cortex (Node ${{ matrix.node }})
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    strategy:
+      fail-fast: false
+      matrix:
+        node: ['22', '24']
+    defaults:
+      run:
+        working-directory: apps/desktop/b2b/cortex
+    env:
+      # Tests stub Electron's lifecycle and use the host Node SQLite binding.
+      # Downloading an Electron desktop binary would not add runtime coverage.
+      ELECTRON_SKIP_BINARY_DOWNLOAD: '1'
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+          submodules: false
+      - uses: actions/setup-node@v4
+        with:
+          node-version: ${{ matrix.node }}
+          cache: npm
+          cache-dependency-path: apps/desktop/b2b/cortex/package-lock.json
+      - name: Install locked dependencies
+        run: npm ci --no-audit --no-fund
+      - name: Typecheck
+        run: npm run typecheck
+      - name: Build current artifacts
+        run: npm run build
+      - name: Test source handlers and emitted bundle
+        run: npm test
+      - name: Check committed Electron artifacts
+        run: git diff --exit-code -- dist-electron/main.js dist-electron/preload.js
