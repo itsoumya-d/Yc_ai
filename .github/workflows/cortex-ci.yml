@@ -36,10 +36,16 @@ jobs:
       # Downloading an Electron desktop binary would not add runtime coverage.
       ELECTRON_SKIP_BINARY_DOWNLOAD: '1'
     steps:
-      - uses: actions/checkout@v4
-        with:
-          persist-credentials: false
-          submodules: false
+      - name: Check out exact event commit without credentials
+        working-directory: ${{ github.workspace }}
+        # This public repository has unrelated gitlinks without .gitmodules
+        # entries. checkout's credential cleanup traverses them even with
+        # submodules disabled. Fetch anonymously and preserve the PR merge SHA.
+        run: |
+          git init
+          git remote add origin "https://github.com/${GITHUB_REPOSITORY}.git"
+          git -c protocol.version=2 fetch --no-tags --no-recurse-submodules --depth=1 origin "$GITHUB_SHA"
+          git checkout --detach FETCH_HEAD
       - uses: actions/setup-node@v4
         with:
           node-version: ${{ matrix.node }}
