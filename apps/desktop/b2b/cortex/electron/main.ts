@@ -7,6 +7,10 @@ import { parse } from 'csv-parse/sync';
 let mainWindow: BrowserWindow | null = null;
 let db: InstanceType<typeof Database> | null = null;
 
+function escapeId(id: string): string {
+  return id.replace(/"/g, '""');
+}
+
 function getDb(): InstanceType<typeof Database> {
   if (!db) {
     // In-memory SQLite database for loaded data
@@ -84,7 +88,7 @@ ipcMain.handle('load-csv', async (_event, filePath: string) => {
     const database = getDb();
 
     // Drop table if exists, then create
-    database.exec(`DROP TABLE IF EXISTS "${tableName}"`);
+    database.exec(`DROP TABLE IF EXISTS "${escapeId(tableName)}"`);
 
     // Infer column types from first 100 rows
     const typeMap: Record<string, string> = {};
@@ -94,12 +98,12 @@ ipcMain.handle('load-csv', async (_event, filePath: string) => {
       typeMap[col] = isNumeric ? 'REAL' : 'TEXT';
     }
 
-    const colDefs = columns.map((c) => `"${c}" ${typeMap[c]}`).join(', ');
-    database.exec(`CREATE TABLE "${tableName}" (${colDefs})`);
+    const colDefs = columns.map((c) => `"${escapeId(c)}" ${typeMap[c]}`).join(', ');
+    database.exec(`CREATE TABLE "${escapeId(tableName)}" (${colDefs})`);
 
     // Insert in batches
     const placeholders = columns.map(() => '?').join(', ');
-    const insertStmt = database.prepare(`INSERT INTO "${tableName}" VALUES (${placeholders})`);
+    const insertStmt = database.prepare(`INSERT INTO "${escapeId(tableName)}" VALUES (${placeholders})`);
 
     const insertMany = database.transaction((rows: Record<string, unknown>[]) => {
       for (const row of rows) {
@@ -143,17 +147,17 @@ ipcMain.handle('load-sqlite', async (_event, filePath: string) => {
       if (!ddlRow) continue;
 
       // Drop and recreate
-      database.exec(`DROP TABLE IF EXISTS "${name}"`);
+      database.exec(`DROP TABLE IF EXISTS "${escapeId(name)}"`);
       database.exec(ddlRow.sql);
 
       // Copy all rows
-      const rows = externalDb.prepare(`SELECT * FROM "${name}"`).all();
+      const rows = externalDb.prepare(`SELECT * FROM "${escapeId(name)}"`).all();
       if (rows.length === 0) continue;
 
       const cols = Object.keys(rows[0] as Record<string, unknown>);
       const placeholders = cols.map(() => '?').join(', ');
-      const colNames = cols.map((c) => `"${c}"`).join(', ');
-      const insertStmt = database.prepare(`INSERT INTO "${name}" (${colNames}) VALUES (${placeholders})`);
+      const colNames = cols.map((c) => `"${escapeId(c)}"`).join(', ');
+      const insertStmt = database.prepare(`INSERT INTO "${escapeId(name)}" (${colNames}) VALUES (${placeholders})`);
 
       const insertMany = database.transaction((data: Record<string, unknown>[]) => {
         for (const row of data) {
@@ -222,14 +226,14 @@ ipcMain.handle('get-schema', async () => {
     ).all() as { name: string }[];
 
     return tables.map(({ name }) => {
-      const columnsRaw = database.prepare(`PRAGMA table_info("${name}")`).all() as {
+      const columnsRaw = database.prepare(`PRAGMA table_info("${escapeId(name)}")`).all() as {
         name: string;
         type: string;
         notnull: number;
         pk: number;
       }[];
 
-      const countRow = database.prepare(`SELECT COUNT(*) as cnt FROM "${name}"`).get() as { cnt: number };
+      const countRow = database.prepare(`SELECT COUNT(*) as cnt FROM "${escapeId(name)}"`).get() as { cnt: number };
 
       return {
         name,
@@ -253,7 +257,7 @@ ipcMain.handle('get-schema', async () => {
 ipcMain.handle('drop-table', async (_event, tableName: string) => {
   try {
     const database = getDb();
-    database.exec(`DROP TABLE IF EXISTS "${tableName}"`);
+    database.exec(`DROP TABLE IF EXISTS "${escapeId(tableName)}"`);
     return true;
   } catch {
     return false;
