@@ -87,9 +87,6 @@ ipcMain.handle('load-csv', async (_event, filePath: string) => {
     const columns = Object.keys(firstRecord);
     const database = getDb();
 
-    // Drop table if exists, then create
-    database.exec(`DROP TABLE IF EXISTS "${escapeId(tableName)}"`);
-
     // Infer column types from first 100 rows
     const typeMap: Record<string, string> = {};
     for (const col of columns) {
@@ -99,14 +96,15 @@ ipcMain.handle('load-csv', async (_event, filePath: string) => {
     }
 
     const colDefs = columns.map((c) => `"${escapeId(c)}" ${typeMap[c]}`).join(', ');
-    database.exec(`CREATE TABLE "${escapeId(tableName)}" (${colDefs})`);
+    // Replace the table and its rows atomically. Invalid column definitions or
+    // a failed insert must leave the previously loaded table intact.
+    const replaceTable = database.transaction(() => {
+      database.exec(`DROP TABLE IF EXISTS "${escapeId(tableName)}"`);
+      database.exec(`CREATE TABLE "${escapeId(tableName)}" (${colDefs})`);
 
-    // Insert in batches
-    const placeholders = columns.map(() => '?').join(', ');
-    const insertStmt = database.prepare(`INSERT INTO "${escapeId(tableName)}" VALUES (${placeholders})`);
-
-    const insertMany = database.transaction((rows: Record<string, unknown>[]) => {
-      for (const row of rows) {
+      const placeholders = columns.map(() => '?').join(', ');
+      const insertStmt = database.prepare(`INSERT INTO "${escapeId(tableName)}" VALUES (${placeholders})`);
+      for (const row of records) {
         const values = columns.map((c) => {
           const v = row[c];
           if (v === null || v === undefined || v === '') return null;
@@ -117,7 +115,7 @@ ipcMain.handle('load-csv', async (_event, filePath: string) => {
       }
     });
 
-    insertMany(records);
+    replaceTable();
 
     return { tableName, columns, rowCount: records.length };
   } catch (err) {
