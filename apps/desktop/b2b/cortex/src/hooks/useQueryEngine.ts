@@ -11,8 +11,6 @@ import type { QueryRecord } from '@/types/database';
  * 3. Results → Display + AI Insight
  */
 export function useQueryEngine() {
-  const store = useAppStore();
-
   const runQuery = useCallback(async (question: string) => {
     const {
       openaiApiKey, schemaTables,
