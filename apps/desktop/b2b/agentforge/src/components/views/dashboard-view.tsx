@@ -150,6 +150,7 @@ export function DashboardView() {
                         <div className="mb-2 flex items-start justify-between">
                           <h4 className="text-sm font-medium text-text-primary">{agent.name}</h4>
                           <button
+                            aria-label={`Agent options for ${agent.name}`}
                             onClick={(e) => e.stopPropagation()}
                             className="opacity-0 transition-opacity group-hover:opacity-100"
                           >
@@ -223,13 +224,13 @@ export function DashboardView() {
                             <td className="px-3 py-2 text-xs text-text-tertiary">{formatRelativeDate(agent.updated_at)}</td>
                             <td className="px-3 py-2 text-right">
                               <div className="flex items-center justify-end gap-1">
-                                <button onClick={(e) => { e.stopPropagation(); handleDuplicateAgent(agent); }} className="rounded p-1 text-text-tertiary hover:bg-bg-surface-hover hover:text-text-secondary">
+                                <button aria-label={`Duplicate ${agent.name}`} onClick={(e) => { e.stopPropagation(); handleDuplicateAgent(agent); }} className="rounded p-1 text-text-tertiary hover:bg-bg-surface-hover hover:text-text-secondary">
                                   <Copy className="h-3 w-3" />
                                 </button>
-                                <button onClick={(e) => e.stopPropagation()} className="rounded p-1 text-text-tertiary hover:bg-bg-surface-hover hover:text-text-secondary">
+                                <button aria-label={`Export ${agent.name}`} onClick={(e) => e.stopPropagation()} className="rounded p-1 text-text-tertiary hover:bg-bg-surface-hover hover:text-text-secondary">
                                   <FileOutput className="h-3 w-3" />
                                 </button>
-                                <button onClick={(e) => { e.stopPropagation(); handleDeleteAgent(agent.id); }} className="rounded p-1 text-text-tertiary hover:bg-error/10 hover:text-error">
+                                <button aria-label={`Delete ${agent.name}`} onClick={(e) => { e.stopPropagation(); handleDeleteAgent(agent.id); }} className="rounded p-1 text-text-tertiary hover:bg-error/10 hover:text-error">
                                   <Trash2 className="h-3 w-3" />
                                 </button>
                               </div>
