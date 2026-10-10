@@ -10,7 +10,16 @@ export default defineConfig({
     react(),
     tailwindcss(),
     electron([
-      { entry: 'electron/main.ts' },
+      {
+        entry: 'electron/main.ts',
+        vite: {
+          build: {
+            // Keep native binding resolution in Node/Electron, not Rollup's
+            // CommonJS dynamic-require shim.
+            rollupOptions: { external: ['better-sqlite3'] },
+          },
+        },
+      },
       { entry: 'electron/preload.ts', onstart: (args) => args.reload() },
     ]),
     renderer(),
