@@ -11,7 +11,13 @@ import type { QueryRecord } from '@/types/database';
  * 3. Results → Display + AI Insight
  */
 export function useQueryEngine() {
-  const store = useAppStore();
+  // ⚡ Bolt: Performance Optimization
+  // Removed `const store = useAppStore()` full store subscription here.
+  // Why: Subscribing to the entire store inside a hook causes any component
+  // using this hook (e.g. WorkspaceView, HistoryView) to re-render on ANY
+  // state change in the app, even unrelated ones.
+  // Impact: Prevents O(1) unnecessary re-renders of heavy views on every state change.
+  // Measurement: Verify React DevTools Profiler shows fewer renders of WorkspaceView.
 
   const runQuery = useCallback(async (question: string) => {
     const {
