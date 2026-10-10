@@ -1,3 +1,6 @@
 ## 2025-02-28 - Avoid Chained Array Methods on Large Datasets in React Renders
 **Learning:** Chaining array methods like `.map().slice().reduce()` inside a React component's `useMemo` on a large dataset (e.g., query results) can cause multiple O(N) array allocations per column, leading to significant but silent memory bottlenecks and slow execution times.
 **Action:** When performing aggregate calculations on large arrays during render, replace chained array methods with a single loop (like a `for` loop) that computes all necessary metrics in one pass to avoid unnecessary memory allocation.
+## 2025-02-28 - Unnecessary Full Store Subscription in Custom Hook
+**Learning:** Using `const store = useAppStore();` inside a custom hook like `useQueryEngine` causes any component that consumes the hook to unnecessarily re-render whenever *any* state in the store changes, even if the hook only needs state statically within callbacks (where `useAppStore.getState()` can be used instead).
+**Action:** When a hook only needs access to store actions or state within callbacks, use `useAppStore.getState()` instead of subscribing to the entire store. If state is needed for rendering, use granular selectors `useAppStore(state => state.property)`.
