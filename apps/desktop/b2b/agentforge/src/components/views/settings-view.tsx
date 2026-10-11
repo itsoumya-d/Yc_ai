@@ -205,9 +205,10 @@ export function SettingsView() {
 
                       <div className="space-y-3">
                         <div>
-                          <label className="mb-1 block text-[11px] text-text-secondary">API Key</label>
+                          <label htmlFor={`api-key-${config.provider}`} className="mb-1 block text-[11px] text-text-secondary">API Key</label>
                           <div className="flex items-center gap-2">
                             <input
+                              id={`api-key-${config.provider}`}
                               type={showKeys[config.provider] ? 'text' : 'password'}
                               value={apiKeys[config.provider] || ''}
                               onChange={(e) => setApiKeys((prev) => ({ ...prev, [config.provider]: e.target.value }))}
@@ -217,6 +218,8 @@ export function SettingsView() {
                             <button
                               onClick={() => toggleKeyVisibility(config.provider)}
                               className="rounded-md border border-border-default p-1.5 text-text-tertiary hover:bg-bg-surface-hover hover:text-text-secondary"
+                              aria-label={showKeys[config.provider] ? `Hide ${label.name} API key` : `Show ${label.name} API key`}
+                              title={showKeys[config.provider] ? `Hide ${label.name} API key` : `Show ${label.name} API key`}
                             >
                               {showKeys[config.provider] ? <EyeOff className="h-3.5 w-3.5" /> : <Eye className="h-3.5 w-3.5" />}
                             </button>
