@@ -11,8 +11,10 @@ import type { QueryRecord } from '@/types/database';
  * 3. Results → Display + AI Insight
  */
 export function useQueryEngine() {
-  const store = useAppStore();
-
+  // ⚡ Bolt: Removed `const store = useAppStore()` reactive subscription.
+  // We use `useAppStore.getState()` inside the callbacks instead,
+  // preventing all consumers of this hook from unnecessarily re-rendering
+  // whenever any unrelated state in the store changes.
   const runQuery = useCallback(async (question: string) => {
     const {
       openaiApiKey, schemaTables,
