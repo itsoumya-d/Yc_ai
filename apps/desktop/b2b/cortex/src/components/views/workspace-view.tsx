@@ -115,13 +115,23 @@ export function WorkspaceView() {
 
     if (!labelCol || !valueCol) return [];
 
-    return queryResults.slice(0, 50).map((row) => ({
-      label: String(row[labelCol] ?? ''),
-      value: Number(row[valueCol] ?? 0),
-    }));
+    // Performance Optimization: Replace chained .slice().map() with a single loop
+    const result = [];
+    const limit = Math.min(50, queryResults.length);
+    for (let i = 0; i < limit; i++) {
+      const row = queryResults[i];
+      if (row) {
+        result.push({
+          label: String(row[labelCol] ?? ''),
+          value: Number(row[valueCol] ?? 0),
+        });
+      }
+    }
+    return result;
   }, [queryResults, queryColumns]);
 
-  const maxChartValue = useMemo(() => Math.max(...chartData.map((d) => d.value), 1), [chartData]);
+  // Performance Optimization: Replace array map and spread with reduce
+  const maxChartValue = useMemo(() => chartData.reduce((max, d) => Math.max(max, d.value), 1), [chartData]);
 
   const hasData = queryResults.length > 0;
   const isRunning = queryStatus === 'running';
