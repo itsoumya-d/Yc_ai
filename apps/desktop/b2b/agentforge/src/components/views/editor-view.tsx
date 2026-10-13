@@ -196,14 +196,16 @@ function EditorCanvas() {
 
   const selectedNode = useMemo(() => nodes.find((n) => n.id === selectedNodeId), [nodes, selectedNodeId]);
 
-  const filteredLibrary = nodeLibrary
+  // Performance Optimization: Memoized the node library filtering to prevent
+  // expensive O(N*M) string matching and object creation on every render
+  const filteredLibrary = useMemo(() => nodeLibrary
     .map((cat) => ({
       ...cat,
       types: cat.types.filter(
         (t) => t.label.toLowerCase().includes(librarySearch.toLowerCase()) || t.description.toLowerCase().includes(librarySearch.toLowerCase())
       ),
     }))
-    .filter((cat) => cat.types.length > 0);
+    .filter((cat) => cat.types.length > 0), [librarySearch]);
 
   return (
     <div className="flex h-full flex-col">
