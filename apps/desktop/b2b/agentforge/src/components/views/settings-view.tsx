@@ -217,6 +217,8 @@ export function SettingsView() {
                             <button
                               onClick={() => toggleKeyVisibility(config.provider)}
                               className="rounded-md border border-border-default p-1.5 text-text-tertiary hover:bg-bg-surface-hover hover:text-text-secondary"
+                              aria-label={showKeys[config.provider] ? `Hide ${config.provider} API key` : `Show ${config.provider} API key`}
+                              title={showKeys[config.provider] ? `Hide ${config.provider} API key` : `Show ${config.provider} API key`}
                             >
                               {showKeys[config.provider] ? <EyeOff className="h-3.5 w-3.5" /> : <Eye className="h-3.5 w-3.5" />}
                             </button>
