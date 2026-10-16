@@ -120,10 +120,21 @@ test('empty or malformed CSV preserves an existing table', async (t) => {
 
 test('quoted table names remain supported by schema inspection and drop', async (t) => {
   const app = application(t);
-  await app.call('execute-sql', 'CREATE TABLE "customer""records" ("quoted""column" TEXT); INSERT INTO "customer""records" VALUES (\'fixture\')');
+
+  // Use a temporary database to set up the external SQLite file
+  const dbFile = path.join(os.tmpdir(), `cortex-sqlite-test-${Date.now()}.db`);
+  const setupDb = new Database(dbFile);
+  setupDb.exec('CREATE TABLE "customer""records" ("quoted""column" TEXT); INSERT INTO "customer""records" VALUES (\'fixture\')');
+  setupDb.close();
+
+  // Load the temporary database into the app memory via IPC
+  await app.call('load-sqlite', dbFile);
+
   const schema = await app.call('get-schema');
   assert.equal(schema[0].name, 'customer"records');
   assert.equal(schema[0].rowCount, 1);
   assert.equal(await app.call('drop-table', 'customer"records'), true);
   assert.equal((await app.call('get-schema')).length, 0);
+
+  fs.rmSync(dbFile, { force: true });
 });

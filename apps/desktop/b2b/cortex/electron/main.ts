@@ -199,14 +199,7 @@ ipcMain.handle('execute-sql', async (_event, sql: string) => {
         executionTimeMs: Math.round(end - start),
       };
     } else {
-      const result = database.exec(sql);
-      const end = performance.now();
-      return {
-        columns: [],
-        rows: [],
-        rowCount: 0,
-        executionTimeMs: Math.round(end - start),
-      };
+      throw new Error('Only SELECT, WITH, or EXPLAIN queries are allowed for security reasons.');
     }
   } catch (err) {
     const message = err instanceof Error ? err.message : String(err);
