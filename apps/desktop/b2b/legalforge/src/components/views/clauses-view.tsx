@@ -121,9 +121,9 @@ export function ClausesView() {
               <div className="flex items-center justify-between">
                 <span className="text-[10px] text-text-tertiary">Used {c.usage_count} times</span>
                 <div className="flex items-center gap-1">
-                  <button className="rounded p-1.5 text-text-tertiary hover:bg-bg-surface-raised hover:text-accent"><ArrowRight className="h-3.5 w-3.5" /></button>
-                  <button className="rounded p-1.5 text-text-tertiary hover:bg-bg-surface-raised hover:text-text-secondary"><Edit3 className="h-3.5 w-3.5" /></button>
-                  <button className="rounded p-1.5 text-text-tertiary hover:bg-bg-surface-raised hover:text-text-secondary"><Copy className="h-3.5 w-3.5" /></button>
+                  <button aria-label={`Use ${c.title}`} title={`Use ${c.title}`} className="rounded p-1.5 text-text-tertiary hover:bg-bg-surface-raised hover:text-accent"><ArrowRight className="h-3.5 w-3.5" /></button>
+                  <button aria-label={`Edit ${c.title}`} title={`Edit ${c.title}`} className="rounded p-1.5 text-text-tertiary hover:bg-bg-surface-raised hover:text-text-secondary"><Edit3 className="h-3.5 w-3.5" /></button>
+                  <button aria-label={`Copy ${c.title}`} title={`Copy ${c.title}`} className="rounded p-1.5 text-text-tertiary hover:bg-bg-surface-raised hover:text-text-secondary"><Copy className="h-3.5 w-3.5" /></button>
                 </div>
               </div>
             </div>
