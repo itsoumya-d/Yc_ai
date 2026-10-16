@@ -153,6 +153,7 @@ export function DashboardView() {
                             aria-label={`Agent options for ${agent.name}`}
                             onClick={(e) => e.stopPropagation()}
                             className="opacity-0 transition-opacity group-hover:opacity-100"
+                            aria-label={`More options for ${agent.name}`}
                           >
                             <MoreHorizontal className="h-4 w-4 text-text-tertiary hover:text-text-secondary" />
                           </button>

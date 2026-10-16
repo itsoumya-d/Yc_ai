@@ -1,0 +1,3 @@
+## 2026-07-20 - Missing Context on Icon-only Action Buttons
+**Learning:** Icon-only action buttons (e.g. More Options, Duplicate, Export, Delete) within grid and list views were completely inaccessible to screen readers as they lacked `aria-label` attributes. Without context, screen reader users would only hear 'button' for multiple items.
+**Action:** Always verify that icon-only buttons include descriptive `aria-label` attributes. When these buttons are part of a mapped list or grid, ensure the `aria-label` dynamically includes the item's name or identifier (e.g., `aria-label={\`Delete ${item.name}\`}`) to provide clear, disambiguated context for screen reader users.
