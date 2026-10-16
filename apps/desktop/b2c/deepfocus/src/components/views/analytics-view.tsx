@@ -17,12 +17,32 @@ export function AnalyticsView() {
   const heatmap = useMemo(() => getHeatmapData(), []);
 
   // Compute stats from filtered sessions
-  const totalMinutes = sessions.reduce((sum, s) => sum + s.actual_minutes, 0);
-  const completedSessions = sessions.filter((s) => s.completed);
-  const avgScore = completedSessions.length > 0
-    ? Math.round(completedSessions.reduce((sum, s) => sum + s.focus_score, 0) / completedSessions.length)
-    : 0;
-  const totalBlocked = sessions.reduce((sum, s) => sum + s.distractions_blocked, 0);
+  // Performance Optimization: Replaced multiple array iterations with a single loop
+  const stats = useMemo(() => {
+    let totalMinutes = 0;
+    let completedCount = 0;
+    let totalScore = 0;
+    let totalBlocked = 0;
+
+    for (let i = 0; i < sessions.length; i++) {
+      const s = sessions[i];
+      if (!s) continue;
+
+      totalMinutes += s.actual_minutes;
+      totalBlocked += s.distractions_blocked;
+
+      if (s.completed) {
+        completedCount++;
+        totalScore += s.focus_score;
+      }
+    }
+
+    const avgScore = completedCount > 0 ? Math.round(totalScore / completedCount) : 0;
+
+    return { totalMinutes, completedCount, avgScore, totalBlocked };
+  }, [sessions]);
+
+  const { totalMinutes, completedCount, avgScore, totalBlocked } = stats;
 
   const maxMinutes = Math.max(...weeklyChart.map((d) => d.minutes), 1);
 
@@ -48,7 +68,7 @@ export function AnalyticsView() {
         <div className="grid grid-cols-4 gap-4">
           {[
             { label: 'Total Focus', value: totalMinutes > 0 ? formatMinutes(totalMinutes) : '0m', icon: Clock, color: 'text-primary-light', sub: `${sessions.length} sessions` },
-            { label: 'Sessions', value: completedSessions.length.toString(), icon: Target, color: 'text-sage-DEFAULT', sub: `${sessions.length - completedSessions.length} incomplete` },
+            { label: 'Sessions', value: completedCount.toString(), icon: Target, color: 'text-sage-DEFAULT', sub: `${sessions.length - completedCount} incomplete` },
             { label: 'Avg Score', value: avgScore > 0 ? avgScore.toString() : '—', icon: Zap, color: avgScore > 0 ? getScoreColor(avgScore) : 'text-text-tertiary', sub: avgScore >= 70 ? 'Good — keep going!' : avgScore > 0 ? 'Room to improve' : 'No data yet' },
             { label: 'Blocked', value: totalBlocked.toString(), icon: Shield, color: 'text-amber-DEFAULT', sub: 'distractions blocked' },
           ].map((s) => (
