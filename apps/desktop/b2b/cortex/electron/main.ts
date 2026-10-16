@@ -199,14 +199,7 @@ ipcMain.handle('execute-sql', async (_event, sql: string) => {
         executionTimeMs: Math.round(end - start),
       };
     } else {
-      const result = database.exec(sql);
-      const end = performance.now();
-      return {
-        columns: [],
-        rows: [],
-        rowCount: 0,
-        executionTimeMs: Math.round(end - start),
-      };
+      throw new Error('Security Error: Only SELECT queries are permitted.');
     }
   } catch (err) {
     const message = err instanceof Error ? err.message : String(err);
