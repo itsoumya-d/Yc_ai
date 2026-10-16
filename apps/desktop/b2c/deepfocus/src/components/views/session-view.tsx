@@ -132,6 +132,7 @@ export function SessionView() {
               value={task}
               onChange={(e) => setTask(e.target.value)}
               placeholder="What will you focus on?"
+              aria-label="What will you focus on?"
               className="h-11 w-full rounded-lg border border-border-default bg-bg-surface px-4 text-sm text-text-primary placeholder:text-text-tertiary focus:border-amber-DEFAULT focus:outline-none"
             />
             <div className="mt-3 flex items-center justify-center gap-1.5 flex-wrap">
@@ -200,18 +201,18 @@ export function SessionView() {
         {/* Controls */}
         <div className="mt-8 flex items-center gap-4">
           {!isActive ? (
-            <button onClick={handleStart} className="flex h-14 w-14 items-center justify-center rounded-full bg-amber-DEFAULT text-bg-root hover:bg-amber-light">
+            <button onClick={handleStart} aria-label="Start session" title="Start session" className="flex h-14 w-14 items-center justify-center rounded-full bg-amber-DEFAULT text-bg-root hover:bg-amber-light focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-amber-DEFAULT">
               <Play className="h-6 w-6 ml-0.5" />
             </button>
           ) : (
             <>
-              <button onClick={handlePause} className="flex h-12 w-12 items-center justify-center rounded-full border border-border-default text-text-secondary hover:text-text-primary">
+              <button onClick={handlePause} aria-label={sessionStatus === 'paused' ? 'Resume session' : 'Pause session'} title={sessionStatus === 'paused' ? 'Resume session' : 'Pause session'} className="flex h-12 w-12 items-center justify-center rounded-full border border-border-default text-text-secondary hover:text-text-primary focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-amber-DEFAULT">
                 {sessionStatus === 'paused' ? <Play className="h-5 w-5 ml-0.5" /> : <Pause className="h-5 w-5" />}
               </button>
-              <button onClick={handleStop} className="flex h-12 w-12 items-center justify-center rounded-full border border-error/30 text-error hover:bg-error/10">
+              <button onClick={handleStop} aria-label="Stop session" title="Stop session" className="flex h-12 w-12 items-center justify-center rounded-full border border-error/30 text-error hover:bg-error/10 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-error">
                 <Square className="h-5 w-5" />
               </button>
-              <button onClick={handleSkip} className="flex h-12 w-12 items-center justify-center rounded-full border border-border-default text-text-secondary hover:text-text-primary">
+              <button onClick={handleSkip} aria-label="Skip session" title="Skip session" className="flex h-12 w-12 items-center justify-center rounded-full border border-border-default text-text-secondary hover:text-text-primary focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-amber-DEFAULT">
                 <SkipForward className="h-5 w-5" />
               </button>
             </>

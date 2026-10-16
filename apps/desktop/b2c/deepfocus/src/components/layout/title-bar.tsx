@@ -33,8 +33,8 @@ export function TitleBar() {
         ))}
       </div>
       <div className="flex items-center gap-1" style={{ WebkitAppRegion: 'no-drag' } as React.CSSProperties}>
-        <button onClick={() => setView('settings')} className="rounded-md p-2 text-text-secondary hover:bg-bg-surface-raised"><Settings className="h-4 w-4" /></button>
-        <button className="ml-1 flex h-7 w-7 items-center justify-center rounded-full bg-sage-muted text-xs font-medium text-sage-DEFAULT">D</button>
+        <button onClick={() => setView('settings')} aria-label="Settings" title="Settings" className="rounded-md p-2 text-text-secondary hover:bg-bg-surface-raised focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-amber-DEFAULT"><Settings className="h-4 w-4" /></button>
+        <button className="ml-1 flex h-7 w-7 items-center justify-center rounded-full bg-sage-muted text-xs font-medium text-sage-DEFAULT" aria-label="User profile" title="User profile">D</button>
       </div>
     </div>
   );
