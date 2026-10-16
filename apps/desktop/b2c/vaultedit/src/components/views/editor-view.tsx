@@ -81,11 +81,11 @@ export function EditorView() {
           </div>
           {/* Transport Controls */}
           <div className="flex items-center justify-center gap-4 border-t border-border-default bg-bg-surface px-4 py-2">
-            <button className="rounded p-1 text-text-secondary hover:text-text-primary"><SkipBack className="h-4 w-4" /></button>
-            <button onClick={togglePlayback} className="flex h-8 w-8 items-center justify-center rounded-full bg-primary-DEFAULT text-white hover:bg-primary-light">
+            <button aria-label="Skip Back" className="rounded p-1 text-text-secondary hover:text-text-primary"><SkipBack className="h-4 w-4" /></button>
+            <button aria-label={isPlaying ? "Pause" : "Play"} onClick={togglePlayback} className="flex h-8 w-8 items-center justify-center rounded-full bg-primary-DEFAULT text-white hover:bg-primary-light">
               {isPlaying ? <Pause className="h-4 w-4" /> : <Play className="h-4 w-4 ml-0.5" />}
             </button>
-            <button className="rounded p-1 text-text-secondary hover:text-text-primary"><SkipForward className="h-4 w-4" /></button>
+            <button aria-label="Skip Forward" className="rounded p-1 text-text-secondary hover:text-text-primary"><SkipForward className="h-4 w-4" /></button>
             <span className="timecode text-xs text-text-secondary">{formatTimecode(currentTime)}</span>
             <div className="ml-4 flex items-center gap-2">
               <Volume2 className="h-4 w-4 text-text-tertiary" />
@@ -159,7 +159,7 @@ export function EditorView() {
                     placeholder="Describe an edit..."
                     className="h-9 flex-1 rounded-md border border-border-default bg-bg-surface-raised px-3 text-sm text-text-primary placeholder:text-text-tertiary focus:border-accent-DEFAULT focus:outline-none"
                   />
-                  <button className="flex h-9 w-9 items-center justify-center rounded-md bg-accent-DEFAULT text-white hover:bg-accent-light">
+                  <button aria-label="Send AI Command" className="flex h-9 w-9 items-center justify-center rounded-md bg-accent-DEFAULT text-white hover:bg-accent-light">
                     <Send className="h-4 w-4" />
                   </button>
                 </div>
@@ -185,9 +185,9 @@ export function EditorView() {
           ))}
         </div>
         <div className="flex items-center gap-2">
-          <button className="rounded p-1 text-text-tertiary hover:text-text-secondary"><ZoomOut className="h-3.5 w-3.5" /></button>
+          <button aria-label="Zoom Out" className="rounded p-1 text-text-tertiary hover:text-text-secondary"><ZoomOut className="h-3.5 w-3.5" /></button>
           <span className="text-[10px] text-text-tertiary">100%</span>
-          <button className="rounded p-1 text-text-tertiary hover:text-text-secondary"><ZoomIn className="h-3.5 w-3.5" /></button>
+          <button aria-label="Zoom In" className="rounded p-1 text-text-tertiary hover:text-text-secondary"><ZoomIn className="h-3.5 w-3.5" /></button>
         </div>
       </div>
 
@@ -211,10 +211,10 @@ export function EditorView() {
               <div className="flex w-14 items-center justify-between px-2">
                 <span className="text-[9px] text-text-tertiary truncate">{track.name}</span>
                 <div className="flex gap-0.5">
-                  <button className="text-text-tertiary hover:text-text-secondary">
+                  <button aria-label={`${track.muted ? 'Unmute' : 'Mute'} ${track.name}`} className="text-text-tertiary hover:text-text-secondary">
                     {track.muted ? <EyeOff className="h-2.5 w-2.5" /> : <Eye className="h-2.5 w-2.5" />}
                   </button>
-                  <button className="text-text-tertiary hover:text-text-secondary">
+                  <button aria-label={`${track.locked ? 'Unlock' : 'Lock'} ${track.name}`} className="text-text-tertiary hover:text-text-secondary">
                     {track.locked ? <Lock className="h-2.5 w-2.5" /> : <Unlock className="h-2.5 w-2.5" />}
                   </button>
                 </div>
