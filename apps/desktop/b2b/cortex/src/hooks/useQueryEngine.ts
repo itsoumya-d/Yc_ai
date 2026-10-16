@@ -11,7 +11,10 @@ import type { QueryRecord } from '@/types/database';
  * 3. Results → Display + AI Insight
  */
 export function useQueryEngine() {
-  const store = useAppStore();
+  // Performance Optimization: Removed full store subscription.
+  // Using useAppStore() without selectors causes the consuming component
+  // to re-render on *any* state change across the app. We instead use
+  // useAppStore.getState() inside callbacks for static access.
 
   const runQuery = useCallback(async (question: string) => {
     const {
