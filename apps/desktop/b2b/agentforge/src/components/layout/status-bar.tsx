@@ -1,8 +1,13 @@
+import { useShallow } from 'zustand/react/shallow';
 import { useAppStore } from '@/stores/app-store';
 import { Wifi, Zap, TestTubes } from 'lucide-react';
 
 export function StatusBar() {
-  const { currentAgentName, isExecuting } = useAppStore();
+  // Performance: useShallow prevents unnecessary re-renders when unrelated store properties change
+  const { currentAgentName, isExecuting } = useAppStore(useShallow((state) => ({
+    currentAgentName: state.currentAgentName,
+    isExecuting: state.isExecuting,
+  })));
 
   return (
     <div className="flex h-6 items-center justify-between border-t border-border-default bg-bg-root px-3 text-[11px] text-text-tertiary">

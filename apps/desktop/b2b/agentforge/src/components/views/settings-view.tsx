@@ -1,3 +1,4 @@
+import { useShallow } from 'zustand/react/shallow';
 import { useState, useEffect, useCallback } from 'react';
 import { cn } from '@/lib/utils';
 import { useAppStore } from '@/stores/app-store';
@@ -42,7 +43,15 @@ const PROVIDER_LABELS: Record<LLMProvider, { name: string; logo: string }> = {
 };
 
 export function SettingsView() {
-  const { providerConfigs, setProviderConfigs, theme, setTheme, editorFontSize, setEditorFontSize } = useAppStore();
+  // Performance: useShallow prevents unnecessary re-renders when unrelated store properties change
+  const { providerConfigs, setProviderConfigs, theme, setTheme, editorFontSize, setEditorFontSize } = useAppStore(useShallow((state) => ({
+    providerConfigs: state.providerConfigs,
+    setProviderConfigs: state.setProviderConfigs,
+    theme: state.theme,
+    setTheme: state.setTheme,
+    editorFontSize: state.editorFontSize,
+    setEditorFontSize: state.setEditorFontSize,
+  })));
   const [activeSection, setActiveSection] = useState<SettingsSection>('providers');
   const [showKeys, setShowKeys] = useState<Record<string, boolean>>({});
   const [apiKeys, setApiKeys] = useState<Record<string, string>>({});

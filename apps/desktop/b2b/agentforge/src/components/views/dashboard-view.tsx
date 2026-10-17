@@ -1,3 +1,4 @@
+import { useShallow } from 'zustand/react/shallow';
 import { useState, useMemo, useCallback } from 'react';
 import { cn, getAgentStatusBadge, getNodeColor, getNodeLabel, generateAgentName } from '@/lib/utils';
 import { useAppStore } from '@/stores/app-store';
@@ -20,7 +21,14 @@ import {
 } from 'lucide-react';
 
 export function DashboardView() {
-  const { setCurrentView, setCurrentAgent, agents, addAgent, removeAgent } = useAppStore();
+  // Performance: useShallow prevents unnecessary re-renders when unrelated store properties change
+  const { setCurrentView, setCurrentAgent, agents, addAgent, removeAgent } = useAppStore(useShallow((state) => ({
+    setCurrentView: state.setCurrentView,
+    setCurrentAgent: state.setCurrentAgent,
+    agents: state.agents,
+    addAgent: state.addAgent,
+    removeAgent: state.removeAgent,
+  })));
   const [searchQuery, setSearchQuery] = useState('');
   const [viewMode, setViewMode] = useState<'grid' | 'list'>('grid');
 
