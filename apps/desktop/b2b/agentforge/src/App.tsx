@@ -1,3 +1,4 @@
+import { useShallow } from 'zustand/react/shallow';
 import { useEffect } from 'react';
 import { useAppStore } from '@/stores/app-store';
 import { getSettings, getAgents, getProviderConfigs } from '@/lib/storage';
@@ -14,7 +15,15 @@ import { MarketplaceView } from '@/components/views/marketplace-view';
 import { SettingsView } from '@/components/views/settings-view';
 
 function App() {
-  const { currentView, setCommandPaletteOpen, setAgents, setProviderConfigs, setTheme, setEditorFontSize } = useAppStore();
+  // Performance: useShallow prevents unnecessary re-renders when unrelated store properties change
+  const { currentView, setCommandPaletteOpen, setAgents, setProviderConfigs, setTheme, setEditorFontSize } = useAppStore(useShallow((state) => ({
+    currentView: state.currentView,
+    setCommandPaletteOpen: state.setCommandPaletteOpen,
+    setAgents: state.setAgents,
+    setProviderConfigs: state.setProviderConfigs,
+    setTheme: state.setTheme,
+    setEditorFontSize: state.setEditorFontSize,
+  })));
 
   // Load settings, agents, and provider configs on mount
   useEffect(() => {

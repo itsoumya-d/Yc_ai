@@ -1,7 +1,12 @@
+import { useShallow } from 'zustand/react/shallow';
 import { useAppStore } from '@/stores/app-store';
 
 export function TitleBar() {
-  const { currentAgentName, currentView } = useAppStore();
+  // Performance: useShallow prevents unnecessary re-renders when unrelated store properties change
+  const { currentAgentName, currentView } = useAppStore(useShallow((state) => ({
+    currentAgentName: state.currentAgentName,
+    currentView: state.currentView,
+  })));
 
   const viewTitles: Record<string, string> = {
     dashboard: 'Dashboard',

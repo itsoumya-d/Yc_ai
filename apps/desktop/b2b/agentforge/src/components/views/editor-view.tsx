@@ -1,3 +1,4 @@
+import { useShallow } from 'zustand/react/shallow';
 import { useState, useCallback, useMemo } from 'react';
 import {
   ReactFlow,
@@ -182,7 +183,16 @@ const logLevelColors: Record<string, string> = {
 function EditorCanvas() {
   const [nodes, setNodes, onNodesChange] = useNodesState(initialNodes);
   const [edges, setEdges, onEdgesChange] = useEdgesState(initialEdges);
-  const { isExecuting, setIsExecuting, nodeLibraryOpen, propertiesPanelOpen, consolePanelOpen, selectedNodeId, setSelectedNodeId } = useAppStore();
+  // Performance: useShallow prevents unnecessary re-renders when unrelated store properties change
+  const { isExecuting, setIsExecuting, nodeLibraryOpen, propertiesPanelOpen, consolePanelOpen, selectedNodeId, setSelectedNodeId } = useAppStore(useShallow((state) => ({
+    isExecuting: state.isExecuting,
+    setIsExecuting: state.setIsExecuting,
+    nodeLibraryOpen: state.nodeLibraryOpen,
+    propertiesPanelOpen: state.propertiesPanelOpen,
+    consolePanelOpen: state.consolePanelOpen,
+    selectedNodeId: state.selectedNodeId,
+    setSelectedNodeId: state.setSelectedNodeId,
+  })));
   const [librarySearch, setLibrarySearch] = useState('');
 
   const onConnect = useCallback(
