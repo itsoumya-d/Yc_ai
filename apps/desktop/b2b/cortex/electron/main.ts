@@ -185,29 +185,23 @@ ipcMain.handle('execute-sql', async (_event, sql: string) => {
     const trimmed = sql.trim().toUpperCase();
     const isSelect = trimmed.startsWith('SELECT') || trimmed.startsWith('WITH') || trimmed.startsWith('EXPLAIN');
 
-    if (isSelect) {
-      const stmt = database.prepare(sql);
-      const rows = stmt.all() as Record<string, unknown>[];
-      const end = performance.now();
-
-      const columns = rows.length > 0 && rows[0] ? Object.keys(rows[0]) : [];
-
-      return {
-        columns,
-        rows: rows.slice(0, 5000), // Limit to 5000 rows for display
-        rowCount: rows.length,
-        executionTimeMs: Math.round(end - start),
-      };
-    } else {
-      const result = database.exec(sql);
-      const end = performance.now();
-      return {
-        columns: [],
-        rows: [],
-        rowCount: 0,
-        executionTimeMs: Math.round(end - start),
-      };
+    if (!isSelect) {
+      // Security: Only allow SELECT, WITH, and EXPLAIN queries to prevent unintended mutations.
+      throw new Error('Only SELECT, WITH, and EXPLAIN queries are allowed.');
     }
+
+    const stmt = database.prepare(sql);
+    const rows = stmt.all() as Record<string, unknown>[];
+    const end = performance.now();
+
+    const columns = rows.length > 0 && rows[0] ? Object.keys(rows[0]) : [];
+
+    return {
+      columns,
+      rows: rows.slice(0, 5000), // Limit to 5000 rows for display
+      rowCount: rows.length,
+      executionTimeMs: Math.round(end - start),
+    };
   } catch (err) {
     const message = err instanceof Error ? err.message : String(err);
     throw new Error(message);

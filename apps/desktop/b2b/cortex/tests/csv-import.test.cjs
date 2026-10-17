@@ -120,10 +120,26 @@ test('empty or malformed CSV preserves an existing table', async (t) => {
 
 test('quoted table names remain supported by schema inspection and drop', async (t) => {
   const app = application(t);
-  await app.call('execute-sql', 'CREATE TABLE "customer""records" ("quoted""column" TEXT); INSERT INTO "customer""records" VALUES (\'fixture\')');
+  const file = app.csv('"quoted""column"\nfixture\n', 'setup.csv');
+  await app.call('load-csv', file);
+
+  // We write a small temporary sqlite file to test schema inspection
+  // and drop commands with quoted table names since `execute-sql`
+  // is now restricted to read-only queries and `load-csv` transforms file names.
+  const sqliteFile = path.join(path.dirname(file), 'temp.sqlite');
+  const tempDb = new Database(sqliteFile);
+  tempDb.exec('CREATE TABLE "customer""records" ("quoted""column" TEXT); INSERT INTO "customer""records" VALUES (\'fixture\')');
+  tempDb.close();
+
+  await app.call('load-sqlite', sqliteFile);
+
   const schema = await app.call('get-schema');
-  assert.equal(schema[0].name, 'customer"records');
-  assert.equal(schema[0].rowCount, 1);
+  const quotedSchema = schema.find(s => s.name === 'customer"records');
+  assert.ok(quotedSchema, 'Quoted table should be found in schema');
+  assert.equal(quotedSchema.name, 'customer"records');
+  assert.equal(quotedSchema.rowCount, 1);
   assert.equal(await app.call('drop-table', 'customer"records'), true);
-  assert.equal((await app.call('get-schema')).length, 0);
+
+  const postSchema = await app.call('get-schema');
+  assert.equal(postSchema.find(s => s.name === 'customer"records'), undefined);
 });
