@@ -120,7 +120,12 @@ test('empty or malformed CSV preserves an existing table', async (t) => {
 
 test('quoted table names remain supported by schema inspection and drop', async (t) => {
   const app = application(t);
-  await app.call('execute-sql', 'CREATE TABLE "customer""records" ("quoted""column" TEXT); INSERT INTO "customer""records" VALUES (\'fixture\')');
+  // Using an external SQLite database to mock quoted table name behavior instead of execute-sql because load-csv automatically sanitizes table names (e.g., replaces non-alphanumeric with '_').
+  const dbFile = app.csv('', 'mock.db');
+  const mockDb = new Database(dbFile);
+  mockDb.exec('CREATE TABLE "customer""records" ("quoted""column" TEXT); INSERT INTO "customer""records" VALUES (\'fixture\')');
+  mockDb.close();
+  await app.call('load-sqlite', dbFile);
   const schema = await app.call('get-schema');
   assert.equal(schema[0].name, 'customer"records');
   assert.equal(schema[0].rowCount, 1);
