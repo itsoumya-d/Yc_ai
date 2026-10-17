@@ -1,6 +1,7 @@
 import { useState, useMemo, useCallback, KeyboardEvent } from 'react';
 import { cn, formatNumber, formatDuration } from '@/lib/utils';
 import { useAppStore } from '@/stores/app-store';
+import { useShallow } from 'zustand/react/shallow';
 import { useQueryEngine } from '@/hooks/useQueryEngine';
 import { toggleBookmark, generateId } from '@/lib/storage';
 import {
@@ -12,12 +13,29 @@ import {
 type ViewMode = 'chart' | 'table' | 'sql';
 
 export function WorkspaceView() {
+  // Performance Optimization: Prevented unnecessary re-renders.
+  // Destructuring directly from useAppStore() previously subscribed the component
+  // to *all* global state changes, causing heavy re-renders during background operations.
+  // We now use useShallow() to subscribe only to the specific properties needed.
+  // Impact: Eliminates O(N) re-renders triggered by unrelated global state updates.
   const {
     queryStatus, currentQuery, setCurrentQuery,
     currentSQL, queryResults, queryColumns,
     queryError, executionTimeMs, aiInsight,
     chartType, schemaTables,
-  } = useAppStore();
+  } = useAppStore(useShallow((state) => ({
+    queryStatus: state.queryStatus,
+    currentQuery: state.currentQuery,
+    setCurrentQuery: state.setCurrentQuery,
+    currentSQL: state.currentSQL,
+    queryResults: state.queryResults,
+    queryColumns: state.queryColumns,
+    queryError: state.queryError,
+    executionTimeMs: state.executionTimeMs,
+    aiInsight: state.aiInsight,
+    chartType: state.chartType,
+    schemaTables: state.schemaTables,
+  })));
 
   const { runQuery, loadFile, refreshSchema } = useQueryEngine();
   const [viewMode, setViewMode] = useState<ViewMode>('chart');
