@@ -81,7 +81,11 @@ export function MonitorView() {
             <button className="px-2 py-1 text-text-tertiary hover:text-text-secondary">7d</button>
             <button className="rounded-r-md px-2 py-1 text-text-tertiary hover:text-text-secondary">30d</button>
           </div>
-          <button className="rounded-md border border-border-default p-1.5 text-text-tertiary hover:bg-bg-surface-hover hover:text-text-secondary">
+          <button
+            aria-label="Refresh metrics"
+            title="Refresh metrics"
+            className="rounded-md border border-border-default p-1.5 text-text-tertiary hover:bg-bg-surface-hover hover:text-text-secondary"
+          >
             <RefreshCw className="h-3.5 w-3.5" />
           </button>
         </div>
