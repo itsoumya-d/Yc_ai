@@ -57,6 +57,7 @@ function application(t, { failInsert } = {}) {
       fs.writeFileSync(file, contents);
       return file;
     },
+    directory,
   };
 }
 
@@ -120,7 +121,11 @@ test('empty or malformed CSV preserves an existing table', async (t) => {
 
 test('quoted table names remain supported by schema inspection and drop', async (t) => {
   const app = application(t);
-  await app.call('execute-sql', 'CREATE TABLE "customer""records" ("quoted""column" TEXT); INSERT INTO "customer""records" VALUES (\'fixture\')');
+  const dbFile = path.join(app.directory, 'test.db');
+  const db = new Database(dbFile);
+  db.exec('CREATE TABLE "customer""records" ("quoted""column" TEXT); INSERT INTO "customer""records" VALUES (\'fixture\')');
+  db.close();
+  await app.call('load-sqlite', dbFile);
   const schema = await app.call('get-schema');
   assert.equal(schema[0].name, 'customer"records');
   assert.equal(schema[0].rowCount, 1);
