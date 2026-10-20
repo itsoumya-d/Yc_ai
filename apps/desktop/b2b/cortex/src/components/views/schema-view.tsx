@@ -1,4 +1,4 @@
-import { useState, useEffect, useCallback } from 'react';
+import { useState, useEffect, useCallback, useMemo } from 'react';
 import { cn, formatNumber, formatBytes } from '@/lib/utils';
 import { useAppStore } from '@/stores/app-store';
 import { useQueryEngine } from '@/hooks/useQueryEngine';
@@ -42,13 +42,17 @@ export function SchemaView() {
     await loadFile();
   }, [loadFile]);
 
-  const filtered = schemaTables.filter((t) =>
-    t.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
-    t.columns.some((c) => c.name.toLowerCase().includes(searchQuery.toLowerCase()))
-  );
+  const filtered = useMemo(() => {
+    const q = searchQuery.toLowerCase();
+    if (!q) return schemaTables;
+    return schemaTables.filter((t) =>
+      t.name.toLowerCase().includes(q) ||
+      t.columns.some((c) => c.name.toLowerCase().includes(q))
+    );
+  }, [schemaTables, searchQuery]);
 
-  const schemas = [...new Set(filtered.map((t) => t.schema))];
-  const totalRows = schemaTables.reduce((a, t) => a + t.row_count, 0);
+  const schemas = useMemo(() => [...new Set(filtered.map((t) => t.schema))], [filtered]);
+  const totalRows = useMemo(() => schemaTables.reduce((a, t) => a + t.row_count, 0), [schemaTables]);
 
   return (
     <div className="flex h-full flex-col">
