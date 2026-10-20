@@ -91,6 +91,7 @@ function SidebarButton({
     <button
       onClick={onClick}
       title={item.label}
+      aria-label={item.label}
       className={cn(
         'group relative flex h-9 w-9 items-center justify-center rounded-md transition-all',
         isActive
