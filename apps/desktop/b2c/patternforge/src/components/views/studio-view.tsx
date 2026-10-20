@@ -75,7 +75,7 @@ export function StudioView() {
               placeholder="Describe a change..."
               className="flex-1 bg-transparent text-sm text-text-primary placeholder:text-text-tertiary focus:outline-none"
             />
-            <button className="rounded-md bg-primary-DEFAULT p-1.5 text-white hover:bg-primary-light">
+            <button aria-label="Send message" className="rounded-md bg-primary-DEFAULT p-1.5 text-white hover:bg-primary-light">
               <Send className="h-3.5 w-3.5" />
             </button>
           </div>
@@ -101,28 +101,28 @@ export function StudioView() {
               </button>
             ))}
             <div className="mx-2 h-4 w-px bg-border-default" />
-            <button className="rounded-md p-1.5 text-text-secondary hover:bg-bg-surface-raised hover:text-text-primary">
+            <button aria-label="Toggle grid" className="rounded-md p-1.5 text-text-secondary hover:bg-bg-surface-raised hover:text-text-primary">
               <Grid3X3 className="h-4 w-4" />
             </button>
-            <button className="rounded-md p-1.5 text-text-secondary hover:bg-bg-surface-raised hover:text-text-primary">
+            <button aria-label="Toggle visibility" className="rounded-md p-1.5 text-text-secondary hover:bg-bg-surface-raised hover:text-text-primary">
               <Eye className="h-4 w-4" />
             </button>
-            <button className="rounded-md p-1.5 text-text-secondary hover:bg-bg-surface-raised hover:text-text-primary">
+            <button aria-label="Toggle layers" className="rounded-md p-1.5 text-text-secondary hover:bg-bg-surface-raised hover:text-text-primary">
               <Layers className="h-4 w-4" />
             </button>
           </div>
           <div className="flex items-center gap-1">
-            <button className="rounded-md p-1.5 text-text-secondary hover:bg-bg-surface-raised hover:text-text-primary">
+            <button aria-label="Zoom out" className="rounded-md p-1.5 text-text-secondary hover:bg-bg-surface-raised hover:text-text-primary">
               <ZoomOut className="h-4 w-4" />
             </button>
             <span className="text-xs text-text-tertiary">100%</span>
-            <button className="rounded-md p-1.5 text-text-secondary hover:bg-bg-surface-raised hover:text-text-primary">
+            <button aria-label="Zoom in" className="rounded-md p-1.5 text-text-secondary hover:bg-bg-surface-raised hover:text-text-primary">
               <ZoomIn className="h-4 w-4" />
             </button>
-            <button className="rounded-md p-1.5 text-text-secondary hover:bg-bg-surface-raised hover:text-text-primary">
+            <button aria-label="Maximize viewport" className="rounded-md p-1.5 text-text-secondary hover:bg-bg-surface-raised hover:text-text-primary">
               <Maximize2 className="h-4 w-4" />
             </button>
-            <button className="rounded-md p-1.5 text-text-secondary hover:bg-bg-surface-raised hover:text-text-primary">
+            <button aria-label="Reset view" className="rounded-md p-1.5 text-text-secondary hover:bg-bg-surface-raised hover:text-text-primary">
               <RotateCcw className="h-4 w-4" />
             </button>
           </div>
