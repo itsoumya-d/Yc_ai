@@ -71,10 +71,10 @@ export function GalleryView() {
             />
           </div>
           <div className="flex rounded-md border border-border-default">
-            <button onClick={() => setViewMode('grid')} className={cn('p-1.5', viewMode === 'grid' ? 'bg-primary-muted text-primary-DEFAULT' : 'text-text-tertiary')}>
+            <button aria-label="Grid view" onClick={() => setViewMode('grid')} className={cn('p-1.5', viewMode === 'grid' ? 'bg-primary-muted text-primary-DEFAULT' : 'text-text-tertiary')}>
               <Grid3X3 className="h-4 w-4" />
             </button>
-            <button onClick={() => setViewMode('list')} className={cn('border-l border-border-default p-1.5', viewMode === 'list' ? 'bg-primary-muted text-primary-DEFAULT' : 'text-text-tertiary')}>
+            <button aria-label="List view" onClick={() => setViewMode('list')} className={cn('border-l border-border-default p-1.5', viewMode === 'list' ? 'bg-primary-muted text-primary-DEFAULT' : 'text-text-tertiary')}>
               <List className="h-4 w-4" />
             </button>
           </div>
@@ -131,6 +131,7 @@ export function GalleryView() {
                 </button>
                 <div className="flex justify-end px-3 pb-2">
                   <button
+                    aria-label={`Delete ${d.name}`}
                     onClick={() => handleDeleteDesign(d.id)}
                     className="rounded p-1 text-text-tertiary opacity-0 transition-opacity hover:text-status-error group-hover:opacity-100"
                   >
@@ -158,6 +159,7 @@ export function GalleryView() {
                 </span>
                 <span className="text-xs text-text-tertiary">{formatRelativeDate(d.updated_at)}</span>
                 <button
+                  aria-label={`Delete ${d.name}`}
                   onClick={() => handleDeleteDesign(d.id)}
                   className="rounded p-1 text-text-tertiary opacity-0 transition-opacity hover:text-status-error group-hover:opacity-100"
                 >
