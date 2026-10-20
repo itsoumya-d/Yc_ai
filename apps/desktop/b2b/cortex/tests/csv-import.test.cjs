@@ -52,6 +52,7 @@ function application(t, { failInsert } = {}) {
   });
   return {
     call: (name, ...args) => handlers.get(name)(undefined, ...args),
+    getDb: () => databases[0],
     csv: (contents, filename = 'records.csv') => {
       const file = path.join(directory, filename);
       fs.writeFileSync(file, contents);
@@ -120,10 +121,21 @@ test('empty or malformed CSV preserves an existing table', async (t) => {
 
 test('quoted table names remain supported by schema inspection and drop', async (t) => {
   const app = application(t);
-  await app.call('execute-sql', 'CREATE TABLE "customer""records" ("quoted""column" TEXT); INSERT INTO "customer""records" VALUES (\'fixture\')');
+
+  // We cannot use execute-sql to create the table because we correctly disabled it
+  // for mutations to prevent SQL injection. We must use the raw db instance directly.
+  const file = app.csv('"quoted""column"\nfixture\n', 'customer_records.csv');
+  await app.call('load-csv', file); // Initialize the DB
+  const db = app.getDb();
+  db.exec('CREATE TABLE "customer""records" ("quoted""column" TEXT); INSERT INTO "customer""records" VALUES (\'fixture\')');
+
   const schema = await app.call('get-schema');
-  assert.equal(schema[0].name, 'customer"records');
-  assert.equal(schema[0].rowCount, 1);
+  const table = schema.find(s => s.name === 'customer"records');
+  assert.ok(table);
+  assert.equal(table.name, 'customer"records');
+  assert.equal(table.rowCount, 1);
   assert.equal(await app.call('drop-table', 'customer"records'), true);
-  assert.equal((await app.call('get-schema')).length, 0);
+
+  const finalSchema = await app.call('get-schema');
+  assert.equal(finalSchema.find(s => s.name === 'customer"records'), undefined);
 });

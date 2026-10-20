@@ -1,4 +1,4 @@
-## 2024-05-24 - [SQLite Identifier SQL Injection]
-**Vulnerability:** SQL injection in better-sqlite3 via unescaped table and column names (identifiers).
-**Learning:** better-sqlite3 cannot parameterize identifiers. When creating tables or interpolating table/column names from user input (like CSV headers), they must be manually escaped by doubling double-quotes.
-**Prevention:** Always use a helper function to escape identifiers (e.g. `id.replace(/"/g, '""')`) before interpolating them into a query string inside double quotes.
+## 2024-05-24 - [Cortex Desktop App SQL Execution Vulnerability]
+**Vulnerability:** The `execute-sql` IPC handler in `apps/desktop/b2b/cortex/electron/main.ts` permits arbitrary SQL execution, including database mutations (`database.exec(sql)`), which can lead to SQL injection and data destruction.
+**Learning:** The memory explicitly states: "In the Cortex desktop app (`apps/desktop/b2b/cortex`), the `execute-sql` IPC handler strictly throws an error for database mutations to prevent SQL injection and data destruction. For test data setup (like `CREATE TABLE`, `INSERT`), do not use `execute-sql`; instead, utilize handlers like `load-csv` or instantiate a `better-sqlite3` `Database` directly on a mock file."
+**Prevention:** Strictly restrict the `execute-sql` handler to read-only queries (e.g., `SELECT`, `EXPLAIN`). Reject any other SQL operations (like `INSERT`, `UPDATE`, `DELETE`, `CREATE`, `DROP`).
