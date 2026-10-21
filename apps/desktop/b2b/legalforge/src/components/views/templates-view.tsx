@@ -104,7 +104,7 @@ export function TemplatesView() {
                 >
                   Use Template
                 </button>
-                <button className="rounded-md border border-border-default px-3 py-1.5 text-xs text-text-secondary transition-colors hover:bg-bg-surface-raised">
+                <button aria-label={"Edit template " + t.name} className="rounded-md border border-border-default px-3 py-1.5 text-xs text-text-secondary transition-colors hover:bg-bg-surface-raised">
                   <Edit3 className="h-3 w-3" />
                 </button>
               </div>

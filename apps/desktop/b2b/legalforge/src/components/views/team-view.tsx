@@ -65,7 +65,7 @@ export function TeamView() {
                     <div className="text-xs text-text-tertiary">{m.email}</div>
                   </div>
                 </div>
-                <button className="rounded p-1 text-text-tertiary hover:bg-bg-surface-raised hover:text-text-secondary">
+                <button aria-label={"More options for " + m.name} className="rounded p-1 text-text-tertiary hover:bg-bg-surface-raised hover:text-text-secondary">
                   <MoreHorizontal className="h-4 w-4" />
                 </button>
               </div>
