@@ -1,6 +1,7 @@
 import { useState, useMemo, useCallback, KeyboardEvent } from 'react';
 import { cn, formatNumber, formatDuration } from '@/lib/utils';
 import { useAppStore } from '@/stores/app-store';
+import { useShallow } from 'zustand/react/shallow';
 import { useQueryEngine } from '@/hooks/useQueryEngine';
 import { toggleBookmark, generateId } from '@/lib/storage';
 import {
@@ -12,12 +13,26 @@ import {
 type ViewMode = 'chart' | 'table' | 'sql';
 
 export function WorkspaceView() {
+  // Performance Optimization: Wrapped the state selection in useShallow
+  // to avoid re-rendering WorkspaceView when unrelated app states change.
   const {
     queryStatus, currentQuery, setCurrentQuery,
     currentSQL, queryResults, queryColumns,
     queryError, executionTimeMs, aiInsight,
     chartType, schemaTables,
-  } = useAppStore();
+  } = useAppStore(useShallow((state) => ({
+    queryStatus: state.queryStatus,
+    currentQuery: state.currentQuery,
+    setCurrentQuery: state.setCurrentQuery,
+    currentSQL: state.currentSQL,
+    queryResults: state.queryResults,
+    queryColumns: state.queryColumns,
+    queryError: state.queryError,
+    executionTimeMs: state.executionTimeMs,
+    aiInsight: state.aiInsight,
+    chartType: state.chartType,
+    schemaTables: state.schemaTables,
+  })));
 
   const { runQuery, loadFile, refreshSchema } = useQueryEngine();
   const [viewMode, setViewMode] = useState<ViewMode>('chart');
