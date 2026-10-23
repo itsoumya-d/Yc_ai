@@ -138,6 +138,7 @@ export function HistoryView() {
                       onClick={() => handleRerun(q.natural_language)}
                       className="rounded p-1.5 text-text-tertiary opacity-0 hover:bg-bg-surface-raised hover:text-text-secondary group-hover:opacity-100"
                       title="Re-run query"
+                      aria-label="Re-run query"
                     >
                       <Play className="h-3.5 w-3.5" />
                     </button>
@@ -145,6 +146,7 @@ export function HistoryView() {
                       onClick={() => handleCopySQL(q.generated_sql)}
                       className="rounded p-1.5 text-text-tertiary opacity-0 hover:bg-bg-surface-raised hover:text-text-secondary group-hover:opacity-100"
                       title="Copy SQL"
+                      aria-label="Copy SQL"
                     >
                       <Copy className="h-3.5 w-3.5" />
                     </button>
@@ -152,6 +154,7 @@ export function HistoryView() {
                       onClick={() => handleToggleBookmark(q.id)}
                       className={cn('rounded p-1.5', q.bookmarked ? 'text-chart-amber' : 'text-text-tertiary opacity-0 group-hover:opacity-100 hover:bg-bg-surface-raised hover:text-text-secondary')}
                       title={q.bookmarked ? 'Remove bookmark' : 'Bookmark'}
+                      aria-label={q.bookmarked ? 'Remove bookmark' : 'Bookmark'}
                     >
                       {q.bookmarked ? <BookmarkCheck className="h-3.5 w-3.5" /> : <Bookmark className="h-3.5 w-3.5" />}
                     </button>
@@ -159,6 +162,7 @@ export function HistoryView() {
                       onClick={() => handleDelete(q.id)}
                       className="rounded p-1.5 text-text-tertiary opacity-0 hover:bg-bg-surface-raised hover:text-status-error group-hover:opacity-100"
                       title="Delete"
+                      aria-label="Delete query"
                     >
                       <Trash2 className="h-3.5 w-3.5" />
                     </button>
