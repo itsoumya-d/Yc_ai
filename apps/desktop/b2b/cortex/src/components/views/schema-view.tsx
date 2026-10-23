@@ -120,6 +120,7 @@ export function SchemaView() {
                         <button
                           onClick={(e) => { e.stopPropagation(); handleDropTable(table.name); }}
                           className="rounded p-1 text-text-tertiary hover:text-status-error hover:bg-bg-surface-raised"
+                          aria-label={`Drop table ${table.name}`}
                         >
                           <Trash2 className="h-3.5 w-3.5" />
                         </button>
