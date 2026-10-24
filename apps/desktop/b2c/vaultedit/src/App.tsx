@@ -1,4 +1,5 @@
 import { useEffect } from 'react';
+import { useShallow } from 'zustand/react/shallow';
 import { useAppStore } from '@/stores/app-store';
 import { getSettings, getProjects } from '@/lib/storage';
 import { TitleBar } from '@/components/layout/title-bar';
@@ -20,7 +21,16 @@ function renderView(view: string) {
 }
 
 export function App() {
-  const { currentView, setOpenaiApiKey, setTheme, setProjects } = useAppStore();
+  // ⚡ Bolt Optimization: Use `useShallow` to select only required state properties,
+  // preventing unnecessary re-renders across the app when unrelated global state changes.
+  const { currentView, setOpenaiApiKey, setTheme, setProjects } = useAppStore(
+    useShallow((s) => ({
+      currentView: s.currentView,
+      setOpenaiApiKey: s.setOpenaiApiKey,
+      setTheme: s.setTheme,
+      setProjects: s.setProjects,
+    }))
+  );
   const showTitleBar = currentView !== 'welcome';
 
   useEffect(() => {

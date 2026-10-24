@@ -1,3 +1,4 @@
+import { useShallow } from 'zustand/react/shallow';
 import { useAppStore } from '@/stores/app-store';
 import { cn } from '@/lib/utils';
 import { formatTimecode } from '@/lib/utils';
@@ -60,7 +61,18 @@ const trackColors: Record<string, string> = {
 const totalDuration = 75;
 
 export function EditorView() {
-  const { isPlaying, togglePlayback, currentTime, setCurrentTime, aiPanelOpen, toggleAIPanel } = useAppStore();
+  // ⚡ Bolt Optimization: Use `useShallow` to select only required state properties,
+  // preventing unnecessary re-renders across the app when unrelated global state changes.
+  const { isPlaying, togglePlayback, currentTime, setCurrentTime, aiPanelOpen, toggleAIPanel } = useAppStore(
+    useShallow((s) => ({
+      isPlaying: s.isPlaying,
+      togglePlayback: s.togglePlayback,
+      currentTime: s.currentTime,
+      setCurrentTime: s.setCurrentTime,
+      aiPanelOpen: s.aiPanelOpen,
+      toggleAIPanel: s.toggleAIPanel,
+    }))
+  );
   const [aiCommand, setAICommand] = useState('');
   const [showFillers, setShowFillers] = useState(true);
 

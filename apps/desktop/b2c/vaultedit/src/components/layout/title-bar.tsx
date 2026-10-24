@@ -1,3 +1,4 @@
+import { useShallow } from 'zustand/react/shallow';
 import { useAppStore } from '@/stores/app-store';
 import { cn } from '@/lib/utils';
 import type { AppView } from '@/types/database';
@@ -10,7 +11,14 @@ const tabs: { view: AppView; label: string }[] = [
 ];
 
 export function TitleBar() {
-  const { currentView, setView } = useAppStore();
+  // ⚡ Bolt Optimization: Use `useShallow` to select only required state properties,
+  // preventing unnecessary re-renders across the app when unrelated global state changes.
+  const { currentView, setView } = useAppStore(
+    useShallow((s) => ({
+      currentView: s.currentView,
+      setView: s.setView,
+    }))
+  );
   return (
     <div className="flex h-12 items-center justify-between border-b border-border-default bg-bg-surface px-4" style={{ WebkitAppRegion: 'drag' } as React.CSSProperties}>
       <div className="flex items-center gap-3" style={{ WebkitAppRegion: 'no-drag' } as React.CSSProperties}>
