@@ -1,4 +1,5 @@
 import { useState, useEffect, useCallback } from 'react';
+import { useShallow } from 'zustand/react/shallow';
 import { useAppStore } from '@/stores/app-store';
 import { getSettings, saveSettings } from '@/lib/storage';
 import { cn } from '@/lib/utils';
@@ -12,7 +13,16 @@ const sections = [
 ];
 
 export function SettingsView() {
-  const { openaiApiKey, setOpenaiApiKey, theme, setTheme } = useAppStore();
+  // ⚡ Bolt Optimization: Use `useShallow` to select only required state properties,
+  // preventing unnecessary re-renders across the app when unrelated global state changes.
+  const { openaiApiKey, setOpenaiApiKey, theme, setTheme } = useAppStore(
+    useShallow((s) => ({
+      openaiApiKey: s.openaiApiKey,
+      setOpenaiApiKey: s.setOpenaiApiKey,
+      theme: s.theme,
+      setTheme: s.setTheme,
+    }))
+  );
 
   const [activeSection, setActiveSection] = useState('general');
   const [whisperKey, setWhisperKey] = useState('');

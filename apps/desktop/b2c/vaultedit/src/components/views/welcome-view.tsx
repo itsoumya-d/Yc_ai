@@ -1,3 +1,4 @@
+import { useShallow } from 'zustand/react/shallow';
 import { useAppStore } from '@/stores/app-store';
 import { Film, Upload, FolderOpen, Sparkles, ArrowRight } from 'lucide-react';
 
@@ -8,7 +9,13 @@ const recentProjects = [
 ];
 
 export function WelcomeView() {
-  const { setView } = useAppStore();
+  // ⚡ Bolt Optimization: Use `useShallow` to select only required state properties,
+  // preventing unnecessary re-renders across the app when unrelated global state changes.
+  const { setView } = useAppStore(
+    useShallow((s) => ({
+      setView: s.setView,
+    }))
+  );
   return (
     <div className="flex h-full items-center justify-center p-8">
       <div className="max-w-2xl text-center">

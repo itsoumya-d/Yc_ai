@@ -1,4 +1,5 @@
 import { useState, useMemo, useCallback } from 'react';
+import { useShallow } from 'zustand/react/shallow';
 import { useAppStore } from '@/stores/app-store';
 import { cn, formatDuration, formatBytes, getStatusColor, getStatusLabel } from '@/lib/utils';
 import { generateId, saveProject, deleteProject as deleteProjectStorage, formatRelativeDate } from '@/lib/storage';
@@ -6,7 +7,17 @@ import type { Project } from '@/types/database';
 import { Film, Search, Plus, Grid3X3, List, Clock, HardDrive, Trash2 } from 'lucide-react';
 
 export function LibraryView() {
-  const { setView, projects, addProject, removeProject, setActiveProjectId } = useAppStore();
+  // ⚡ Bolt Optimization: Use `useShallow` to select only required state properties,
+  // preventing unnecessary re-renders across the app when unrelated global state changes.
+  const { setView, projects, addProject, removeProject, setActiveProjectId } = useAppStore(
+    useShallow((s) => ({
+      setView: s.setView,
+      projects: s.projects,
+      addProject: s.addProject,
+      removeProject: s.removeProject,
+      setActiveProjectId: s.setActiveProjectId,
+    }))
+  );
   const [viewMode, setViewMode] = useState<'grid' | 'list'>('grid');
   const [search, setSearch] = useState('');
 
