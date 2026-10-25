@@ -94,12 +94,16 @@ export function DashboardView() {
             <button
               onClick={() => setViewMode('grid')}
               className={cn('rounded-l-md p-1.5', viewMode === 'grid' ? 'bg-bg-surface-hover text-text-primary' : 'text-text-tertiary hover:text-text-secondary')}
+              aria-label="Grid view"
+              title="Grid view"
             >
               <LayoutGrid className="h-3.5 w-3.5" />
             </button>
             <button
               onClick={() => setViewMode('list')}
               className={cn('rounded-r-md p-1.5', viewMode === 'list' ? 'bg-bg-surface-hover text-text-primary' : 'text-text-tertiary hover:text-text-secondary')}
+              aria-label="List view"
+              title="List view"
             >
               <List className="h-3.5 w-3.5" />
             </button>
