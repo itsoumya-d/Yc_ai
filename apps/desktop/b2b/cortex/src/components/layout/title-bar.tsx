@@ -19,17 +19,17 @@ export function TitleBar() {
       </div>
 
       <div className="flex items-center gap-1" style={{ WebkitAppRegion: 'no-drag' } as React.CSSProperties}>
-        <button className="flex items-center gap-2 rounded-md px-3 py-1.5 text-xs text-text-secondary hover:bg-bg-surface-raised hover:text-text-primary">
+        <button aria-label="Search" className="flex items-center gap-2 rounded-md px-3 py-1.5 text-xs text-text-secondary hover:bg-bg-surface-raised hover:text-text-primary">
           <Search className="h-3.5 w-3.5" />
           <span className="text-text-tertiary">⌘K</span>
         </button>
-        <button className="rounded-md p-2 text-text-secondary hover:bg-bg-surface-raised hover:text-text-primary">
+        <button aria-label="Notifications" className="rounded-md p-2 text-text-secondary hover:bg-bg-surface-raised hover:text-text-primary">
           <Bell className="h-4 w-4" />
         </button>
-        <button onClick={() => setView('settings')} className="rounded-md p-2 text-text-secondary hover:bg-bg-surface-raised hover:text-text-primary">
+        <button aria-label="Settings" onClick={() => setView('settings')} className="rounded-md p-2 text-text-secondary hover:bg-bg-surface-raised hover:text-text-primary">
           <Settings className="h-4 w-4" />
         </button>
-        <button className="ml-1 flex h-7 w-7 items-center justify-center rounded-full bg-primary-muted text-xs font-medium text-primary-light">
+        <button aria-label="User Profile" className="ml-1 flex h-7 w-7 items-center justify-center rounded-full bg-primary-muted text-xs font-medium text-primary-light">
           A
         </button>
       </div>
