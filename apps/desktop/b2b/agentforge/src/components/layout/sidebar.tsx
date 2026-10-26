@@ -1,3 +1,4 @@
+import { useShallow } from 'zustand/react/shallow';
 import { useAppStore, type AppView } from '@/stores/app-store';
 import { cn } from '@/lib/utils';
 import {
@@ -30,7 +31,15 @@ const navItems: NavItem[] = [
 ];
 
 export function Sidebar() {
-  const { currentView, setCurrentView } = useAppStore();
+  // ⚡ Bolt: Using useShallow to prevent unnecessary re-renders across the app
+  // when unrelated store values update. Sidebar now only re-renders
+  // on view changes.
+  const { currentView, setCurrentView } = useAppStore(
+    useShallow((state) => ({
+      currentView: state.currentView,
+      setCurrentView: state.setCurrentView,
+    }))
+  );
 
   const mainItems = navItems.filter((item) => item.section === 'main');
   const discoverItems = navItems.filter((item) => item.section === 'discover');
