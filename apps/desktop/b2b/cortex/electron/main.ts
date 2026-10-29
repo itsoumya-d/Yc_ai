@@ -181,33 +181,34 @@ ipcMain.handle('execute-sql', async (_event, sql: string) => {
     const database = getDb();
     const start = performance.now();
 
+    // Remove single-line and multi-line comments before validation
+    // using a regex that prevents bypassing the startsWith check
+    const queryWithoutComments = sql
+      .replace(/--.*$/gm, '')
+      .replace(/\/\*[\s\S]*?\*\//g, '')
+      .trim();
+
     // Determine if it's a SELECT-like query or a statement
-    const trimmed = sql.trim().toUpperCase();
+    const trimmed = queryWithoutComments.toUpperCase();
     const isSelect = trimmed.startsWith('SELECT') || trimmed.startsWith('WITH') || trimmed.startsWith('EXPLAIN');
 
-    if (isSelect) {
-      const stmt = database.prepare(sql);
-      const rows = stmt.all() as Record<string, unknown>[];
-      const end = performance.now();
-
-      const columns = rows.length > 0 && rows[0] ? Object.keys(rows[0]) : [];
-
-      return {
-        columns,
-        rows: rows.slice(0, 5000), // Limit to 5000 rows for display
-        rowCount: rows.length,
-        executionTimeMs: Math.round(end - start),
-      };
-    } else {
-      const result = database.exec(sql);
-      const end = performance.now();
-      return {
-        columns: [],
-        rows: [],
-        rowCount: 0,
-        executionTimeMs: Math.round(end - start),
-      };
+    if (!isSelect) {
+      throw new Error('Only read-only queries are allowed.');
     }
+
+    // Use the original sql for actual execution, but since it's verified as a SELECT it will be prepared
+    const stmt = database.prepare(sql);
+    const rows = stmt.all() as Record<string, unknown>[];
+    const end = performance.now();
+
+    const columns = rows.length > 0 && rows[0] ? Object.keys(rows[0]) : [];
+
+    return {
+      columns,
+      rows: rows.slice(0, 5000), // Limit to 5000 rows for display
+      rowCount: rows.length,
+      executionTimeMs: Math.round(end - start),
+    };
   } catch (err) {
     const message = err instanceof Error ? err.message : String(err);
     throw new Error(message);

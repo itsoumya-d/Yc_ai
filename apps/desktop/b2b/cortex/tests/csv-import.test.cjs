@@ -52,6 +52,7 @@ function application(t, { failInsert } = {}) {
   });
   return {
     call: (name, ...args) => handlers.get(name)(undefined, ...args),
+    databases,
     csv: (contents, filename = 'records.csv') => {
       const file = path.join(directory, filename);
       fs.writeFileSync(file, contents);
@@ -120,7 +121,9 @@ test('empty or malformed CSV preserves an existing table', async (t) => {
 
 test('quoted table names remain supported by schema inspection and drop', async (t) => {
   const app = application(t);
-  await app.call('execute-sql', 'CREATE TABLE "customer""records" ("quoted""column" TEXT); INSERT INTO "customer""records" VALUES (\'fixture\')');
+  await app.call('get-schema'); // initialize database
+  const db = app.databases[0];
+  db.exec('CREATE TABLE "customer""records" ("quoted""column" TEXT); INSERT INTO "customer""records" VALUES (\'fixture\')');
   const schema = await app.call('get-schema');
   assert.equal(schema[0].name, 'customer"records');
   assert.equal(schema[0].rowCount, 1);
