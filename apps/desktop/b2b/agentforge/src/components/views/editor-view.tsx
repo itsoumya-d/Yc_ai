@@ -18,6 +18,7 @@ import {
 } from '@xyflow/react';
 import '@xyflow/react/dist/style.css';
 import { cn, getNodeColor, getNodeLabel } from '@/lib/utils';
+import { useShallow } from 'zustand/react/shallow';
 import { useAppStore } from '@/stores/app-store';
 import type { AgentNodeType } from '@/types/database';
 import {
@@ -182,7 +183,17 @@ const logLevelColors: Record<string, string> = {
 function EditorCanvas() {
   const [nodes, setNodes, onNodesChange] = useNodesState(initialNodes);
   const [edges, setEdges, onEdgesChange] = useEdgesState(initialEdges);
-  const { isExecuting, setIsExecuting, nodeLibraryOpen, propertiesPanelOpen, consolePanelOpen, selectedNodeId, setSelectedNodeId } = useAppStore();
+  const { isExecuting, setIsExecuting, nodeLibraryOpen, propertiesPanelOpen, consolePanelOpen, selectedNodeId, setSelectedNodeId } = useAppStore(
+    useShallow((state) => ({
+      isExecuting: state.isExecuting,
+      setIsExecuting: state.setIsExecuting,
+      nodeLibraryOpen: state.nodeLibraryOpen,
+      propertiesPanelOpen: state.propertiesPanelOpen,
+      consolePanelOpen: state.consolePanelOpen,
+      selectedNodeId: state.selectedNodeId,
+      setSelectedNodeId: state.setSelectedNodeId,
+    }))
+  );
   const [librarySearch, setLibrarySearch] = useState('');
 
   const onConnect = useCallback(
