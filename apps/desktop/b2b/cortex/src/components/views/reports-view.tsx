@@ -47,10 +47,10 @@ export function ReportsView() {
                   </div>
                 </div>
                 <div className="flex items-center gap-1">
-                  <button className="rounded p-1.5 text-text-tertiary hover:bg-bg-surface-raised hover:text-text-secondary">
+                  <button aria-label={r.enabled ? "Pause " + r.name : "Resume " + r.name} className="rounded p-1.5 text-text-tertiary hover:bg-bg-surface-raised hover:text-text-secondary">
                     {r.enabled ? <Pause className="h-4 w-4" /> : <Play className="h-4 w-4" />}
                   </button>
-                  <button className="rounded p-1.5 text-text-tertiary hover:bg-bg-surface-raised hover:text-text-secondary">
+                  <button aria-label={"Options for " + r.name} className="rounded p-1.5 text-text-tertiary hover:bg-bg-surface-raised hover:text-text-secondary">
                     <MoreHorizontal className="h-4 w-4" />
                   </button>
                 </div>
