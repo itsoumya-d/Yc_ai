@@ -95,10 +95,10 @@ export function AlertsView() {
                         <div className="text-[10px] text-text-tertiary">Last triggered</div>
                       </div>
                       <div className="flex items-center gap-1">
-                        <button className="rounded p-1.5 text-text-tertiary hover:bg-bg-surface-raised">
+                        <button aria-label={a.enabled ? "Mute " + a.name : "Unmute " + a.name} className="rounded p-1.5 text-text-tertiary hover:bg-bg-surface-raised">
                           {a.enabled ? <Bell className="h-4 w-4" /> : <BellOff className="h-4 w-4" />}
                         </button>
-                        <button className="rounded p-1.5 text-text-tertiary hover:bg-bg-surface-raised">
+                        <button aria-label={"Options for " + a.name} className="rounded p-1.5 text-text-tertiary hover:bg-bg-surface-raised">
                           <MoreHorizontal className="h-4 w-4" />
                         </button>
                       </div>

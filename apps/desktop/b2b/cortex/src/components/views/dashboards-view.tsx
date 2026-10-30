@@ -67,7 +67,7 @@ export function DashboardsView() {
             <div key={w.id} className="rounded-lg border border-border-default bg-bg-surface p-4">
               <div className="mb-3 flex items-center justify-between">
                 <span className="text-xs text-text-tertiary">{w.title}</span>
-                <button className="rounded p-1 text-text-tertiary hover:bg-bg-surface-raised">
+                <button aria-label={"Options for " + w.title} className="rounded p-1 text-text-tertiary hover:bg-bg-surface-raised">
                   <MoreHorizontal className="h-3.5 w-3.5" />
                 </button>
               </div>
@@ -116,7 +116,7 @@ export function DashboardsView() {
           <div className="rounded-lg border border-border-default bg-bg-surface p-4">
             <div className="mb-3 flex items-center justify-between">
               <span className="text-xs text-text-tertiary">Revenue by Region</span>
-              <button className="rounded p-1 text-text-tertiary hover:bg-bg-surface-raised">
+              <button aria-label="Options for Revenue by Region" className="rounded p-1 text-text-tertiary hover:bg-bg-surface-raised">
                 <MoreHorizontal className="h-3.5 w-3.5" />
               </button>
             </div>
@@ -138,7 +138,7 @@ export function DashboardsView() {
           <div className="col-span-2 rounded-lg border border-border-default bg-bg-surface p-4">
             <div className="mb-3 flex items-center justify-between">
               <span className="text-xs text-text-tertiary">Top Products</span>
-              <button className="rounded p-1 text-text-tertiary hover:bg-bg-surface-raised">
+              <button aria-label="Options for Top Products" className="rounded p-1 text-text-tertiary hover:bg-bg-surface-raised">
                 <MoreHorizontal className="h-3.5 w-3.5" />
               </button>
             </div>
